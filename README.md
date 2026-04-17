@@ -23,6 +23,7 @@ The configuration is strictly modular:
 - `lua/options.lua`: Global Vim settings and non-plugin autocommands.
 - `lua/plugins.lua`: Plugin declarations and detailed registry-based configurations.
 - `lua/keymaps.lua`: Centralized user-facing keybindings.
+- `lua/const.lua`: Stores constant values for reference in the configuration.
 
 ## 🚀 Getting Started
 
