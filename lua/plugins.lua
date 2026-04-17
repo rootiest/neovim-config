@@ -44,7 +44,7 @@ Config.plugins.snacks = {
 			{ section = "keys", gap = 1, padding = 1 },
 		},
 		preset = {
-			header = require("data").header,
+			header = require("const").header,
 		},
 	},
 	explorer = { enabled = true },
