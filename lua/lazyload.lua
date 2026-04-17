@@ -1,3 +1,13 @@
+--[[
+  ┌────────────────────────────────────────────────────────────────┐
+  │                            Lazyload                            │
+  └────────────────────────────────────────────────────────────────┘
+--]]
+
+-- Original work Copyright (c) 2021 Fredrik Averpil
+-- This file is licensed under the MIT License.
+-- See: https://github.com/fredrikaverpil/dotfiles/blob/main/LICENSE
+
 -- Lazyload queues for phased plugin loading.
 --
 -- on_vim_enter(fn):                    async fire-and-forget via vim.schedule() (default)
