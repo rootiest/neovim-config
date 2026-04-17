@@ -32,3 +32,4 @@ Thumbs.db
 # AI assistant files
 CLAUDE.md
 GEMINI.md
+.gemini_session
