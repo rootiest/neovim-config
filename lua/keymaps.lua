@@ -100,7 +100,15 @@ vim.keymap.set("n", "gao", function() Snacks.picker.lsp_outgoing_calls() end, { 
 vim.keymap.set("n", "<leader>ss", function() Snacks.picker.lsp_symbols() end, { desc = "LSP Symbols" })
 vim.keymap.set("n", "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, { desc = "LSP Workspace Symbols" })
 
+-- Standard LSP
+vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover Documentation" })
+vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
+vim.keymap.set("n", "<leader>cr", function()
+  return ":" .. require("inc_rename").config.cmd_name .. " " .. vim.fn.expand("<cword>")
+end, { expr = true, desc = "Rename Symbol" })
+
 -- Other
+vim.keymap.set("n", "<leader>sq", "<cmd>nohlsearch<cr>", { desc = "Clear Search Highlights" })
 vim.keymap.set("n", "<leader>z",  function() Snacks.zen() end, { desc = "Toggle Zen Mode" })
 vim.keymap.set("n", "<leader>Z",  function() Snacks.zen.zoom() end, { desc = "Toggle Zoom" })
 vim.keymap.set("n", "<leader>.",  function() Snacks.scratch() end, { desc = "Toggle Scratch Buffer" })
@@ -111,8 +119,8 @@ vim.keymap.set("n", "<leader>cR", function() Snacks.rename.rename_file() end, { 
 vim.keymap.set({ "n", "v" }, "<leader>gB", function() Snacks.gitbrowse() end, { desc = "Git Browse" })
 vim.keymap.set("n", "<leader>gg", function() Snacks.lazygit() end, { desc = "Lazygit" })
 vim.keymap.set("n", "<leader>un", function() Snacks.notifier.hide() end, { desc = "Dismiss All Notifications" })
-vim.keymap.set("n", "<c-/>",      function() Snacks.terminal() end, { desc = "Toggle Terminal" })
-vim.keymap.set("n", "<c-_>",      function() Snacks.terminal() end, { desc = "which_key_ignore" })
+vim.keymap.set({ "n", "t" }, "<c-/>", function() Snacks.terminal() end, { desc = "Toggle Terminal" })
+vim.keymap.set({ "n", "t" }, "<c-_>", function() Snacks.terminal() end, { desc = "which_key_ignore" })
 vim.keymap.set({ "n", "t" }, "]]", function() Snacks.words.jump(vim.v.count1) end, { desc = "Next Reference" })
 vim.keymap.set({ "n", "t" }, "[[", function() Snacks.words.jump(-vim.v.count1) end, { desc = "Prev Reference" })
 vim.keymap.set("n", "<leader>N", function()
@@ -129,6 +137,24 @@ vim.keymap.set("n", "<leader>N", function()
     },
   })
 end, { desc = "Neovim News" })
+
+----------------------------------------------------------
+
+-- Leap Keymaps
+vim.keymap.set({ 'n', 'x', 'o' }, '<CR>', '<Plug>(leap)')
+vim.keymap.set('n', 'S', '<Plug>(leap-from-window)')
+
+----------------------------------------------------------
+
+-- Conform Keymaps
+vim.keymap.set({ "n", "v" }, "<leader>cf", function()
+  require("conform").format({ lsp_format = "fallback" })
+end, { desc = "Format Buffer" })
+
+----------------------------------------------------------
+
+-- Undotree Keymaps
+vim.keymap.set("n", "<leader>uu", "<cmd>UndotreeToggle<cr>", { desc = "Toggle Undotree" })
 
 ----------------------------------------------------------
 
