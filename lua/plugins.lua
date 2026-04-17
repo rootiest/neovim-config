@@ -168,6 +168,10 @@ lazyload.on_vim_enter(function()
 	vim.pack.add({ { src = "https://github.com/echasnovski/mini.surround", name = "mini.surround" } })
 	require("mini.surround").setup()
 
+	-- Mini.pairs
+	vim.pack.add({ { src = "https://github.com/echasnovski/mini.pairs", name = "mini.pairs" } })
+	require("mini.pairs").setup()
+
 	-- Undotree
 	vim.g.undotree_ShortIndicators = 0
 	vim.g.undotree_SplitWidth = 32
