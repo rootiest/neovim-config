@@ -1,0 +1,34 @@
+/.claude_session
+
+# Plugin installs (managed by vim.pack)
+/pack/
+
+# Compiled / cached Lua
+**/*.luac
+/lua/__pycache__/
+
+# LSP and tool data
+/.luarc.json.bak
+/lsp/
+
+# Session and state files
+/session/
+/sessions/
+/.session
+
+# Swap, backup, undo files
+*.swp
+*.swo
+*~
+*.bak
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# AI assistant files
+CLAUDE.md
+GEMINI.md
