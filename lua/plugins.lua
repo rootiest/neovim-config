@@ -224,45 +224,57 @@ lazyload.on_vim_enter(function()
 	vim.pack.add({ { src = "https://github.com/williamboman/mason-lspconfig.nvim", name = "mason-lspconfig" } })
 	vim.pack.add({ { src = "https://github.com/neovim/nvim-lspconfig", name = "nvim-lspconfig" } })
 
-	-- Completion
-	vim.pack.add({ { src = "https://github.com/saghen/blink.cmp", name = "blink.cmp" } })
-	vim.pack.add({ { src = "https://github.com/rafamadriz/friendly-snippets", name = "friendly-snippets" } })
-	vim.pack.add({ { src = "https://github.com/fang2hou/blink-copilot", name = "blink-copilot" } })
-
 	require("mason").setup()
 
-	-- Blink.cmp setup
-	require("blink.cmp").setup({
-		keymap = { preset = "default" },
-		appearance = {
-			use_nvim_cmp_as_default = true,
-			nerd_font_variant = "mono",
-			kind_icons = {
-				Copilot = "",
+	-- Completion (Blink.cmp)
+	-- We check if the binary exists or if cargo is available to build it.
+	-- If neither, we skip loading to avoid errors.
+	local blink_path = vim.fn.stdpath("data") .. "/site/pack/core/opt/blink.cmp"
+	local has_blink_bin = vim.fn.filereadable(blink_path .. "/target/release/libblink_cmp_fuzzy.so") == 1
+		or vim.fn.filereadable(blink_path .. "/target/release/libblink_cmp_fuzzy.dylib") == 1
+		or vim.fn.filereadable(blink_path .. "/target/release/libblink_cmp_fuzzy.dll") == 1
+	local has_cargo = vim.fn.executable("cargo") == 1
+
+	if has_blink_bin or has_cargo then
+		vim.pack.add({ { src = "https://github.com/saghen/blink.cmp", name = "blink.cmp" } })
+		vim.pack.add({ { src = "https://github.com/rafamadriz/friendly-snippets", name = "friendly-snippets" } })
+		vim.pack.add({ { src = "https://github.com/fang2hou/blink-copilot", name = "blink-copilot" } })
+
+		-- Blink.cmp setup
+		require("blink.cmp").setup({
+			keymap = { preset = "default" },
+			appearance = {
+				use_nvim_cmp_as_default = true,
+				nerd_font_variant = "mono",
+				kind_icons = {
+					Copilot = "",
+				},
 			},
-		},
-		sources = {
-			default = { "lsp", "path", "snippets", "buffer", "copilot" },
-			providers = {
-				copilot = {
-					name = "copilot",
-					module = "blink-copilot",
-					kind = "lsp",
-					server_name = "copilot",
-					score_offset = 100,
-					async = true,
-					opts = {
-						max_completions = 3,
-						max_attempts = 4,
+			sources = {
+				default = { "lsp", "path", "snippets", "buffer", "copilot" },
+				providers = {
+					copilot = {
+						name = "copilot",
+						module = "blink-copilot",
+						kind = "lsp",
+						server_name = "copilot",
+						score_offset = 100,
+						async = true,
+						opts = {
+							max_completions = 3,
+							max_attempts = 4,
+						},
 					},
 				},
 			},
-		},
-		signature = { enabled = true },
-	})
+			signature = { enabled = true },
+		})
+	else
+		vim.notify("blink.cmp: binary not found and cargo not installed. Completion disabled.", vim.log.levels.WARN)
+	end
 
 	local lspconfig = require("lspconfig")
-	local capabilities = require("blink.cmp").get_lsp_capabilities()
+	local capabilities = (has_blink_bin or has_cargo) and require("blink.cmp").get_lsp_capabilities() or nil
 
 	require("mason-lspconfig").setup({
 		ensure_installed = {
