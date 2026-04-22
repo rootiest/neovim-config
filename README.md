@@ -13,6 +13,7 @@ A modern, modular, and high-performance Neovim configuration built from scratch 
 - **High Performance**: Featuring **blink.cmp** (Rust-based completion) and optimized **Snacks.nvim** components.
 - **AI-Powered**: Native integration with the **GitHub Copilot Language Server**.
 - **User-Centric QoL**: Hybrid line numbers, autosave-on-edit, and seamless system clipboard integration.
+- **Resilient & Portable**: Intelligent terminal title management (Kitty + Fallback) and automatic project root detection.
 
 ## 📁 Architecture
 
@@ -20,19 +21,42 @@ The configuration is strictly modular:
 
 - `init.lua`: Entry point and global state initialization.
 - `lua/lazyload.lua`: Logic for async and phased plugin loading.
-- `lua/options.lua`: Global Vim settings and non-plugin autocommands.
+- `lua/options.lua`: Global Vim settings, root management, and terminal title logic.
 - `lua/plugins.lua`: Plugin declarations and detailed registry-based configurations.
 - `lua/keymaps.lua`: Centralized user-facing keybindings.
-- `lua/const.lua`: Stores constant values for reference in the configuration.
+- `lua/const.lua`: Stores constant values (like dashboard headers) for the configuration.
+
+## 🛠️ System Dependencies
+
+To ensure all features (pickers, formatters, and LSPs) work correctly, the following packages are required:
+
+### Essential Tools
+- `git`, `curl`, `unzip`, `build-essential` (or `base-devel`)
+- `ripgrep` (Grep support)
+- `fd` (Fast file finding)
+- `fzf` (Fuzzy finder fallback)
+- `lazygit` (Git TUI)
+- `gh` (GitHub CLI integration)
+- `xclip` / `xsel` (X11) or `wl-copy` (Wayland) for clipboard sync.
+
+### Runtime Environments
+- `Node.js` & `npm` (Copilot and various LSPs)
+- `Python3` & `pip` (Python LSPs)
+- `Cargo` (Rust toolchain, required for building `blink.cmp`)
+
+### Installation Commands
+
+**Debian / Ubuntu:**
+```bash
+sudo apt install git ripgrep fd-find fzf lazygit gh xclip nodejs npm build-essential curl unzip
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S git ripgrep fd fzf lazygit github-cli xclip nodejs npm base-devel curl unzip
+```
 
 ## 🚀 Getting Started
-
-### Prerequisites
-
-- **Neovim 0.10+**
-- **Nerd Font** (Mono variant recommended for optimal UI alignment)
-- **Cargo** (Required for building `blink.cmp` fuzzy matching library)
-- **Node.js** (Required for various LSPs and Copilot)
 
 ### Installation
 
@@ -44,24 +68,27 @@ nvim
 ### Post-Install
 
 1.  **Build Blink**: If completion isn't working, run `cargo build --release` inside `~/.local/share/nvim/site/pack/core/opt/blink.cmp`.
-2.  **LSP Servers**: Run `:Mason` to monitor the installation of Language Servers (Lua, C, Rust, Python, etc.).
-3.  **Copilot**: Run `:LspCopilotSignIn` to authenticate with GitHub.
+2.  **LSP Servers**: Run `:Mason` to monitor the installation of Language Servers.
+3.  **Copilot**: Run `:LspCopilotSignIn` to authenticate.
 
 ## ⌨️ Key Features & Mappings
 
 | Key | Description |
 | :--- | :--- |
 | `<leader><space>` | Smart Find Files (Snacks) |
-| `<leader>e` | File Explorer |
-| `<leader>ff` | Find Files |
-| `<leader>sg` | Project-wide Grep |
-| `gd` / `gr` | Go to Definition / References |
+| `<leader>e` | File Explorer (Snacks) |
+| `<leader>sr` | Search and Replace (Grug-far) |
+| `<leader>gg` | Open Lazygit |
+| `<leader>qs` | Restore Last Session (Persistence) |
+| `<leader>cf` | Format Buffer (Conform) |
+| `<leader>uu` | Toggle Undo Tree |
+| `<leader>z` | Toggle Zen Mode |
+| `gd` / `gr` | Goto Definition / References |
 | `K` | Hover Documentation |
 | `s` / `S` | Leap Motion (Normal/Window) |
-| `ys` / `ds` | Mini.surround (Add/Delete) |
+| `ys` / `ds` / `cs` | Surround (Add/Delete/Change) |
 | `:Q` | Forced Write-All and Quit |
 
 ## 📜 License
 
 Distributed under the **GPLv3 or later** License. See `LICENSE` for more information.
-
