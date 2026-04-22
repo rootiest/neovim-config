@@ -14,6 +14,7 @@ A modern, modular, and high-performance Neovim configuration built from scratch 
 - **AI-Powered**: Native integration with the **GitHub Copilot Language Server**.
 - **User-Centric QoL**: Hybrid line numbers, autosave-on-edit, and seamless system clipboard integration.
 - **Resilient & Portable**: Intelligent terminal title management (Kitty + Fallback) and automatic project root detection.
+- **Lean & Readable**: ~741 lines of Lua code (excluding comments and blanks).
 
 ## 📁 Architecture
 
