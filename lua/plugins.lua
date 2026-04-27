@@ -102,7 +102,14 @@ Config.plugins.snacks = {
 		enabled = true,
 		win = {
 			keys = {
-				toggle = { "<c-/>", function(self) self:hide() end, mode = "t", desc = "Toggle Terminal" },
+				toggle = {
+					"<c-/>",
+					function(self)
+						self:hide()
+					end,
+					mode = "t",
+					desc = "Toggle Terminal",
+				},
 			},
 		},
 	},
@@ -171,6 +178,21 @@ lazyload.on_vim_enter(function()
 	-- Mini.pairs
 	vim.pack.add({ { src = "https://github.com/echasnovski/mini.pairs", name = "mini.pairs" } })
 	require("mini.pairs").setup()
+
+	-- Gx.nvim
+	vim.pack.add({ { src = "https://github.com/chrishrb/gx.nvim", name = "gx" } })
+	require("gx").setup({
+		handlers = {
+			plugin = true,
+			github = true,
+			package_json = true,
+			search = true,
+		},
+	})
+
+	-- Comment-box.nvim
+	vim.pack.add({ { src = "https://github.com/LudoPinelli/comment-box.nvim", name = "comment-box" } })
+	require("comment-box").setup()
 
 	-- Undotree
 	vim.g.undotree_ShortIndicators = 0

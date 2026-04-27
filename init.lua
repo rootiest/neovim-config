@@ -34,3 +34,12 @@ require('lazyload')
 require('options')
 require('plugins')
 require('keymaps')
+
+-- Source machine-local and secret overrides (silently ignored if absent)
+local user_dots = vim.fn.expand("~/.config/.user-dots/nvim/")
+for _, file in ipairs({ "secrets.lua", "local.lua" }) do
+  local path = user_dots .. file
+  if vim.fn.filereadable(path) == 1 then
+    dofile(path)
+  end
+end

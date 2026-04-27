@@ -322,6 +322,14 @@ vim.keymap.set("n", "<leader>uu", "<cmd>UndotreeToggle<cr>", { desc = "Toggle Un
 
 ----------------------------------------------------------
 
+-- Comment Box Keymaps
+vim.keymap.set({ "n", "v" }, "<leader>cbb", "<cmd>CBccbox<cr>", { desc = "Centered Box" })
+vim.keymap.set({ "n", "v" }, "<leader>cbl", "<cmd>CBcline<cr>", { desc = "Centered Line" })
+vim.keymap.set({ "n", "v" }, "<leader>cbd", "<cmd>CBd<cr>", { desc = "Delete Box/Line" })
+vim.keymap.set("n", "<leader>cbk", "<cmd>CBcatalog<cr>", { desc = "Box Style Catalog" })
+
+----------------------------------------------------------
+
 -- Persistence Keymaps
 vim.keymap.set("n", "<leader>qs", function()
 	require("persistence").load()

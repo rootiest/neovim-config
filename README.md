@@ -13,7 +13,7 @@ A modern, modular, and high-performance Neovim configuration built from scratch 
 - **High Performance**: Featuring **blink.cmp** (Rust-based completion) and optimized **Snacks.nvim** components.
 - **AI-Powered**: Native integration with the **GitHub Copilot Language Server**.
 - **User-Centric QoL**: Hybrid line numbers, autosave-on-edit, and seamless system clipboard integration.
-- **Resilient & Portable**: Intelligent terminal title management (Kitty + Fallback) and automatic project root detection.
+- **Resilient & Portable**: Intelligent terminal title management (Kitty + Fallback), automatic project root detection, and machine-local override support.
 - **Lean & Readable**: ~800 lines of Lua code (excluding comments and blanks).
 
 ## 📁 Architecture
@@ -88,6 +88,11 @@ nvim
 | `K` | Hover Documentation |
 | `s` / `S` | Leap Motion (Normal/Window) |
 | `ys` / `ds` / `cs` | Surround (Add/Delete/Change) |
+| `gx` / `gX` | Open URL under cursor (Gx.nvim) |
+| `<leader>cbb` | Create Centered Comment Box |
+| `<leader>cbl` | Create Centered Comment Line |
+| `<leader>cbd` | Delete Comment Box/Line |
+| `<leader>cbk` | Browse Box Style Catalog |
 | `:Q` | Forced Write-All and Quit |
 
 ## 📜 License

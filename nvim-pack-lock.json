@@ -12,9 +12,17 @@
       "rev": "426dbebe06b5c69fd846ceb17b42e12f890aedf1",
       "src": "https://github.com/catppuccin/nvim"
     },
+    "comment-box": {
+      "rev": "06bb771690bc9df0763d14769b779062d8f12bc5",
+      "src": "https://github.com/LudoPinelli/comment-box.nvim"
+    },
     "conform": {
       "rev": "086a40dc7ed8242c03be9f47fbcee68699cc2395",
       "src": "https://github.com/stevearc/conform.nvim"
+    },
+    "cord.nvim": {
+      "rev": "0be090969e978f7442870ef227e09eff7bf3480d",
+      "src": "https://github.com/vyfor/cord.nvim"
     },
     "flash": {
       "rev": "fcea7ff883235d9024dc41e638f164a450c14ca2",
@@ -35,6 +43,10 @@
     "grug-far": {
       "rev": "21604255d0e8f9968322f61f2b6c09e5efe1285a",
       "src": "https://github.com/MagicDuck/grug-far.nvim"
+    },
+    "gx": {
+      "rev": "ba9c408fc0130fc4548760c3933a81b58fc50de8",
+      "src": "https://github.com/chrishrb/gx.nvim"
     },
     "inc-rename": {
       "rev": "0074b551a17338ccdcd299bd86687cc651bcb33d",
