@@ -171,6 +171,23 @@ lazyload.on_vim_enter(function()
 	vim.pack.add({ { src = "https://git.disroot.org/andyg/leap.nvim", name = "leap" } })
 	vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
 
+	-- Focusline.nvim
+	vim.pack.add({
+		{ src = "https://github.com/ABDsheikho/focusline.nvim" },
+	})
+
+	require("focusline").setup({
+		-- focus_target can be a line number (e.g., 15), or a ratio (e.g., 0.25, 1 / 4, "25%").
+		focus_target = "30%", -- try it with 30%
+		-- which motion to associate focusline with.
+		with_motion = {
+			"zz",
+			"z,",
+			"\x04", -- Ctrl+D
+			"\x15", -- Ctrl+U
+		},
+	})
+
 	-- Mini.surround
 	vim.pack.add({ { src = "https://github.com/echasnovski/mini.surround", name = "mini.surround" } })
 	require("mini.surround").setup()
@@ -181,6 +198,7 @@ lazyload.on_vim_enter(function()
 
 	-- Gx.nvim
 	vim.pack.add({ { src = "https://github.com/chrishrb/gx.nvim", name = "gx" } })
+	---@diagnostic disable-next-line: missing-fields
 	require("gx").setup({
 		handlers = {
 			plugin = true,
@@ -237,6 +255,7 @@ lazyload.on_vim_enter(function()
 	vim.pack.add({ { src = "https://github.com/folke/lazydev.nvim", name = "lazydev" } })
 	require("lazydev").setup({
 		library = {
+			{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
 			{ path = "snacks.nvim", words = { "Snacks" } },
 		},
 	})
@@ -252,25 +271,33 @@ lazyload.on_vim_enter(function()
 	-- We check if the binary exists or if cargo is available to build it.
 	-- If neither, we skip loading to avoid errors.
 	local blink_path = vim.fn.stdpath("data") .. "/site/pack/core/opt/blink.cmp"
-	local has_blink_bin = vim.fn.filereadable(blink_path .. "/target/release/libblink_cmp_fuzzy.so") == 1
+	local has_blink_bin =
+		-- Check v2 location (most likely where it is now)
+		vim.fn.filereadable(blink_path .. "/lua/blink/cmp/lib/libblink_cmp_fuzzy.so") == 1
+		-- Check v1/Cargo location (fallback)
+		or vim.fn.filereadable(blink_path .. "/target/release/libblink_cmp_fuzzy.so") == 1
+		-- Check macOS/Windows extensions
 		or vim.fn.filereadable(blink_path .. "/target/release/libblink_cmp_fuzzy.dylib") == 1
 		or vim.fn.filereadable(blink_path .. "/target/release/libblink_cmp_fuzzy.dll") == 1
+
 	local has_cargo = vim.fn.executable("cargo") == 1
 
 	if has_blink_bin or has_cargo then
+		-- 1. Add blink.lib first as it's a dependency for blink.cmp
+		vim.pack.add({ { src = "https://github.com/saghen/blink.lib", name = "blink.lib" } })
+
+		-- 2. Add blink.cmp and other sources
 		vim.pack.add({ { src = "https://github.com/saghen/blink.cmp", name = "blink.cmp" } })
 		vim.pack.add({ { src = "https://github.com/rafamadriz/friendly-snippets", name = "friendly-snippets" } })
 		vim.pack.add({ { src = "https://github.com/fang2hou/blink-copilot", name = "blink-copilot" } })
 
-		-- Blink.cmp setup
+		-- 3. Blink.cmp setup
 		require("blink.cmp").setup({
 			keymap = { preset = "default" },
 			appearance = {
 				use_nvim_cmp_as_default = true,
 				nerd_font_variant = "mono",
-				kind_icons = {
-					Copilot = "",
-				},
+				kind_icons = { Copilot = "" },
 			},
 			sources = {
 				default = { "lsp", "path", "snippets", "buffer", "copilot" },
@@ -294,6 +321,21 @@ lazyload.on_vim_enter(function()
 	else
 		vim.notify("blink.cmp: binary not found and cargo not installed. Completion disabled.", vim.log.levels.WARN)
 	end
+
+	-- Autocmd to build blink.cmp after plugin installation or update
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "PackChanged", -- This triggers after vim.pack.update() finishes
+		callback = function()
+			-- Check if blink is actually installed before trying to build
+			local status, blink = pcall(require, "blink.cmp")
+			if status then
+				vim.notify("Blink.cmp: Building native library...", vim.log.levels.INFO)
+				---@diagnostic disable-next-line: undefined-field
+				blink.build():wait(60000)
+				vim.notify("Blink.cmp: Build complete.", vim.log.levels.INFO)
+			end
+		end,
+	})
 
 	local lspconfig = require("lspconfig")
 	local capabilities = (has_blink_bin or has_cargo) and require("blink.cmp").get_lsp_capabilities() or nil
@@ -336,6 +378,7 @@ lazyload.on_vim_enter(function()
 				local n_lines = vim.api.nvim_buf_line_count(0)
 				return {
 					from = { line = 1, col = 1 },
+					---@diagnostic disable-next-line: undefined-field
 					to = { line = n_lines, col = math.max(vim.fn.getline(n_lines):len(), 1) },
 				}
 			end,
@@ -371,7 +414,26 @@ lazyload.on_vim_enter(function()
 
 	-- Inc-rename.nvim
 	vim.pack.add({ { src = "https://github.com/smjonas/inc-rename.nvim", name = "inc-rename" } })
-	require("inc_rename").setup()
+	require("inc_rename").setup({
+		-- the name of the command
+		cmd_name = "IncRename",
+		-- the highlight group used for highlighting the identifier's new name
+		hl_group = "Substitute",
+		-- whether an empty new name should be previewed; if false the command preview will be cancelled instead
+		preview_empty_name = false,
+		-- whether to display a `Renamed m instances in n files` message after a rename operation
+		show_message = true,
+		-- whether to save the "IncRename" command in the commandline history (set to false to prevent issues with
+		-- navigating to older entries that may arise due to the behavior of command preview)
+		save_in_cmdline_history = true,
+		-- the type of the external input buffer to use (currently supports "dressing" or "snacks")
+		input_buffer_type = nil,
+		-- callback to run after renaming, receives the result table (from LSP handler) as an argument
+		post_hook = nil,
+	})
+
+	-- Qalc
+	vim.pack.add({ { src = "https://github.com/Apeiros-46B/qalc.nvim", name = "qalc" } })
 
 	-- Noice dependencies
 	vim.pack.add({ { src = "https://github.com/MunifTanjim/nui.nvim", name = "nui" } })
@@ -396,4 +458,9 @@ lazyload.on_vim_enter(function()
 			lsp_doc_border = false, -- add a border to hover docs and signature help
 		},
 	})
+
+	-- Kitty Scrollback
+	vim.pack.add({ { src = "https://github.com/mikesmithgh/kitty-scrollback.nvim", name = "kitty-scrollback" } })
+	Config.plugins.kitty_scrollback = {}
+	require("kitty-scrollback").setup(Config.plugins.kitty_scrollback)
 end)
