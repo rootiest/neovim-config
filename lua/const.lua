@@ -4,6 +4,9 @@
   └────────────────────────────────────────────────────────────────┘
 --]]
 
+-- Copyright (C) 2026 Rootiest
+-- SPDX-License-Identifier: GPL-3.0-or-later
+
 local M = {}
 
 --- Dashboard Header
