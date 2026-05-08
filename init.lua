@@ -4,20 +4,11 @@
   └────────────────────────────────────────────────────────────────┘
 --]]
 
--- Copyright (C) 2026 rootiest
---
--- This program is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-- Copyright (C) 2026 Rootiest
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+
+-- Trigger bootstrap (runtime path, etc.)
+require("bootstrap")
 
 -- Initialize global registry
 _G.Config = {
@@ -27,9 +18,9 @@ _G.Config = {
 
 -- Load core modules
 require("lazyload") -- Plugin lazy-loading module
-require("options")  -- Configuration options
-require("plugins")  -- Plugin specifications and setup
-require("keymaps")  -- Key mappings
+require("options") -- Configuration options
+require("plugins") -- Plugin specifications and setup
+require("keymaps") -- Key mappings
 
 -- Source machine-local and secret overrides (silently ignored if absent)
 local user_dots = vim.fn.expand("~/.config/.user-dots/nvim/")

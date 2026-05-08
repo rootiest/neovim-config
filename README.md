@@ -14,18 +14,55 @@ A modern, modular, and high-performance Neovim configuration built from scratch 
 - **AI-Powered**: Native integration with the **GitHub Copilot Language Server**.
 - **User-Centric QoL**: Hybrid line numbers, autosave-on-edit, and seamless system clipboard integration.
 - **Resilient & Portable**: Intelligent terminal title management (Kitty + Fallback), automatic project root detection, and machine-local override support.
-- **Lean & Readable**: ~800 lines of Lua code (excluding comments and blanks).
+- **Lean & Readable**: ~850 lines of Lua code (excluding comments and blanks).
 
 ## 📁 Architecture
 
 The configuration is strictly modular:
 
-- `init.lua`: Entry point and global state initialization.
+- `init.lua`: Entry point, bootstrap, global state initialization, and machine-local overrides.
+- `lua/bootstrap.lua`: Early runtime setup — redirects Neovim's data/state paths when running as root (e.g. via a symlinked `~/.config/nvim`), preventing root sessions from polluting or conflicting with the user-level install.
 - `lua/lazyload.lua`: Logic for async and phased plugin loading.
-- `lua/options.lua`: Global Vim settings, root management, and terminal title logic.
+- `lua/options.lua`: Global Vim settings, auto-reload, root management, and terminal title logic.
 - `lua/plugins.lua`: Plugin declarations and detailed registry-based configurations.
 - `lua/keymaps.lua`: Centralized user-facing keybindings.
 - `lua/const.lua`: Stores constant values (like dashboard headers) for the configuration.
+
+## 🔌 Plugin Stack
+
+### Core UI
+- **Catppuccin**: Primary colorscheme (Mocha flavour).
+- **Lualine**: Statusline with Git diff and line-by-line Gitsigns blame.
+- **Noice**: Modern UI for cmdline (popup), messages, and LSP hover.
+- **Snacks**: High-performance dashboard, explorer, and pickers.
+- **Nvim-web-devicons**: Consistent icons across UI components.
+
+### Editing & Navigation
+- **Flash**: Enhanced motion and search.
+- **Focusline**: Keeps the active line at a configurable screen position (30%) during scrolling motions.
+- **Mini.ai**: Better text objects (including `g` for entire buffer).
+- **Mini.surround**: Surround text objects (add/delete/change).
+- **Mini.pairs**: Auto-close brackets and quotes.
+- **Persistence**: Session management.
+- **Which-key**: Interactive keybinding documentation.
+- **Gitsigns**: In-buffer git indicators and line highlights.
+- **Grug-far**: Project-wide search and replace.
+- **Gx.nvim**: Smart URL/reference opener under cursor.
+- **Comment-box**: Decorative comment boxes and lines.
+- **Undotree**: Visual undo history browser.
+- **Zen Mode**: Distraction-free editing.
+- **Qalc**: Inline calculator via `qalculate`.
+
+### LSP & Completion
+- **Blink.cmp** + **blink.lib**: High-performance Rust-based completion. Auto-detects binary across install layouts; falls back gracefully if unavailable. Rebuilds automatically on `PackChanged`.
+- **LSPConfig + Mason**: Managed LSP support for Lua, C/C++, Rust, Python, Fish, and Shell.
+- **Copilot**: GitHub Copilot language server integration.
+- **Conform**: Formatter with format-on-save and range formatting.
+- **Inc-rename**: Incremental LSP rename with live preview.
+- **Lazydev**: Neovim Lua type definitions for `lua_ls`.
+
+### Terminal
+- **Kitty Scrollback**: Browse Kitty terminal scrollback buffer inside Neovim.
 
 ## 🛠️ System Dependencies
 
@@ -44,6 +81,7 @@ To ensure all features (pickers, formatters, and LSPs) work correctly, the follo
 - `Node.js` & `npm` (Copilot and various LSPs)
 - `Python3` & `pip` (Python LSPs)
 - `Cargo` (Rust toolchain, required for building `blink.cmp`)
+- `qalculate` (optional, required for the Qalc calculator plugin)
 
 ### Installation Commands
 
@@ -68,9 +106,13 @@ nvim
 
 ### Post-Install
 
-1.  **Build Blink**: If completion isn't working, run `cargo build --release` inside `~/.local/share/nvim/site/pack/core/opt/blink.cmp`.
+1.  **Build Blink**: Completion auto-rebuilds on `PackChanged`. If it still isn't working, run `cargo build --release` inside `~/.local/share/nvim/site/pack/core/opt/blink.cmp`.
 2.  **LSP Servers**: Run `:Mason` to monitor the installation of Language Servers.
 3.  **Copilot**: Run `:LspCopilotSignIn` to authenticate.
+
+### Machine-Local Overrides
+
+Place machine-specific or secret configuration in `~/.config/.user-dots/nvim/local.lua` or `~/.config/.user-dots/nvim/secrets.lua`. These files are sourced automatically at startup if present, and are intentionally outside the repo to avoid accidental commits.
 
 ## ⌨️ Key Features & Mappings
 
