@@ -11,7 +11,7 @@ A modern, modular, and high-performance Neovim configuration built from scratch 
 - **Phased Loading**: Async, non-blocking startup using a phased `VimEnter` queue for a snappy experience.
 - **Unified Registry**: Configuration is managed via a global `_G.Config` registry, ensuring cross-plugin consistency.
 - **High Performance**: Featuring **blink.cmp** (Rust-based completion) and optimized **Snacks.nvim** components.
-- **AI-Powered**: Native integration with the **GitHub Copilot Language Server**.
+- **AI-Powered**: Native integration with **GitHub Copilot** — inline completions via **blink-copilot** and multi-line refactoring via **Sidekick.nvim** Next Edit Suggestions (NES).
 - **User-Centric QoL**: Hybrid line numbers, autosave-on-edit, and seamless system clipboard integration.
 - **Resilient & Portable**: Intelligent terminal title management (Kitty + Fallback), automatic project root detection, and machine-local override support.
 - **Lean & Readable**: ~850 lines of Lua code (excluding comments and blanks).
@@ -50,13 +50,15 @@ The configuration is strictly modular:
 - **Gx.nvim**: Smart URL/reference opener under cursor.
 - **Comment-box**: Decorative comment boxes and lines.
 - **Undotree**: Visual undo history browser.
+- **Haunt.nvim**: In-buffer annotation and bookmark manager. Integrates with the Snacks picker for browsing bookmarks and exposes `haunt_all` / `haunt_buffer` prompt contexts to Sidekick AI sessions.
 - **Zen Mode**: Distraction-free editing.
 - **Qalc**: Inline calculator via `qalculate`.
 
 ### LSP & Completion
 - **Blink.cmp** + **blink.lib**: High-performance Rust-based completion. Auto-detects binary across install layouts; falls back gracefully if unavailable. Rebuilds automatically on `PackChanged`.
+- **blink-copilot**: Surfaces GitHub Copilot inline suggestions inside the blink.cmp completion menu.
+- **Sidekick.nvim**: AI assistant providing Next Edit Suggestions (NES) for multi-line refactoring via the Copilot LSP, plus an integrated AI CLI terminal (`<leader>aa`) with context-aware prompts. Snacks picker integration sends selections to the active AI session via `<Alt-a>`.
 - **LSPConfig + Mason**: Managed LSP support for Lua, C/C++, Rust, Python, Fish, and Shell.
-- **Copilot**: GitHub Copilot language server integration.
 - **Conform**: Formatter with format-on-save and range formatting.
 - **Inc-rename**: Incremental LSP rename with live preview.
 - **Lazydev**: Neovim Lua type definitions for `lua_ls`.
@@ -108,7 +110,7 @@ nvim
 
 1.  **Build Blink**: Completion auto-rebuilds on `PackChanged`. If it still isn't working, run `cargo build --release` inside `~/.local/share/nvim/site/pack/core/opt/blink.cmp`.
 2.  **LSP Servers**: Run `:Mason` to monitor the installation of Language Servers.
-3.  **Copilot**: Run `:LspCopilotSignIn` to authenticate.
+3.  **Copilot**: Run `:LspCopilotSignIn` to authenticate, then `:checkhealth sidekick` to verify the Sidekick NES integration is working.
 
 ### Machine-Local Overrides
 
@@ -131,6 +133,15 @@ Place machine-specific or secret configuration in `~/.config/.user-dots/nvim/loc
 | `s` / `S` | Leap Motion (Normal/Window) |
 | `ys` / `ds` / `cs` | Surround (Add/Delete/Change) |
 | `gx` / `gX` | Open URL under cursor (Gx.nvim) |
+| `<Tab>` | Advance snippet → apply NES suggestion → fallback |
+| `<leader>aa` | Toggle Sidekick AI CLI terminal |
+| `<leader>as` | Select AI tool (Sidekick) |
+| `<Alt-a>` *(picker)* | Send picker selection to active AI CLI session |
+| `<leader>ha` | Annotate current position (Haunt) |
+| `<leader>ht` | Toggle annotation visibility (Haunt) |
+| `<leader>hd` | Delete bookmark (Haunt) |
+| `<leader>hn` / `<leader>hp` | Next / Previous bookmark (Haunt) |
+| `<leader>hl` | Browse all bookmarks in picker (Haunt) |
 | `<leader>cbb` | Create Centered Comment Box |
 | `<leader>cbl` | Create Centered Comment Line |
 | `<leader>cbd` | Delete Comment Box/Line |
