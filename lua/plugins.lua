@@ -56,6 +56,7 @@ Config.plugins.snacks = {
 				keys = {
 					["<a-s>"] = { "flash", mode = { "n", "i" } },
 					["s"] = { "flash" },
+					["<a-a>"] = { "sidekick_send", mode = { "n", "i" } },
 				},
 			},
 		},
@@ -77,6 +78,9 @@ Config.plugins.snacks = {
 						picker.list:_move(idx, true, true)
 					end,
 				})
+			end,
+			sidekick_send = function(...)
+				return require("sidekick.cli.picker.snacks").send(...)
 			end,
 		},
 	},
@@ -281,7 +285,19 @@ lazyload.on_vim_enter(function()
 
 		-- 3. Blink.cmp setup
 		require("blink.cmp").setup({
-			keymap = { preset = "default" },
+			keymap = {
+				preset = "default",
+				["<Tab>"] = {
+					"snippet_forward",
+					function()
+						return require("sidekick").nes_jump_or_apply()
+					end,
+					function()
+						return vim.lsp.inline_completion.get()
+					end,
+					"fallback",
+				},
+			},
 			appearance = {
 				use_nvim_cmp_as_default = true,
 				nerd_font_variant = "mono",
@@ -445,10 +461,47 @@ lazyload.on_vim_enter(function()
 			inc_rename = true, -- enables an input dialog for inc-rename.nvim
 			lsp_doc_border = false, -- add a border to hover docs and signature help
 		},
+		routes = {
+			{
+				filter = { event = "lsp", kind = "progress", find = "Loading workspace" },
+				opts = { skip = true },
+			},
+			{
+				filter = { event = "lsp", kind = "progress", find = "^Diagnosing" },
+				opts = { skip = true },
+			},
+			{
+				filter = { event = "lsp", kind = "progress", find = "semantic tokens" },
+				opts = { skip = true },
+			},
+		},
 	})
 
 	-- Kitty Scrollback
 	vim.pack.add({ { src = "https://github.com/mikesmithgh/kitty-scrollback.nvim", name = "kitty-scrollback" } })
 	Config.plugins.kitty_scrollback = {}
 	require("kitty-scrollback").setup(Config.plugins.kitty_scrollback)
+
+	-- Haunt.nvim
+	vim.pack.add({ { src = "https://github.com/TheNoeTrevino/haunt.nvim", name = "haunt" } })
+	Config.plugins.haunt = {
+		picker = "snacks",
+	}
+	require("haunt").setup(Config.plugins.haunt)
+
+	-- Sidekick.nvim
+	vim.pack.add({ { src = "https://github.com/folke/sidekick.nvim", name = "sidekick" } })
+	Config.plugins.sidekick = {
+		cli = {
+			prompts = {
+				haunt_all = function()
+					return require("haunt.sidekick").get_locations()
+				end,
+				haunt_buffer = function()
+					return require("haunt.sidekick").get_locations({ current_buffer = true })
+				end,
+			},
+		},
+	}
+	require("sidekick").setup(Config.plugins.sidekick)
 end)

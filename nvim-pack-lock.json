@@ -56,6 +56,10 @@
       "rev": "ba9c408fc0130fc4548760c3933a81b58fc50de8",
       "src": "https://github.com/chrishrb/gx.nvim"
     },
+    "haunt": {
+      "rev": "815141d7367c9d895e902db27e2d25d4652ad0fc",
+      "src": "https://github.com/TheNoeTrevino/haunt.nvim"
+    },
     "inc-rename": {
       "rev": "0074b551a17338ccdcd299bd86687cc651bcb33d",
       "src": "https://github.com/smjonas/inc-rename.nvim"
@@ -127,6 +131,10 @@
     "qalc": {
       "rev": "33198ba0533d6a514f9a48cb472e40407c2ea9f6",
       "src": "https://github.com/Apeiros-46B/qalc.nvim"
+    },
+    "sidekick": {
+      "rev": "208e1c5b8170c01fd1d07df0139322a76479b235",
+      "src": "https://github.com/folke/sidekick.nvim"
     },
     "snacks": {
       "rev": "ad9ede6a9cddf16cedbd31b8932d6dcdee9b716e",
