@@ -463,11 +463,15 @@ lazyload.on_vim_enter(function()
 		},
 		routes = {
 			{
-				filter = {
-					event = "lsp",
-					kind = "progress",
-					find = "Loading workspace",
-				},
+				filter = { event = "lsp", kind = "progress", find = "Loading workspace" },
+				opts = { skip = true },
+			},
+			{
+				filter = { event = "lsp", kind = "progress", find = "^Diagnosing" },
+				opts = { skip = true },
+			},
+			{
+				filter = { event = "lsp", kind = "progress", find = "semantic tokens" },
 				opts = { skip = true },
 			},
 		},
