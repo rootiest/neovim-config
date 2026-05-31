@@ -395,6 +395,9 @@ lazyload.on_vim_enter(function()
 		},
 	})
 
+	-- Enable native inline completion (ghost text in insert mode)
+	vim.lsp.inline_completion.enable()
+
 	-- Mini.ai
 	vim.pack.add({ { src = "https://github.com/echasnovski/mini.ai", name = "mini.ai" } })
 

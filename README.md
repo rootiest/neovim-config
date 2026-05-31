@@ -133,7 +133,8 @@ Place machine-specific or secret configuration in `~/.config/.user-dots/nvim/loc
 | `s` / `S` | Leap Motion (Normal/Window) |
 | `ys` / `ds` / `cs` | Surround (Add/Delete/Change) |
 | `gx` / `gX` | Open URL under cursor (Gx.nvim) |
-| `<Tab>` | Advance snippet → apply NES suggestion → fallback |
+| `<Tab>` *(insert)* | Advance snippet → NES suggestion → native inline completion → fallback |
+| `<Tab>` *(normal)* | Jump to / apply Sidekick NES suggestion |
 | `<leader>aa` | Toggle Sidekick AI CLI terminal |
 | `<leader>as` | Select AI tool (Sidekick) |
 | `<Alt-a>` *(picker)* | Send picker selection to active AI CLI session |
