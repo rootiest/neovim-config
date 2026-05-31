@@ -344,6 +344,16 @@ lazyload.on_vim_enter(function()
 	local lspconfig = require("lspconfig")
 	local capabilities = (has_blink_bin or has_cargo) and require("blink.cmp").get_lsp_capabilities() or nil
 
+	vim.lsp.config("rust_analyzer", {
+		settings = {
+			["rust-analyzer"] = {
+				check = {
+					command = "clippy",
+				},
+			},
+		},
+	})
+
 	require("mason-lspconfig").setup({
 		ensure_installed = {
 			"lua_ls",
@@ -366,6 +376,18 @@ lazyload.on_vim_enter(function()
 					settings = {
 						Lua = {
 							diagnostics = { globals = { "Config" } },
+						},
+					},
+				})
+			end,
+			["rust_analyzer"] = function()
+				lspconfig.rust_analyzer.setup({
+					capabilities = capabilities,
+					settings = {
+						["rust-analyzer"] = {
+							check = {
+								command = "clippy",
+							},
 						},
 					},
 				})
