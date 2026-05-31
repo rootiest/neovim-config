@@ -292,6 +292,13 @@ end, { desc = "Neovim News" })
 
 ----------------------------------------------------------
 
+-- Sidekick NES: accept next-edit suggestion in normal mode
+vim.keymap.set("n", "<Tab>", function()
+	require("sidekick").nes_jump_or_apply()
+end, { desc = "Apply Sidekick NES Suggestion" })
+
+----------------------------------------------------------
+
 -- Leap Keymaps
 vim.keymap.set({ "n", "x", "o" }, "<CR>", "<Plug>(leap)")
 vim.keymap.set("n", "S", "<Plug>(leap-from-window)")

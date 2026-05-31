@@ -344,6 +344,16 @@ lazyload.on_vim_enter(function()
 	local lspconfig = require("lspconfig")
 	local capabilities = (has_blink_bin or has_cargo) and require("blink.cmp").get_lsp_capabilities() or nil
 
+	vim.lsp.config("rust_analyzer", {
+		settings = {
+			["rust-analyzer"] = {
+				check = {
+					command = "clippy",
+				},
+			},
+		},
+	})
+
 	require("mason-lspconfig").setup({
 		ensure_installed = {
 			"lua_ls",
@@ -370,8 +380,23 @@ lazyload.on_vim_enter(function()
 					},
 				})
 			end,
+			["rust_analyzer"] = function()
+				lspconfig.rust_analyzer.setup({
+					capabilities = capabilities,
+					settings = {
+						["rust-analyzer"] = {
+							check = {
+								command = "clippy",
+							},
+						},
+					},
+				})
+			end,
 		},
 	})
+
+	-- Enable native inline completion (ghost text in insert mode)
+	vim.lsp.inline_completion.enable()
 
 	-- Mini.ai
 	vim.pack.add({ { src = "https://github.com/echasnovski/mini.ai", name = "mini.ai" } })
