@@ -102,7 +102,7 @@ sudo pacman -S git ripgrep fd fzf lazygit github-cli xclip nodejs npm base-devel
 ### Installation
 
 ```bash
-git clone https://github.com/your-username/nvim-config ~/.config/nvim
+git clone https://git.rootiest.dev/rootiest/neovim-config.git ~/.config/nvim
 nvim
 ```
 
