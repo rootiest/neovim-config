@@ -21,6 +21,11 @@ vim.cmd.colorscheme("catppuccin")
 -- Eagerly load snacks for dashboard and performance features.
 vim.pack.add({ { src = "https://github.com/folke/snacks.nvim", name = "snacks" } })
 
+-- Snacks-tea.nvim
+-- Gitea/Forgejo extension for Snacks (adds Snacks.tea, the PR picker/buffer
+-- UI). Wraps the `tea` CLI, must be on the runtimepath before snacks.setup().
+vim.pack.add({ { src = "https://github.com/sbulav/snacks-tea.nvim", name = "snacks-tea" } })
+
 -- Snacks Config
 -- Store opts in the registry first.
 Config.plugins.snacks = {
@@ -90,6 +95,14 @@ Config.plugins.snacks = {
   scratch = { enabled = true },
   scroll = { enabled = true },
   statuscolumn = { enabled = true },
+  tea = {
+    enabled = true,
+    tea = {
+      cmd = "tea", -- Path to tea binary
+      login = nil, -- Specific login to use (nil = auto-detect)
+      remote = "origin", -- Git remote to use
+    },
+  },
   terminal = {
     enabled = true,
     win = {

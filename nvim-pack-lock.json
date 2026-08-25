@@ -140,6 +140,10 @@
       "rev": "ad9ede6a9cddf16cedbd31b8932d6dcdee9b716e",
       "src": "https://github.com/folke/snacks.nvim"
     },
+    "snacks-tea": {
+      "rev": "fdbfe05c29a2fab48d4d4feb3e4df0c43f3d4c14",
+      "src": "https://github.com/sbulav/snacks-tea.nvim"
+    },
     "undotree": {
       "rev": "6fa6b57cda8459e1e4b2ca34df702f55242f4e4d",
       "src": "https://github.com/mbbill/undotree"
