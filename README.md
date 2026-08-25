@@ -14,7 +14,7 @@ A modern, modular, and high-performance Neovim configuration built from scratch 
 - **AI-Powered**: Native integration with **GitHub Copilot** — inline completions via **blink-copilot** and multi-line refactoring via **Sidekick.nvim** Next Edit Suggestions (NES).
 - **User-Centric QoL**: Hybrid line numbers, autosave-on-edit, and seamless system clipboard integration.
 - **Resilient & Portable**: Intelligent terminal title management (Kitty + Fallback), automatic project root detection, and machine-local override support.
-- **Lean & Readable**: ~850 lines of Lua code (excluding comments and blanks).
+- **Lean & Readable**: ~980 lines of Lua code (excluding comments and blanks).
 
 ## 📁 Architecture
 
@@ -42,7 +42,7 @@ The configuration is strictly modular:
 - **Focusline**: Keeps the active line at a configurable screen position (30%) during scrolling motions.
 - **Mini.ai**: Better text objects (including `g` for entire buffer).
 - **Mini.surround**: Surround text objects (add/delete/change).
-- **Mini.pairs**: Auto-close brackets and quotes.
+- **Mini.pairs**: Auto-close brackets and quotes. In Markdown, a 3rd backtick expands `` `` `` into a fenced code block (cursor after the opener, ready for a language id) instead of pairing into 4 backticks; backspacing the fence back out removes the closing fence too.
 - **Persistence**: Session management.
 - **Which-key**: Interactive keybinding documentation.
 - **Gitsigns**: In-buffer git indicators and line highlights.
