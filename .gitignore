@@ -175,3 +175,16 @@ Thumbs.db
 .[Rr][Ee][Mm][Ee][Mm][Bb][Ee][Rr]
 
 # ──────────────────────────────────────────────────────────────
+
+#   ──────────────── Added by agents-init ──────────────────
+#   agents-init --agents
+AGENTS/
+#   ────────────────────────────────────────────────────────
+
+#   ──────────────── Added by agents-init ──────────────────
+#   agents-init --plugins
+docs/superpowers
+docs/plans
+docs/specs
+docs/devlogs
+#   ────────────────────────────────────────────────────────
