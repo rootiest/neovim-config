@@ -35,6 +35,7 @@ The configuration is strictly modular:
 - **Lualine**: Statusline with Git diff and line-by-line Gitsigns blame.
 - **Noice**: Modern UI for cmdline (popup), messages, and LSP hover.
 - **Snacks**: High-performance dashboard, explorer, and pickers.
+- **Snacks-tea**: Gitea/Forgejo extension for Snacks (via the `tea` CLI) — Pull Request picker, review, and creation UI, mirroring the built-in GitHub PR/issue integration.
 - **Nvim-web-devicons**: Consistent icons across UI components.
 
 ### Editing & Navigation
@@ -77,6 +78,7 @@ To ensure all features (pickers, formatters, and LSPs) work correctly, the follo
 - `fzf` (Fuzzy finder fallback)
 - `lazygit` (Git TUI)
 - `gh` (GitHub CLI integration)
+- `tea` (Gitea/Forgejo CLI integration, for Snacks-tea)
 - `xclip` / `xsel` (X11) or `wl-copy` (Wayland) for clipboard sync.
 
 ### Runtime Environments
@@ -90,11 +92,12 @@ To ensure all features (pickers, formatters, and LSPs) work correctly, the follo
 **Debian / Ubuntu:**
 ```bash
 sudo apt install git ripgrep fd-find fzf lazygit gh xclip nodejs npm build-essential curl unzip
+# tea: no apt package; install via `go install gitea.com/gitea/tea@latest` or a release binary.
 ```
 
 **Arch Linux:**
 ```bash
-sudo pacman -S git ripgrep fd fzf lazygit github-cli xclip nodejs npm base-devel curl unzip
+sudo pacman -S git ripgrep fd fzf lazygit github-cli tea xclip nodejs npm base-devel curl unzip
 ```
 
 ## 🚀 Getting Started

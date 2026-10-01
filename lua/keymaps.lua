@@ -119,6 +119,17 @@ vim.keymap.set("n", "<leader>gP", function()
 	Snacks.picker.gh_pr({ state = "all" })
 end, { desc = "GitHub Pull Requests (all)" })
 
+-- Tea (Gitea/Forgejo)
+vim.keymap.set("n", "<leader>gt", function()
+	Snacks.tea.pr()
+end, { desc = "Tea Pull Requests (open)" })
+vim.keymap.set("n", "<leader>gT", function()
+	Snacks.tea.pr({ state = "all" })
+end, { desc = "Tea Pull Requests (all)" })
+vim.keymap.set("n", "<leader>gc", function()
+	Snacks.tea.pr_create({})
+end, { desc = "Tea Create Pull Request" })
+
 -- Grep
 vim.keymap.set("n", "<leader>sb", function()
 	Snacks.picker.lines()
