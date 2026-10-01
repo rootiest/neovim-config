@@ -53,6 +53,7 @@ The configuration is strictly modular:
 - **Haunt.nvim**: In-buffer annotation and bookmark manager. Integrates with the Snacks picker for browsing bookmarks and exposes `haunt_all` / `haunt_buffer` prompt contexts to Sidekick AI sessions.
 - **Zen Mode**: Distraction-free editing.
 - **Qalc**: Inline calculator via `qalculate`.
+- **Obsidian.nvim**: Obsidian vault integration for note-taking and knowledge management, with `notebook` (`~/Documents/Notebook`) and `notes` (`~/Documents/Notes`) workspaces.
 
 ### LSP & Completion
 - **Blink.cmp** + **blink.lib**: High-performance Rust-based completion. Auto-detects binary across install layouts; falls back gracefully if unavailable. Rebuilds automatically on `PackChanged`.
@@ -65,6 +66,10 @@ The configuration is strictly modular:
 
 ### Terminal
 - **Kitty Scrollback**: Browse Kitty terminal scrollback buffer inside Neovim.
+- **Neovide**: When running under the Neovide GUI, adds terminal-style system-clipboard keys: `Ctrl+Shift+V` paste (all modes; in Normal mode an empty line is replaced and the cursor lands after the paste), `Ctrl+Shift+C` copy and `Ctrl+Shift+X` cut (selection in Visual mode, current line in Normal mode).
+
+### Tracking
+- **Vim-wakatime**: Coding-time tracking. Loaded eagerly so it sees `VimEnter`/`BufEnter`; server and API key come from `~/.wakatime.cfg`. Reports as `neovim-wakatime` so Wakapi attributes time to Neovim instead of "Unknown".
 
 ## 🛠️ System Dependencies
 
@@ -78,6 +83,7 @@ To ensure all features (pickers, formatters, and LSPs) work correctly, the follo
 - `lazygit` (Git TUI)
 - `gh` (GitHub CLI integration)
 - `xclip` / `xsel` (X11) or `wl-copy` (Wayland) for clipboard sync.
+- `wakatime-cli` (Optional, installed automatically for Wakatime tracking)
 
 ### Runtime Environments
 - `Node.js` & `npm` (Copilot and various LSPs)
