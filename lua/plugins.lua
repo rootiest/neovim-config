@@ -188,70 +188,8 @@ lazyload.on_vim_enter(function()
   vim.pack.add({ { src = "https://github.com/echasnovski/mini.pairs", name = "mini.pairs" } })
   require("mini.pairs").setup()
 
-  -- Smart backtick handling for Markdown: typing a 3rd backtick after an
-  -- existing `` `` `` pair expands into a fenced code block instead of
-  -- pairing into ```` ` ```` (4 backticks).
-  local function attach_markdown_smart_backtick(buf)
-    vim.keymap.set("i", "`", function()
-      local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-      local line = vim.api.nvim_get_current_line()
-      local before, after = line:sub(1, col), line:sub(col + 1)
-      local disabled = vim.g.minipairs_disable == true or vim.b.minipairs_disable == true
-
-      if not disabled and before:sub(-2) == "``" and after:sub(1, 1) ~= "`" then
-        local prefix = before:sub(1, -3)
-        local indent = prefix:match("^%s*")
-        vim.api.nvim_set_current_line(prefix .. "```")
-        vim.api.nvim_buf_set_lines(0, row, row, false, { indent .. "```" .. after })
-        vim.api.nvim_win_set_cursor(0, { row, #prefix + 3 })
-        return
-      end
-
-      local keys = MiniPairs.closeopen("``", "^[^\\]")
-      vim.api.nvim_feedkeys(keys, "in", false)
-    end, { buffer = buf, desc = "Smart Markdown backtick / code fence" })
-
-    -- Deleting the opening fence's last backtick also removes the untouched
-    -- closing fence line it created, so undoing a fence is a clean backspace.
-    vim.keymap.set("i", "<BS>", function()
-      local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-      local line = vim.api.nvim_get_current_line()
-      local before, after = line:sub(1, col), line:sub(col + 1)
-      local disabled = vim.g.minipairs_disable == true or vim.b.minipairs_disable == true
-
-      if not disabled and before:sub(-1) == "`" and before:sub(-2, -2) ~= "`" then
-        local prefix = before:sub(1, -2)
-        local indent = prefix:match("^%s*")
-        local next_line = vim.api.nvim_buf_get_lines(0, row, row + 1, false)[1]
-        if next_line == indent .. "```" then
-          vim.api.nvim_buf_set_lines(0, row, row + 1, false, {})
-          vim.api.nvim_set_current_line(prefix .. after)
-          vim.api.nvim_win_set_cursor(0, { row, #prefix })
-          return
-        end
-      end
-
-      local keys = MiniPairs.bs()
-      vim.api.nvim_feedkeys(keys, "in", false)
-    end, { buffer = buf, desc = "Smart Markdown fence backspace" })
-  end
-
-  vim.api.nvim_create_autocmd("FileType", {
-    group = vim.api.nvim_create_augroup("markdown_smart_backtick", { clear = true }),
-    pattern = "markdown",
-    desc = "Expand `` ` `` pair into a fenced code block on 3rd backtick",
-    callback = function(args)
-      attach_markdown_smart_backtick(args.buf)
-    end,
-  })
-
-  -- Catch buffers that already had their FileType event fire before this
-  -- deferred setup ran (e.g. `nvim file.md` opened directly at startup).
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.bo[buf].filetype == "markdown" then
-      attach_markdown_smart_backtick(buf)
-    end
-  end
+  -- Context-aware pairing + Markdown code fences (see lua/smart_pairs.lua)
+  require("smart_pairs").setup()
 
   -- Gx.nvim
   vim.pack.add({ { src = "https://github.com/chrishrb/gx.nvim", name = "gx" } })

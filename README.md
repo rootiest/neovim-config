@@ -42,7 +42,7 @@ The configuration is strictly modular:
 - **Focusline**: Keeps the active line at a configurable screen position (30%) during scrolling motions.
 - **Mini.ai**: Better text objects (including `g` for entire buffer).
 - **Mini.surround**: Surround text objects (add/delete/change).
-- **Mini.pairs**: Auto-close brackets and quotes. In Markdown, a 3rd backtick expands `` `` `` into a fenced code block (cursor after the opener, ready for a language id) instead of pairing into 4 backticks; backspacing the fence back out removes the closing fence too.
+- **Mini.pairs** + `lua/smart_pairs.lua`: Context-aware auto-close for brackets, quotes and backticks — a closing character is only added when the rest of the line is empty/whitespace or a closing bracket, so wrapping existing text (e.g. adding backticks around a word) never inserts a stray closer; quotes don't pair after a word character. In Markdown, a 3rd `` ` `` or `~` on a blank line opens a fenced code block pair (only outside an existing block and with a blank line or the block's closer below); further characters lengthen both fences (` ```` `, ` ````` `), `<BS>` shrinks them, and fences nested inside a longer block pair as examples, collapsing into the enclosing block's closer once long enough to close it.
 - **Persistence**: Session management.
 - **Which-key**: Interactive keybinding documentation.
 - **Gitsigns**: In-buffer git indicators and line highlights.
