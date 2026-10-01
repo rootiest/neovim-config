@@ -124,6 +124,11 @@
       "rev": "4fc505ac7bd7692824a142e96e5f529c133862f8",
       "src": "https://github.com/nvim-tree/nvim-web-devicons"
     },
+    "obsidian.nvim": {
+      "rev": "7a2b7caf41de196de66f27c1969d0d429810621a",
+      "src": "https://github.com/obsidian-nvim/obsidian.nvim",
+      "version": ">=0.0.0"
+    },
     "persistence": {
       "rev": "b20b2a7887bd39c1a356980b45e03250f3dce49c",
       "src": "https://github.com/folke/persistence.nvim"
@@ -147,6 +152,10 @@
     "undotree": {
       "rev": "6fa6b57cda8459e1e4b2ca34df702f55242f4e4d",
       "src": "https://github.com/mbbill/undotree"
+    },
+    "vim-wakatime": {
+      "rev": "9f8a1d3b9c6f3a948988a0896b3227c1e1f74a58",
+      "src": "https://github.com/wakatime/vim-wakatime"
     },
     "which-key": {
       "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",

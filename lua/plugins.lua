@@ -137,6 +137,19 @@ Config.plugins.persistence = {
 }
 require("persistence").setup(Config.plugins.persistence)
 
+-- Vim-wakatime
+-- Eagerly loaded: it hooks VimEnter/BufEnter, which a deferred load would miss.
+-- Server/api_key come from ~/.wakatime.cfg, shared with other WakaTime clients.
+vim.pack.add({ { src = "https://github.com/wakatime/vim-wakatime", name = "vim-wakatime" } })
+
+-- Wakatime Config
+-- Wakapi derives the editor from a `<editor>-wakatime/` user-agent token; the
+-- default `wakatime.nvim` has none, so time lands under "Unknown".
+Config.plugins.wakatime = {
+  plugin_name = "neovim-wakatime",
+}
+require("wakatime").setup(Config.plugins.wakatime)
+
 -- Lazy-loaded Plugins
 local lazyload = require("lazyload")
 
@@ -148,7 +161,7 @@ lazyload.on_vim_enter(function()
     signcolumn = true,
     current_line_blame = true, -- Required for the statusline variable to update
     current_line_blame_opts = {
-      virt_text = false,     -- Disable virtual text as we'll use the statusline
+      virt_text = false,       -- Disable virtual text as we'll use the statusline
     },
   })
 
@@ -498,11 +511,11 @@ lazyload.on_vim_enter(function()
     },
     -- you can enable a preset for easier configuration
     presets = {
-      bottom_search = true,      -- use a classic bottom cmdline for search
-      command_palette = true,    -- position the cmdline and popupmenu together
+      bottom_search = true,         -- use a classic bottom cmdline for search
+      command_palette = true,       -- position the cmdline and popupmenu together
       long_message_to_split = true, -- long messages will be sent to a split
-      inc_rename = true,         -- enables an input dialog for inc-rename.nvim
-      lsp_doc_border = false,    -- add a border to hover docs and signature help
+      inc_rename = true,            -- enables an input dialog for inc-rename.nvim
+      lsp_doc_border = false,       -- add a border to hover docs and signature help
     },
     routes = {
       {
@@ -547,4 +560,25 @@ lazyload.on_vim_enter(function()
     },
   }
   require("sidekick").setup(Config.plugins.sidekick)
+
+  vim.pack.add {
+    {
+      src = "https://github.com/obsidian-nvim/obsidian.nvim",
+      version = vim.version.range "*", -- use latest release, remove to use latest commit
+    },
+  }
+
+  require("obsidian").setup {
+    legacy_commands = false, -- this will be removed in 4.0.0
+    workspaces = {
+      {
+        name = "notebook",
+        path = "~/Documents/Notebook",
+      },
+      {
+        name = "notes",
+        path = "~/Documents/Notes",
+      },
+    },
+  }
 end)
