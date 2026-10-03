@@ -26,6 +26,26 @@ end
 
 ----------------------------------------------------------
 
+-- Move by display line through wrapped text
+-- Count-less j/k/<Down>/<Up> follow the visual (wrapped) line; with a count
+-- (e.g. 5j) they move by real lines so relative line numbers still work.
+-- Not mapped in operator-pending mode, so dj/yk keep acting on whole lines.
+for _, m in ipairs({ { "j", "gj" }, { "<Down>", "gj" }, { "k", "gk" }, { "<Up>", "gk" } }) do
+	vim.keymap.set({ "n", "x" }, m[1], function()
+		return vim.v.count == 0 and m[2] or m[1]
+	end, { expr = true, silent = true, desc = m[2] == "gj" and "Down (display line)" or "Up (display line)" })
+end
+
+-- Same for the arrow keys in insert mode. The native popup menu keeps its
+-- own <Down>/<Up>; blink.cmp's buffer-local maps fall back to these.
+for _, m in ipairs({ { "<Down>", "gj" }, { "<Up>", "gk" } }) do
+	vim.keymap.set("i", m[1], function()
+		return vim.fn.pumvisible() == 1 and m[1] or "<Cmd>normal! " .. m[2] .. "<CR>"
+	end, { expr = true, silent = true, desc = m[2] == "gj" and "Down (display line)" or "Up (display line)" })
+end
+
+----------------------------------------------------------
+
 -- Quit and Save All with :Q
 -- Replaces safety-checked :xa with a forced write-all-and-quit.
 vim.api.nvim_create_user_command("Q", "xa!", { desc = "Write all and quit (forced)" })

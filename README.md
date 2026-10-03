@@ -131,6 +131,7 @@ Place machine-specific or secret configuration in `~/.config/.user-dots/nvim/loc
 | :--- | :--- |
 | `<leader><space>` | Smart Find Files (Snacks) |
 | `<leader>e` | File Explorer (Snacks) |
+| `j` / `k` / `↓` / `↑` | Move by wrapped (display) line when no count is given; counts still move by real lines. Arrows do the same in insert mode |
 | `<leader>sr` | Search and Replace (Grug-far) |
 | `<leader>gg` | Open Lazygit |
 | `<leader>qs` | Restore Last Session (Persistence) |
