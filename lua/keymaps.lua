@@ -15,10 +15,17 @@ vim.opt.clipboard = "unnamedplus"
 ----------------------------------------------------------
 
 -- Redirect 'delete' and 'change' operations to the 'd' register
--- This keeps your system clipboard (unnamedplus) clean
+-- This keeps your system clipboard (unnamedplus) clean.
+-- A register typed first ("a, "_ …) is still honoured; with unnamedplus an
+-- explicit "+ looks like the default, so it also goes to "d.
+-- Mapped in "x" (Visual), not "v": "v" includes Select mode, where typing a
+-- letter must replace the selection (snippet placeholders).
 local delete_keys = { "d", "D", "c", "C", "x", "X" }
 for _, key in ipairs(delete_keys) do
-	vim.keymap.set({ "n", "v" }, key, '"d' .. key, { noremap = true, silent = true })
+	vim.keymap.set({ "n", "x" }, key, function()
+		local reg = vim.v.register
+		return (reg == '"' or reg == "+" or reg == "*") and '"d' .. key or key
+	end, { expr = true, silent = true })
 end
 
 -- If you ever need to paste what you just deleted:
@@ -75,9 +82,6 @@ end, { desc = "Grep" })
 vim.keymap.set("n", "<leader>:", function()
 	Snacks.picker.command_history()
 end, { desc = "Command History" })
-vim.keymap.set("n", "<leader>n", function()
-	Snacks.picker.notifications()
-end, { desc = "Notification History" })
 vim.keymap.set("n", "<leader>e", function()
 	Snacks.explorer()
 end, { desc = "File Explorer" })
@@ -211,7 +215,14 @@ vim.keymap.set("n", "<leader>sM", function()
 	Snacks.picker.man()
 end, { desc = "Man Pages" })
 vim.keymap.set("n", "<leader>sp", function()
-	Snacks.picker.lazy()
+	-- Snacks.picker.lazy() needs lazy.nvim; list the vim.pack specs instead.
+	Snacks.picker.grep({
+		cwd = vim.fn.stdpath("config"),
+		glob = "lua/plugins.lua",
+		search = 'src = "https://',
+		regex = false,
+		live = false,
+	})
 end, { desc = "Search for Plugin Spec" })
 vim.keymap.set("n", "<leader>sq", function()
 	Snacks.picker.qflist()
@@ -233,9 +244,10 @@ end, { desc = "Goto Definition" })
 vim.keymap.set("n", "gD", function()
 	Snacks.picker.lsp_declarations()
 end, { desc = "Goto Declaration" })
-vim.keymap.set("n", "gr", function()
+-- grr rather than a nowait gr, which would hide Neovim's grn/gra/gri/grt/grx.
+vim.keymap.set("n", "grr", function()
 	Snacks.picker.lsp_references()
-end, { nowait = true, desc = "References" })
+end, { desc = "References" })
 vim.keymap.set("n", "gI", function()
 	Snacks.picker.lsp_implementations()
 end, { desc = "Goto Implementation" })
@@ -263,7 +275,7 @@ vim.keymap.set("n", "<leader>cr", function()
 end, { expr = true, desc = "Rename Symbol" })
 
 -- Other
-vim.keymap.set("n", "<leader>sq", "<cmd>nohlsearch<cr>", { desc = "Clear Search Highlights" })
+vim.keymap.set("n", "<leader>ur", "<cmd>nohlsearch<cr>", { desc = "Clear Search Highlights" })
 vim.keymap.set("n", "<leader>z", function()
 	Snacks.zen()
 end, { desc = "Toggle Zen Mode" })
@@ -285,7 +297,7 @@ end, { desc = "Delete Buffer" })
 vim.keymap.set("n", "<leader>cR", function()
 	Snacks.rename.rename_file()
 end, { desc = "Rename File" })
-vim.keymap.set({ "n", "v" }, "<leader>gB", function()
+vim.keymap.set({ "n", "x" }, "<leader>gB", function()
 	Snacks.gitbrowse()
 end, { desc = "Git Browse" })
 vim.keymap.set("n", "<leader>gg", function()
@@ -300,10 +312,10 @@ end, { desc = "Toggle Terminal" })
 vim.keymap.set({ "n", "t" }, "<c-_>", function()
 	Snacks.terminal()
 end, { desc = "which_key_ignore" })
-vim.keymap.set({ "n", "t" }, "]]", function()
+vim.keymap.set("n", "]]", function()
 	Snacks.words.jump(vim.v.count1)
 end, { desc = "Next Reference" })
-vim.keymap.set({ "n", "t" }, "[[", function()
+vim.keymap.set("n", "[[", function()
 	Snacks.words.jump(-vim.v.count1)
 end, { desc = "Prev Reference" })
 vim.keymap.set("n", "<leader>N", function()
@@ -324,9 +336,15 @@ end, { desc = "Neovim News" })
 ----------------------------------------------------------
 
 -- Sidekick NES: accept next-edit suggestion in normal mode
+-- Without a suggestion <Tab> keeps its built-in meaning (jump forward).
+-- <C-i> is mapped to itself so terminals that can tell it from <Tab> (kitty,
+-- Neovide) keep it as a plain jump forward (see :h CTRL-I).
 vim.keymap.set("n", "<Tab>", function()
-	require("sidekick").nes_jump_or_apply()
+	if not require("sidekick").nes_jump_or_apply() then
+		vim.api.nvim_feedkeys(vim.v.count1 .. vim.keycode("<C-i>"), "n", false)
+	end
 end, { desc = "Apply Sidekick NES Suggestion" })
+vim.keymap.set("n", "<C-i>", "<C-i>", { desc = "Jump Forward" })
 
 ----------------------------------------------------------
 
@@ -336,8 +354,13 @@ vim.keymap.set("n", "S", "<Plug>(leap-from-window)")
 
 ----------------------------------------------------------
 
+-- Gx Keymaps
+vim.keymap.set({ "n", "x" }, "gx", "<cmd>Browse<cr>", { desc = "Open with gx.nvim" })
+
+----------------------------------------------------------
+
 -- Conform Keymaps
-vim.keymap.set({ "n", "v" }, "<leader>cf", function()
+vim.keymap.set({ "n", "x" }, "<leader>cf", function()
 	require("conform").format({ lsp_format = "fallback" })
 end, { desc = "Format Buffer" })
 
@@ -349,9 +372,9 @@ vim.keymap.set("n", "<leader>uu", "<cmd>UndotreeToggle<cr>", { desc = "Toggle Un
 ----------------------------------------------------------
 
 -- Comment Box Keymaps
-vim.keymap.set({ "n", "v" }, "<leader>cbb", "<cmd>CBccbox<cr>", { desc = "Centered Box" })
-vim.keymap.set({ "n", "v" }, "<leader>cbl", "<cmd>CBcline<cr>", { desc = "Centered Line" })
-vim.keymap.set({ "n", "v" }, "<leader>cbd", "<cmd>CBd<cr>", { desc = "Delete Box/Line" })
+vim.keymap.set({ "n", "x" }, "<leader>cbb", "<cmd>CBccbox<cr>", { desc = "Centered Box" })
+vim.keymap.set({ "n", "x" }, "<leader>cbl", "<cmd>CBcline<cr>", { desc = "Centered Line" })
+vim.keymap.set({ "n", "x" }, "<leader>cbd", "<cmd>CBd<cr>", { desc = "Delete Box/Line" })
 vim.keymap.set("n", "<leader>cbk", "<cmd>CBcatalog<cr>", { desc = "Box Style Catalog" })
 
 ----------------------------------------------------------

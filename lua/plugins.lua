@@ -181,8 +181,7 @@ lazyload.on_vim_enter(function()
   -- Flash.nvim
   vim.pack.add({ { src = "https://github.com/folke/flash.nvim", name = "flash" } })
   require("flash").setup({
-    modes = { char = { keys = {} } },
-    keys = {},
+    modes = { char = { multi_line = false } },
   })
 
   -- Leap.nvim
@@ -318,6 +317,17 @@ lazyload.on_vim_enter(function()
     cmp.setup({
       keymap = {
         preset = "default",
+        -- The preset's signature toggle would shadow digraphs (i_CTRL-K);
+        -- signature help stays on <C-s> (Neovim default) and auto-trigger.
+        ["<C-k>"] = false,
+        -- With the menu closed, open it instead of doing nothing.
+        ["<C-n>"] = { "select_next", "show_and_insert" },
+        ["<C-p>"] = {
+          "select_prev",
+          function(cmp)
+            return cmp.show_and_insert({ initial_selected_item_idx = -1 })
+          end,
+        },
         ["<Tab>"] = {
           "snippet_forward",
           function()
@@ -372,8 +382,16 @@ lazyload.on_vim_enter(function()
     end,
   })
 
-  local lspconfig = require("lspconfig")
-  local capabilities = (has_blink_bin or has_cargo) and require("blink.cmp").get_lsp_capabilities() or nil
+  -- Server settings use vim.lsp.config(); mason-lspconfig v2 enables every
+  -- installed server (automatic_enable) and no longer reads `handlers`.
+  -- blink.cmp adds its completion capabilities to vim.lsp.config("*") itself.
+  vim.lsp.config("lua_ls", {
+    settings = {
+      Lua = {
+        diagnostics = { globals = { "Config" } },
+      },
+    },
+  })
 
   vim.lsp.config("rust_analyzer", {
     settings = {
@@ -395,35 +413,6 @@ lazyload.on_vim_enter(function()
       "bashls",
       "copilot",
     },
-    handlers = {
-      -- Default handler
-      function(server_name)
-        lspconfig[server_name].setup({ capabilities = capabilities })
-      end,
-      -- Specific overrides
-      ["lua_ls"] = function()
-        lspconfig.lua_ls.setup({
-          capabilities = capabilities,
-          settings = {
-            Lua = {
-              diagnostics = { globals = { "Config" } },
-            },
-          },
-        })
-      end,
-      ["rust_analyzer"] = function()
-        lspconfig.rust_analyzer.setup({
-          capabilities = capabilities,
-          settings = {
-            ["rust-analyzer"] = {
-              check = {
-                command = "clippy",
-              },
-            },
-          },
-        })
-      end,
-    },
   })
 
   -- Enable native inline completion (ghost text in insert mode)
@@ -433,6 +422,11 @@ lazyload.on_vim_enter(function()
   vim.pack.add({ { src = "https://github.com/echasnovski/mini.ai", name = "mini.ai" } })
 
   Config.plugins.mini_ai = {
+    -- an/in stay Neovim's LSP selection-range maps (|v_an|, |v_in|).
+    mappings = {
+      around_next = "aN",
+      inside_next = "iN",
+    },
     custom_textobjects = {
       g = function()
         local n_lines = vim.api.nvim_buf_line_count(0)

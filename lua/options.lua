@@ -78,17 +78,6 @@ vim.api.nvim_create_user_command("Format", function(args)
   require("conform").format({ async = true, lsp_format = "fallback", range = range })
 end, { range = true })
 
--- FormatOnSave
--- Formats the buffer before saving.
--- This is a common practice to ensure code is consistently formatted.
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*",
-  callback = function()
-    -- Call Format function
-    vim.api.nvim_command("Format")
-  end,
-})
-
 -- Return to last-known cursor position when reopening files
 vim.api.nvim_create_autocmd("BufReadPost", {
   desc = "Jump to last known cursor position on open",
