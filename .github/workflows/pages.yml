@@ -1,0 +1,58 @@
+# Publish this repo's static HTML to https://pages.rootiest.dev/<repo>/.
+#
+# Runs on Gitea only: the racknerd runner's "pages" label is a container job
+# that may mount the Caddy web root (~/docker/caddy/pages, the runner's only
+# valid_volumes entry). Gitea mirrors this repo to GitHub, which also sees
+# this file, so the job is skipped there; a skipped job costs nothing and
+# leaves no pending status.
+#
+# To publish more files, add "source destination" lines to PAGES. The
+# destination is relative to pages.rootiest.dev/<repo>/; anything under a
+# private/ directory needs a Rootiest ID login.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/cheatsheet/cheatsheet.html
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+env:
+  PAGES: |
+    docs/cheatsheet/cheatsheet.html cheatsheet/index.html
+
+jobs:
+  publish:
+    if: github.server_url != 'https://github.com'
+    runs-on: pages
+    container:
+      image: docker.gitea.com/runner-images:ubuntu-latest
+      volumes:
+        - /home/rootiest/docker/caddy/pages:/pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish
+        # act_runner defaults to sh; the loop below reads PAGES with <<<.
+        shell: bash
+        run: |
+          dest="/pages/${GITHUB_REPOSITORY#*/}"
+          # Stage everything first, then swap it in, so the site never shows
+          # a half-copied tree and files dropped from PAGES disappear.
+          stage="$(mktemp -d /pages/.stage.XXXXXX)"
+          trap 'rm -rf "$stage"' EXIT
+          while read -r src dst; do
+            [ -n "$src" ] || continue
+            install -D -m 644 "$src" "$stage/$dst"
+            echo "https://pages.rootiest.dev/${GITHUB_REPOSITORY#*/}/$dst"
+          done <<< "$PAGES"
+          chmod 755 "$stage"
+          # Files belong to the server user (uid 1000), not the job's root.
+          chown -R 1000:1000 "$stage"
+          rm -rf "$dest.old"
+          [ -e "$dest" ] && mv "$dest" "$dest.old"
+          mv "$stage" "$dest"
+          rm -rf "$dest.old"
