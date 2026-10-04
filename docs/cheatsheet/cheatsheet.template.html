@@ -1,0 +1,2027 @@
+<!-- Template for gen_cheatsheet.py — edit here, then regenerate cheatsheet.html (this first line is dropped) -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Neovim Cheatsheet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Every Vim motion, built-in key and keymap of this Neovim config, searchable and on an interactive keyboard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:ital,wght@0,500;0,700;1,500&display=swap">
+<script>
+  // Apply a saved light/dark choice before first paint (no flash of the wrong theme).
+  try { const t = localStorage.getItem("nvim-cheatsheet-theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #e8ebee;
+  --panel: #f5f6f8;
+  --ink: #15191e;
+  --muted: #5b6570;
+  --line: #d1d6dc;
+  --cap: #ffffff;
+  --cap-edge: #bfc6ce;
+  --accent: #0a66e8;
+  --accent-ink: #ffffff;
+  --warn: #a35a00;
+  --warn-bg: #fdf0dc;
+  --danger: #c62828;
+  --danger-bg: #fde4e4;
+  --ok: #2f7d32;
+  --ok-bg: #e2f3e3;
+  --case: linear-gradient(170deg, #f4f4f1, #d8d9d5);
+  --plate: #e1e3e2;
+  /* Source colours: who defines a key. */
+  --s-builtin: #6b7480;
+  --s-neovim: #0f8a7e;
+  --s-config: #d6336c;
+  --s-plugin: #6a48d7;
+  /* Category hues (see CAT_HUE in the script). */
+  --h1: #1f6feb; --h2: #0f8a7e; --h3: #d1462f; --h4: #2f8a3a; --h5: #7c4ddb; --h6: #b7791f; --h7: #4b55d6;
+  --h8: #c03aa8; --h9: #0e7fa0; --h10: #6f7d17; --h11: #d6336c; --h12: #8a5a2b; --h13: #6b7280;
+  --sans: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111418; --panel: #191d22; --ink: #e6e9ed; --muted: #8e97a2; --line: #2a3038;
+    --cap: #252b32; --cap-edge: #0a0c0f; --accent: #4f9bff; --accent-ink: #0b1220;
+    --warn: #f0b35c; --warn-bg: #33270f; --danger: #ff6b6b; --danger-bg: #3a1a1c; --ok: #7ccc6c; --ok-bg: #18301a;
+    --case: linear-gradient(170deg, #22272e, #15191e); --plate: #0e1114;
+    --s-builtin: #8e97a2; --s-neovim: #3cc7b8; --s-config: #ff5c8f; --s-plugin: #a497ff;
+    --h1: #5ea1ff; --h2: #3cc7b8; --h3: #ff7a5c; --h4: #7ccc6c; --h5: #b197ff; --h6: #e8b44c; --h7: #8f96ff;
+    --h8: #e070cf; --h9: #4fc3dc; --h10: #b5c85a; --h11: #ff5c8f; --h12: #d6a06a; --h13: #8e97a2;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111418; --panel: #191d22; --ink: #e6e9ed; --muted: #8e97a2; --line: #2a3038;
+  --cap: #252b32; --cap-edge: #0a0c0f; --accent: #4f9bff; --accent-ink: #0b1220;
+  --warn: #f0b35c; --warn-bg: #33270f; --danger: #ff6b6b; --danger-bg: #3a1a1c; --ok: #7ccc6c; --ok-bg: #18301a;
+  --case: linear-gradient(170deg, #22272e, #15191e); --plate: #0e1114;
+  --s-builtin: #8e97a2; --s-neovim: #3cc7b8; --s-config: #ff5c8f; --s-plugin: #a497ff;
+  --h1: #5ea1ff; --h2: #3cc7b8; --h3: #ff7a5c; --h4: #7ccc6c; --h5: #b197ff; --h6: #e8b44c; --h7: #8f96ff;
+  --h8: #e070cf; --h9: #4fc3dc; --h10: #b5c85a; --h11: #ff5c8f; --h12: #d6a06a; --h13: #8e97a2;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); overflow-x: hidden; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 32px 16px 64px; display: grid; gap: 48px; min-width: 0; }
+.wrap > * { min-width: 0; }
+@media (min-width: 720px) { .wrap { padding-inline: 20px; } }
+h1, h2, h3 { font-family: var(--mono); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.1; }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 0.95rem; }
+p { margin: 0; }
+a { color: var(--accent); }
+code { font: 500 0.85em var(--mono); overflow-wrap: anywhere; }
+.muted { color: var(--muted); }
+kbd {
+  font: 700 0.8em/1 var(--mono); display: inline-block; min-width: 1.7em; text-align: center; white-space: nowrap;
+  padding: 0.35em 0.45em 0.3em; border-radius: 5px; background: var(--cap); color: var(--ink);
+  border: 1px solid var(--line); border-bottom: 3px solid var(--cap-edge);
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.skip { position: absolute; left: 16px; top: -60px; background: var(--accent); color: var(--accent-ink); padding: 8px 14px; border-radius: 8px; z-index: 20; }
+.skip:focus { top: 12px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- Header ---------------------------------------------------------- */
+header { display: grid; gap: 18px; }
+.eyebrow { font: 600 0.75rem/1.4 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.titlebar { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; }
+nav { display: flex; gap: 8px 16px; flex-wrap: wrap; font-size: 0.95rem; }
+nav a { color: var(--accent); text-decoration: none; font-weight: 600; }
+nav a:hover { text-decoration: underline; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: var(--panel); flex: none; }
+.seg button { border: 0; background: transparent; padding: 6px 12px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+#kblayout { justify-self: start; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; list-style: none; margin: 0; padding: 0; }
+.stats li { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; align-content: start; }
+.stats b { font: 700 1.5rem/1.1 var(--mono); font-variant-numeric: tabular-nums; }
+.stats span { font-size: 0.85rem; color: var(--muted); }
+.stats kbd { font-size: 0.9rem; }
+
+/* ---- Shared bits ------------------------------------------------------- */
+.stack { display: grid; gap: 16px; }
+.lede { color: var(--muted); max-width: 75ch; }
+.search { display: flex; align-items: center; gap: 10px; background: var(--cap); border: 1.5px solid var(--line); border-radius: 10px; padding: 0 14px; min-width: 0; }
+.search:focus-within { border-color: var(--accent); }
+.search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font: 500 1.1rem var(--mono); padding: 11px 0; }
+.search input::placeholder { color: var(--muted); font-family: var(--sans); font-weight: 400; }
+.search svg { flex: none; color: var(--muted); }
+.count { font: 500 0.85rem var(--mono); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; align-items: center; }
+.chips.wrapchips { flex-wrap: wrap; overflow: visible; }
+.chips > .lbl { flex: none; font: 600 0.72rem var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-right: 4px; }
+.chip { flex: none; border: 1px solid var(--line); background: var(--panel); border-radius: 99px; padding: 4px 11px; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip span { opacity: 0.65; font-variant-numeric: tabular-nums; margin-left: 4px; }
+.chip i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--dot, var(--muted)); margin-right: 6px; vertical-align: 1px; }
+.toggle { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; font-size: 0.9rem; flex: none; }
+.toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+.empty { padding: 32px 0; text-align: center; color: var(--muted); }
+.compose { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 10px 14px; border-radius: 10px; border: 1px dashed var(--accent); background: color-mix(in oklab, var(--accent) 7%, var(--panel)); font-size: 0.95rem; }
+.compose .keys kbd { font-size: 0.85rem; }
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 99px; font-weight: 600; z-index: 30;
+  max-width: calc(100vw - 32px); text-align: center;
+}
+.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+.btn:hover { border-color: var(--accent); }
+.btn.big { padding: 10px 20px; font-size: 0.95rem; justify-self: center; }
+
+/* Key sequences rendered as keycaps */
+.keys { display: inline-flex; flex-wrap: wrap; gap: 3px; align-items: center; min-width: 0; vertical-align: middle; }
+.keys kbd { font-size: 0.85rem; }
+.keys .combo { display: inline-flex; gap: 1px; align-items: center; }
+.keys kbd.mod { font-size: 0.68rem; color: var(--muted); padding-inline: 0.4em; }
+.keys kbd.named { font-size: 0.74rem; }
+.keys kbd.lead { background: color-mix(in oklab, var(--s-config) 18%, var(--cap)); border-color: color-mix(in oklab, var(--s-config) 55%, var(--line)); display: inline-flex; flex-direction: column; gap: 2px; padding-block: 0.25em 0.2em; }
+.keys kbd.lead small { font: 600 0.55rem/1 var(--sans); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.keys .ph { font: italic 500 0.8rem var(--mono); color: var(--muted); border: 1px dashed var(--line); border-radius: 5px; padding: 2px 6px; }
+.keys .reg { font: 500 0.75rem var(--mono); color: var(--muted); border: 1px dashed var(--line); border-radius: 5px; padding: 2px 5px; opacity: 0.85; }
+.keys .exk { font: 700 0.95rem var(--mono); }
+.keys .exk .opt { color: var(--muted); font-weight: 500; }
+.badge { display: inline-flex; align-items: center; font: 600 0.68rem/1 var(--mono); padding: 3px 6px; border-radius: 5px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.badge.m { min-width: 1.9em; justify-content: center; }
+.src { display: inline-flex; align-items: center; gap: 5px; font: 600 0.72rem/1.2 var(--sans); padding: 3px 8px; border-radius: 99px; white-space: nowrap;
+  color: var(--sc); background: color-mix(in oklab, var(--sc) 13%, transparent); border: 1px solid color-mix(in oklab, var(--sc) 40%, transparent); }
+.src.builtin { --sc: var(--s-builtin); } .src.neovim { --sc: var(--s-neovim); } .src.config { --sc: var(--s-config); } .src.plugin { --sc: var(--s-plugin); }
+.catb { display: inline-flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+.catb::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--cat); }
+.ctx { font-size: 0.75rem; color: var(--muted); border: 1px dashed var(--line); border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
+.flag { display: inline-block; font: 600 0.75rem/1.35 var(--sans); padding: 3px 8px; border-radius: 6px; color: var(--warn); background: var(--warn-bg); }
+.flag.rep { color: var(--muted); background: color-mix(in oklab, var(--muted) 12%, transparent); }
+.flag.over { color: var(--s-config); background: color-mix(in oklab, var(--s-config) 12%, transparent); }
+.flag.dead { color: var(--danger); background: var(--danger-bg); }
+.flag.info { color: var(--muted); background: transparent; border: 1px solid var(--line); }
+.flag b { font-weight: 700; }
+.flag code { font-size: 0.72rem; }
+.flag s { opacity: 0.8; font-weight: 500; }
+
+/* ---- Finder rows -------------------------------------------------------- */
+.finder { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 0 10px; display: grid; gap: 10px; border-bottom: 1px solid var(--line); }
+.searchrow { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; min-width: 0; }
+.searchrow .search { flex: 1 1 260px; }
+.filters { display: grid; gap: 8px; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; font-size: 0.9rem; }
+.opts .seg button { font-size: 0.82rem; padding: 6px 11px; }
+.scopehint { font-size: 0.85rem; color: var(--muted); flex: 1 1 240px; min-width: 0; }
+.sel { font: 500 0.85rem var(--sans); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 99px; padding: 4px 10px; cursor: pointer; flex: none; max-width: 100%; }
+.sel.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+@media (min-width: 720px) { .chips.wrapwide { flex-wrap: wrap; overflow: visible; } }
+.chips, .tabs, .wsubs { scrollbar-color: var(--line) transparent; }
+@media (max-width: 560px) {
+  /* Phones: tab rows and window chips scroll sideways instead of stacking 4–10 rows deep. */
+  .tabs, .wsubs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding-bottom: 4px; }
+  .tab, .wsubs .chip { flex: none; }
+  #scope { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 1px; background: var(--line); }
+  #scope button + button { border-left: 0; }
+  #scope button:not([aria-pressed="true"]) { background: var(--panel); }
+}
+.results { display: grid; gap: 6px; }
+.rcat { margin: 14px 0 2px; display: flex; gap: 8px; align-items: center; font: 600 0.78rem var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.rcat::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--cat); }
+.rcat:first-child { margin-top: 0; }
+.row { display: grid; grid-template-columns: minmax(96px, 180px) minmax(0, 1fr); gap: 4px 16px; padding: 9px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; border-left: 4px solid var(--cat, var(--line)); align-items: start; }
+.row.dimmed .rd { text-decoration: line-through; text-decoration-color: color-mix(in oklab, var(--muted) 70%, transparent); color: var(--muted); }
+.rb { display: grid; gap: 5px; min-width: 0; }
+.rd { font-size: 0.97rem; overflow-wrap: anywhere; }
+.rm { display: flex; flex-wrap: wrap; gap: 5px 8px; align-items: center; }
+.rm .fl { font: 500 0.74rem var(--mono); color: var(--muted); }
+.rm a { font: 500 0.74rem var(--mono); text-decoration: none; }
+.rm a:hover { text-decoration: underline; }
+.rflags { display: flex; flex-wrap: wrap; gap: 5px; }
+.rn { font-size: 0.86rem; color: var(--muted); overflow-wrap: anywhere; }
+.rn kbd { font-size: 0.75rem; }
+.rf { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; font: 500 0.75rem var(--mono); color: var(--muted); }
+.rf a { text-decoration: none; }
+.rf a:hover { text-decoration: underline; }
+.copy { border: 1px solid var(--line); background: transparent; border-radius: 5px; padding: 1px 6px; cursor: pointer; font: 500 0.72rem var(--mono); color: var(--muted); }
+.copy:hover { color: var(--ink); border-color: var(--accent); }
+.keys .alt { color: var(--muted); font-size: 0.8rem; margin: 0 2px; }
+@media (max-width: 640px) { .row { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- What's different -------------------------------------------------- */
+.notes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 22px 28px; font-size: 0.92rem; }
+.notes > div { border-top: 3px solid var(--kind, var(--line)); padding-top: 10px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.notes .change { --kind: var(--accent); } .notes .warn { --kind: var(--warn); } .notes .tip { --kind: var(--ok); }
+.notes b.t { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.notes b.t em { font-style: normal; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; color: var(--kind); border: 1px solid var(--kind); letter-spacing: 0.08em; }
+.notes p { color: var(--muted); font-size: 0.85rem; }
+.notes p.lead { color: var(--ink); font-size: inherit; }
+.notes dl { display: grid; grid-template-columns: fit-content(48%) minmax(0, 1fr); gap: 5px 14px; margin: 2px 0 4px; align-items: center; }
+.notes dt { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.notes dd { margin: 0; overflow-wrap: anywhere; }
+.notes kbd { font-size: 0.75rem; }
+.difflists { display: grid; gap: 10px; }
+.dl { display: grid; gap: 10px; }
+.dl > p { color: var(--muted); font-size: 0.9rem; max-width: 80ch; }
+details.dl { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 4px 16px; }
+details.dl[open] { padding-bottom: 14px; }
+details.dl > summary { cursor: pointer; padding: 10px 0; list-style-position: outside; margin-left: 18px; }
+details.dl > summary h3 { display: inline-flex; gap: 10px; align-items: baseline; }
+#notemore { justify-self: start; }
+.dgroup { display: grid; gap: 2px; }
+.dgroup h4 { margin: 10px 0 4px; font: 600 0.8rem var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+.drow { display: grid; grid-template-columns: minmax(110px, 190px) minmax(0, 1fr); gap: 4px 16px; padding: 8px 0; border-top: 1px solid var(--line); align-items: start; font-size: 0.92rem; }
+.drow .was { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in oklab, var(--danger) 60%, transparent); }
+.drow .arrow { color: var(--muted); margin: 0 6px; }
+.drow .meta { display: flex; gap: 6px 10px; flex-wrap: wrap; align-items: center; margin-top: 3px; font: 500 0.72rem var(--mono); color: var(--muted); }
+details.more > summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: 0.9rem; padding: 6px 0; }
+@media (max-width: 560px) { .drow { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- Keyboard ---------------------------------------------------------- */
+.layers { display: grid; gap: 14px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 7px 13px; cursor: pointer; font-weight: 600; font-size: 0.92rem; }
+.tab i { width: 10px; height: 10px; border-radius: 50%; background: var(--led); box-shadow: 0 0 8px var(--led); }
+.tab[aria-selected="true"] { border-color: var(--led); background: color-mix(in oklab, var(--led) 16%, var(--panel)); }
+.layer-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; font-size: 0.95rem; }
+.layer-meta .grow { flex: 1 1 280px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.85rem; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.legend span.c::before { content: ""; width: 12px; height: 12px; border-radius: 3px; background: color-mix(in oklab, var(--cat) 35%, var(--cap)); border: 1px solid var(--cat); }
+.legend .mk { position: static; }
+.board { overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+.case { min-width: 900px; background: var(--case); border-radius: 18px; padding: 1.2%; border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, #fff 50%, transparent), 0 12px 30px -16px rgba(0,0,0,.45); }
+.kb { position: relative; container-type: inline-size; aspect-ratio: 18.25 / 6.25; background: var(--plate); border-radius: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,.14); }
+.key { position: absolute; padding: 0.14%; margin: 0; border: 0; background: none; cursor: pointer; text-align: left; color: inherit; }
+.key > .cap {
+  --cat: var(--h13);
+  position: relative; width: 100%; height: 100%; border-radius: 0.55cqw; background: var(--cap); color: var(--ink);
+  border: 1px solid var(--line); border-bottom-width: 0.35cqw; border-bottom-color: var(--cap-edge);
+  display: flex; flex-direction: column; justify-content: space-between; padding: 0.35cqw 0.45cqw 0.3cqw;
+  overflow: hidden; transition: opacity .15s, transform .08s;
+}
+.key .g { font: 700 1.3cqw/1.1 var(--mono); white-space: nowrap; }
+.key .g small { font-size: 0.75em; color: var(--muted); font-weight: 500; }
+.key .lb { font: 600 0.95cqw/1.12 var(--sans); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: break-word; hyphens: auto; }
+.key.tint > .cap { background: color-mix(in oklab, var(--cat) 24%, var(--cap)); border-color: color-mix(in oklab, var(--cat) 60%, transparent); border-bottom-color: color-mix(in oklab, var(--cat) 50%, var(--cap-edge)); }
+.key.none > .cap { opacity: 0.4; }
+.key.none .lb { display: none; }
+.key.modkey > .cap { background: color-mix(in oklab, var(--muted) 22%, var(--cap)); justify-content: center; }
+.key.modkey .g { font-size: 1.05cqw; color: var(--muted); }
+.key.modkey[aria-pressed="true"] > .cap { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.key.modkey[aria-pressed="true"] .g { color: var(--accent-ink); }
+.key.dead .lb { text-decoration: line-through; }
+.key:hover > .cap, .key:focus-visible > .cap, .key.cur > .cap { opacity: 1; outline: 2px solid var(--accent); outline-offset: -1px; }
+.key:focus-visible { outline: none; }
+.key:active > .cap { transform: translateY(1px); }
+.mk { position: absolute; top: 0.35cqw; right: 0.4cqw; width: 0.85cqw; height: 0.85cqw; min-width: 7px; min-height: 7px; border-radius: 50%; display: inline-block; }
+.mk.live { background: var(--mkc, var(--s-config)); box-shadow: 0 0 0 1px var(--cap); }
+.mk.builtin { border: 1.5px solid var(--s-builtin); }
+.mk.group { border-radius: 2px; background: transparent; border: 1.5px dashed var(--muted); }
+.mk.wait { box-shadow: 0 0 0 2px var(--warn); }
+.legend .mk { width: 10px; height: 10px; }
+.keyinfo { min-height: 7em; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 10px; font-size: 0.95rem; }
+.ki-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.ki-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ki-list li { display: grid; gap: 4px; padding-top: 8px; border-top: 1px solid var(--line); }
+.ki-list li:first-child { border-top: 0; padding-top: 0; }
+.ki-list .top { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.ki-list .was { text-decoration: line-through; color: var(--muted); }
+.kids { display: flex; flex-wrap: wrap; gap: 6px; }
+.kid { display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 3px 8px 3px 4px; font-size: 0.82rem; background: var(--bg); }
+.kid .keys kbd { font-size: 0.72rem; }
+
+/* ---- Leader tree -------------------------------------------------------- */
+.ltree { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; align-items: start; }
+.lcard { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; grid-template-columns: max-content minmax(0, 1fr) auto; gap: 6px 10px; border-top: 4px solid var(--cat, var(--line)); min-width: 0; align-content: start; }
+.lcard > header, .lcard > h4 { grid-column: 1 / -1; }
+.lcard header { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 2px; }
+.lcard header .keys kbd { font-size: 0.8rem; }
+.lcard h3 { font-size: 1rem; }
+.lcard h4 .keys { text-transform: none; }
+.lcard h4 { margin: 6px 0 0; font: 600 0.72rem var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+.litem { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: center; font-size: 0.9rem; padding: 1px 0; }
+.litem .keys kbd { font-size: 0.72rem; }
+.litem .ms { display: flex; gap: 3px; }
+
+/* ---- Composer ----------------------------------------------------------- */
+.composer { display: grid; gap: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.crow { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 14px; align-items: start; }
+.crow > .lbl { font: 600 0.75rem var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding-top: 6px; }
+.crow .chips { flex-wrap: wrap; overflow: visible; }
+.crow .chip { font-family: var(--mono); }
+.crow .chip.mini { border-style: dashed; }
+.crow .chip small { font-family: var(--sans); opacity: 0.75; margin-left: 5px; }
+.crow input[type="number"] { width: 5em; font: 500 1rem var(--mono); padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--cap); color: var(--ink); }
+.cout { display: grid; gap: 8px; padding: 16px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); }
+.cout .keys kbd { font-size: 1.15rem; }
+.cout .keys .ph { font-size: 1rem; }
+.cout p.sent { font-size: 1.1rem; }
+.cout p.sent b { color: var(--accent); }
+@media (max-width: 560px) { .crow { grid-template-columns: minmax(0, 1fr); } .crow > .lbl { padding-top: 0; } }
+
+/* ---- Plugin windows / commands ------------------------------------------ */
+.wtools { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.wtools .search { flex: 1 1 280px; }
+.wtools .search input { font-size: 1rem; padding: 8px 0; }
+.wtabs .tab span { font: 500 0.75rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.wsubs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.wsubs .chip { font-size: 0.8rem; padding: 3px 10px; }
+.wpanel { display: grid; gap: 22px; }
+.wgroup { display: grid; gap: 6px; scroll-margin-top: 16px; }
+.wgroup h3 { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.wgroup > .lede { font-size: 0.9rem; }
+.wlist { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 0 28px; }
+.witem { display: grid; grid-template-columns: 7.2em minmax(0, 1fr); gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 0.9rem; align-items: start; }
+.witem .keys kbd { font-size: 0.72rem; }
+.witem .act { display: grid; gap: 2px; min-width: 0; }
+.witem .chain { font: 500 0.75rem var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+.witem .ms { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: 1px; }
+.witem .rn { font-size: 0.82rem; }
+.clist { display: grid; gap: 0; }
+.crow2 { display: grid; grid-template-columns: minmax(120px, 220px) minmax(0, 1fr); gap: 4px 16px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 0.92rem; }
+.crow2 .cn { font: 700 0.92rem var(--mono); overflow-wrap: anywhere; }
+.crow2 .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin-top: 3px; font: 500 0.72rem var(--mono); color: var(--muted); }
+@media (max-width: 560px) { .crow2, .witem { grid-template-columns: minmax(0, 1fr); } }
+footer { font-size: 0.85rem; color: var(--muted); }
+footer code { font-size: 0.8rem; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#find">Skip to the key finder</a>
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow">Rootiest Neovim</div>
+    <div class="titlebar">
+      <h1>Vim keys &amp; keymaps</h1>
+      <div class="seg" id="theme" role="group" aria-label="Colour theme">
+        <button type="button" data-theme-set="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-theme-set="light" aria-pressed="false">Light</button>
+        <button type="button" data-theme-set="dark" aria-pressed="false">Dark</button>
+      </div>
+    </div>
+    <nav aria-label="Sections">
+      <a href="#different">What's different</a><a href="#keyboard">Keyboard</a><a href="#leader">Leader keys</a>
+      <a href="#find">Find any key</a><a href="#composer">Text objects</a><a href="#windows">Plugin windows</a><a href="#commands">Commands</a>
+    </nav>
+    <ul class="stats" id="stats"></ul>
+  </header>
+
+  <section id="different" class="stack" aria-labelledby="h-different">
+    <h2 id="h-different">What's different here</h2>
+    <p class="lede">How this config changes stock Vim. Cards first, then lists worked out from the live keymaps.</p>
+    <div class="chips" id="notechips" role="group" aria-label="Filter cards by kind"></div>
+    <div class="notes" id="notecards"></div>
+    <button type="button" class="btn big" id="notemore" hidden></button>
+    <div class="difflists" id="difflists"></div>
+  </section>
+
+  <section id="keyboard" class="layers" aria-labelledby="h-keyboard">
+    <h2 id="h-keyboard">Keyboard</h2>
+    <p class="lede">What every key does in each mode or after each prefix. Hover or focus a key for details; click it to look it up in the finder. Click <kbd>Shift</kbd> or <kbd>Ctrl</kbd> on the board to hold them.</p>
+    <div class="tabs" id="kbtabs" role="tablist" aria-label="Keyboard layers"></div>
+    <div class="layer-meta">
+      <p class="grow" id="layermeta"></p>
+      <div class="seg" id="aiswitch" role="group" aria-label="Text object scope" hidden>
+        <button type="button" data-ai="i" aria-pressed="true">i · inside</button>
+        <button type="button" data-ai="a" aria-pressed="false">a · around</button>
+      </div>
+    </div>
+    <div class="seg" id="kblayout" role="group" aria-label="Keyboard layout"></div>
+    <div class="legend" id="kblegend"></div>
+    <div class="board"><div class="case"><div class="kb" id="kb" role="group" aria-label="Keyboard"></div></div></div>
+    <div class="keyinfo" id="keyinfo" aria-live="polite"></div>
+  </section>
+
+  <section id="leader" class="stack" aria-labelledby="h-leader">
+    <h2 id="h-leader">Leader keys</h2>
+    <p class="lede" id="leaderintro"></p>
+    <div class="ltree" id="ltree"></div>
+  </section>
+
+  <section id="find" class="stack" aria-labelledby="h-find">
+    <h2 id="h-find">Find any key</h2>
+    <p class="lede">Every built-in key, Neovim default, plugin map and your own maps in one list. Search by keys (<code>ctrl-w</code>, <code>&lt;C-w&gt;</code>, <code>^w</code>, <code>space f</code>, <code>leader f</code>) or by words. Start with <code>:</code> to search Ex commands.</p>
+    <div class="finder">
+      <div class="searchrow">
+        <label class="search" for="q">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input id="q" type="search" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="Keys or words — e.g. gU, ctrl-w v, leader f, delete word, :sort" aria-label="Search keys and keymaps" aria-controls="results">
+          <kbd title="Press / to focus">/</kbd>
+        </label>
+        <span class="count" id="count" aria-live="polite"></span>
+      </div>
+      <div class="chips" id="modechips" role="group" aria-label="Filter by mode"></div>
+    </div>
+    <div class="filters">
+      <div class="opts">
+        <div class="seg" id="scope" role="group" aria-label="Which keys to list">
+          <button type="button" data-scope="starter" aria-pressed="true" title="Essentials plus everything your config adds or changes. Typing a search looks through everything.">Essentials + my changes</button>
+          <button type="button" data-scope="ess" aria-pressed="false">Essentials</button>
+          <button type="button" data-scope="chg" aria-pressed="false">Changed by my config</button>
+          <button type="button" data-scope="all" aria-pressed="false">Everything</button>
+        </div>
+        <span class="scopehint" id="scopehint"></span>
+        <button type="button" class="btn" id="reset">Reset filters</button>
+      </div>
+      <div class="chips wrapwide" id="srcchips" role="group" aria-label="Filter by source"></div>
+      <div class="chips wrapwide" id="catchips" role="group" aria-label="Filter by category"></div>
+    </div>
+    <div class="results" id="results"></div>
+    <button type="button" class="btn big" id="more" hidden>Show more</button>
+  </section>
+
+  <section id="composer" class="stack" aria-labelledby="h-composer">
+    <h2 id="h-composer">Text-object composer</h2>
+    <p class="lede" id="composerintro">Pick an operator and a text object to see the keys and what they do.</p>
+    <div class="composer" id="comp"></div>
+  </section>
+
+  <section id="windows" class="stack" aria-labelledby="h-windows">
+    <h2 id="h-windows">Inside plugin windows</h2>
+    <p class="lede">Keys that only work inside a plugin's own window, menu or buffer, from your live config. Pick a group, then jump to one window with the chips below it, or search them all.</p>
+    <div class="wtools">
+      <label class="search" for="wq">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="wq" type="search" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="Search every plugin window — e.g. ctrl-q, split, stage" aria-label="Search keys in plugin windows">
+      </label>
+      <span class="count" id="wcount" aria-live="polite"></span>
+    </div>
+    <div class="tabs wtabs" id="wtabs" role="tablist" aria-label="Plugin window groups"></div>
+    <div class="wsubs" id="wsubs" role="group" aria-label="Windows in this group"></div>
+    <div class="wpanel" id="wpanel" role="tabpanel"></div>
+  </section>
+
+  <section id="commands" class="stack" aria-labelledby="h-commands">
+    <h2 id="h-commands">Commands</h2>
+    <p class="lede">User and plugin <code>:commands</code> defined by this config. Built-in Ex commands are in the finder (choose <b>Ex commands</b> or type <code>:</code>).</p>
+    <div class="searchrow">
+      <label class="search" for="cq">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="cq" type="search" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="Filter commands — e.g. git, box, Mason" aria-label="Filter commands">
+      </label>
+      <span class="count" id="ccount" aria-live="polite"></span>
+    </div>
+    <div class="chips wrapwide" id="cchips" role="group" aria-label="Filter commands by source"></div>
+    <div class="clist" id="clist"></div>
+  </section>
+
+  <footer>Generated from <code>index.txt</code>, your live config and <code>curated/*.json</code> by <code>gen_cheatsheet.py</code>.</footer>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+"use strict";
+const DATA = /*DATA*/null;
+
+// ---- Basics -------------------------------------------------------------------
+// Every DATA section is optional: missing pieces render as empty, never crash.
+const D = DATA && typeof DATA === "object" ? DATA : {};
+const arr = (x) => (Array.isArray(x) ? x : []);
+const obj = (x) => (x && typeof x === "object" && !Array.isArray(x) ? x : {});
+const META = obj(D.meta);
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const stripTags = (h) => String(h ?? "").replace(/<[^>]*>/g, " ");
+const TIMEOUT = META.timeoutlen ?? obj(META.options).timeoutlen ?? 1000;
+const REDUCE = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+const scrollToEl = (el) => el && el.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "start" });
+
+// ---- Theme ----------------------------------------------------------------------
+const THEME_KEY = "nvim-cheatsheet-theme";
+function setTheme(t, save) {
+  const root = document.documentElement;
+  if (t === "light" || t === "dark") root.setAttribute("data-theme", t);
+  else { root.removeAttribute("data-theme"); t = "auto"; }
+  for (const b of document.querySelectorAll("[data-theme-set]")) b.setAttribute("aria-pressed", String(b.dataset.themeSet === t));
+  if (save) { try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* storage blocked: theme just isn't remembered */ } }
+}
+{
+  let saved = "auto";
+  try { saved = localStorage.getItem(THEME_KEY) || "auto"; } catch (e) { /* ignore */ }
+  setTheme(saved, false);
+}
+$("theme").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-theme-set]");
+  if (b) setTheme(b.dataset.themeSet, true);
+});
+
+// ---- Toast & clipboard -----------------------------------------------------------
+let toastTimer;
+function toast(msg) {
+  $("toast").textContent = msg;
+  $("toast").hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => ($("toast").hidden = true), 1800);
+}
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); toast(`Copied ${text}`); }
+  catch (e) {
+    // Older browsers / file:// without clipboard permission: fall back to a hidden textarea.
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+    ta.remove();
+    toast(ok ? `Copied ${text}` : "Copy blocked by the browser — select the text instead");
+  }
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-copy]");
+  if (b) copy(b.dataset.copy);
+});
+
+// ---- Key notation ------------------------------------------------------------------
+// Vim notation is split into tokens: <C-w>, <Space>, {motion}, ["x], or one character.
+const TOKEN_RE = /\["x\]|\{[^}\s]+\}|<(?:[A-Za-z0-9]+-)*(?:\{[^}]+\}|[A-Za-z0-9]+|[^>\s])>|[\s\S]/g;
+const tokenize = (k) => String(k ?? "").match(TOKEN_RE) || [];
+const isPh = (t) => t === '["x]' || (t.length > 2 && t[0] === "{" && t[t.length - 1] === "}");
+const LEADER = typeof META.leader === "string" && META.leader ? META.leader : "\\";
+const LOCAL = typeof META.localleader === "string" && META.localleader ? META.localleader : "\\";
+const charTok = (c) => (c === " " ? "<Space>" : c);
+const LEADER_TOK = charTok(LEADER);
+const LOCAL_TOK = charTok(LOCAL);
+const NAMED = {
+  cr: "CR", return: "CR", enter: "CR", esc: "Esc", escape: "Esc", tab: "Tab", bs: "BS", backspace: "BS", space: "Space",
+  nl: "NL", del: "Del", delete: "Del", insert: "Insert", ins: "Insert", up: "Up", down: "Down", left: "Left", right: "Right",
+  home: "Home", end: "End", pageup: "PageUp", pagedown: "PageDown", pgup: "PageUp", pgdn: "PageDown", help: "Help",
+  undo: "Undo", nop: "Nop", plug: "Plug", ignore: "Ignore", cmd: "Cmd", sid: "SID", snr: "SNR",
+};
+const MOD_ALIAS = { c: "C", ctrl: "C", control: "C", s: "S", shift: "S", m: "M", a: "M", alt: "M", meta: "M", d: "D", cmd: "D", super: "D", t: "T" };
+
+/** Canonical form of one token, matching the generator's keytrans style: <C-W>, <M-p>, <CR>, <Space>. */
+function canonTok(t) {
+  if (t.length < 3 || t[0] !== "<" || t[t.length - 1] !== ">") return t;
+  const inner = t.slice(1, -1);
+  const low = inner.toLowerCase();
+  if (low === "leader") return LEADER_TOK;
+  if (low === "localleader") return LOCAL_TOK;
+  if (low === "lt") return "<";
+  if (low === "bar") return "|";
+  if (low === "bslash") return "\\";
+  const parts = inner.split("-");
+  let key = parts.pop();
+  if (key === "") key = "-";
+  const mods = parts.filter(Boolean).map((m) => MOD_ALIAS[m.toLowerCase()] || m.toUpperCase());
+  if (key.length > 1 && key[0] !== "{") {
+    key = NAMED[key.toLowerCase()] || (/^f\d+$/i.test(key) ? key.toUpperCase() : key[0].toUpperCase() + key.slice(1));
+  } else if (mods.length && mods.every((m) => m === "C") && /^[a-z]$/i.test(key)) {
+    key = key.toUpperCase();
+  }
+  if (!mods.length) return key.length === 1 ? key : `<${key}>`;
+  return `<${mods.join("-")}-${key}>`;
+}
+const canonKeys = (k) => tokenize(k).map(canonTok);
+/** Split a canonical token into modifiers and key ("<C-S-Tab>" → C,S + Tab). */
+function splitTok(t) {
+  if (t.length < 3 || t[0] !== "<" || t[t.length - 1] !== ">") return { mods: [], key: t, plain: true };
+  const parts = t.slice(1, -1).split("-");
+  let key = parts.pop();
+  if (key === "") key = "-";
+  return { mods: parts.filter(Boolean), key, plain: false };
+}
+const NICE = {
+  CR: "Enter", Esc: "Esc", Tab: "Tab", BS: "Bksp", Space: "Space", NL: "NL", Del: "Del", Insert: "Ins", Up: "↑", Down: "↓",
+  Left: "←", Right: "→", Home: "Home", End: "End", PageUp: "PgUp", PageDown: "PgDn", Bar: "|", Bslash: "\\",
+};
+const MODN = { C: "Ctrl", S: "Shift", M: "Alt", A: "Alt", D: "Cmd", T: "Meta" };
+const WORDN = { CR: "enter", BS: "backspace", Up: "up", Down: "down", Left: "left", Right: "right", Space: "space", Esc: "esc" };
+/** Words for a token, so "ctrl-w", "space" and "enter" find keys in the search haystack. */
+function humanTok(t) {
+  const { mods, key, plain } = splitTok(t);
+  if (plain) return t === " " ? "space" : t;
+  const k = (WORDN[key] || key).toLowerCase();
+  return mods.length ? [...mods.map((m) => (MODN[m] || m).toLowerCase()), k].join("-") + ` ^${k}` : k;
+}
+/** Short text form of tokens for keycap glyphs and chips ("^W h", "Space f"). */
+function glyphTok(t) {
+  const { mods, key, plain } = splitTok(t);
+  if (plain) return t === " " ? "Space" : t;
+  const k = NICE[key] || key;
+  if (!mods.length) return k;
+  if (mods.length === 1 && mods[0] === "C") return "^" + k;
+  // Compact for keycaps: ⇧ for Shift, ^ for Ctrl ("⇧↑", "^⇧Tab", "Alt+x").
+  return mods.map((m) => (m === "S" ? "⇧" : m === "C" ? "^" : (MODN[m] || m) + "+")).join("") + k;
+}
+
+// ---- Source & category styling ------------------------------------------------------
+const RUNTIME_SRC = new Set(["neovim", "ftplugin", "matchit"]);
+const srcKind = (s) => (s === "builtin" ? "builtin" : RUNTIME_SRC.has(s) ? "neovim" : s === "config" ? "config" : "plugin");
+const SRC_LABEL = { builtin: "Built-in", neovim: "Neovim default", ftplugin: "Runtime ftplugin", matchit: "matchit (runtime)", config: "Your config" };
+const srcLabel = (s) => SRC_LABEL[s] || s;
+const srcBadge = (s) => `<span class="src ${srcKind(s)}">${esc(srcLabel(s))}</span>`;
+const CAT_ORDER = ["Motion", "Text object", "Operator", "Edit", "Insert", "Visual", "Search", "Mark & jump", "Register & macro",
+  "Undo & repeat", "Scroll & view", "Window", "Buffer & tab", "Fold", "Quickfix & lists", "LSP & diagnostics", "Git",
+  "Find & pick", "Surround", "Pairs", "Comment", "Completion & AI", "Session", "Terminal", "Command line", "Files", "Tags",
+  "Diff", "Spell", "Notes", "UI & toggles", "Help", "Misc"];
+const CAT_HUE = {
+  "Motion": 1, "Text object": 2, "Operator": 3, "Edit": 3, "Insert": 4, "Visual": 5, "Search": 6, "Mark & jump": 7,
+  "Register & macro": 8, "Undo & repeat": 8, "Scroll & view": 9, "Window": 10, "Buffer & tab": 10, "Fold": 9,
+  "Quickfix & lists": 12, "LSP & diagnostics": 7, "Git": 11, "Find & pick": 6, "Surround": 2, "Pairs": 2, "Comment": 9,
+  "Completion & AI": 4, "Session": 10, "Terminal": 12, "Command line": 12, "Files": 12, "Tags": 7, "Diff": 11, "Spell": 5,
+  "Notes": 5, "UI & toggles": 5, "Help": 13, "Misc": 13,
+};
+const catVar = (c) => `var(--h${CAT_HUE[c] || 13})`;
+const catRank = (c) => { const i = CAT_ORDER.indexOf(c); return i < 0 ? CAT_ORDER.length : i; };
+const MODE_INFO = {
+  n: ["N", "Normal"], x: ["V", "Visual"], v: ["V", "Visual & Select"], o: ["O", "Operator-pending"], i: ["I", "Insert"],
+  c: ["C", "Command-line"], t: ["T", "Terminal"], s: ["S", "Select"], ":": [":", "Ex command"], l: ["L", "Lang-arg"],
+};
+const modeBadges = (ms) => arr(ms).map((m) => `<span class="badge m" title="${esc((MODE_INFO[m] || [m, m])[1])} mode">${esc((MODE_INFO[m] || [m])[0])}</span>`).join("");
+const modeNames = (ms) => arr(ms).map((m) => (MODE_INFO[m] || [m, m])[1]).join(", ");
+// neovim.io serves each help file at /doc/user/<name>/ (index.txt is "vimindex") and its tag ids are
+// percent-encoded like encodeURIComponent plus "!" → %21 (checked against the live site: 1251 links).
+const helpURL = (file, tag) => {
+  const name = String(file).replace(/\.txt$/, "");
+  return `https://neovim.io/doc/user/${encodeURIComponent(name === "index" ? "vimindex" : name)}/#${encodeURIComponent(tag).replace(/!/g, "%21")}`;
+};
+
+// ---- Entries ----------------------------------------------------------------------------
+// One normalised object per built-in, live map, curated entry and command.
+//   tok: canonical tokens  btok: without a leading register/count  core: also without trailing {placeholders}
+function mk(e, kind, idx) {
+  e = obj(e);
+  const raw = String(e.k ?? "");
+  const ex = kind === "cmd" || !!e.ex;
+  const x = { kind, idx, ref: e, raw, ex };
+  x.s = kind === "builtin" ? "builtin" : String(e.s || "other");
+  x.sk = srcKind(x.s);
+  x.ld = !!e.ld || /^<leader>/i.test(raw);
+  x.lld = /^<localleader>/i.test(raw);
+  x.tok = ex ? [raw] : canonKeys(raw);
+  let b = 0;
+  while (!ex && b < x.tok.length && isPh(x.tok[b])) b++;
+  x.btok = x.tok.slice(b);
+  let end = x.btok.length;
+  while (!ex && end > 0 && isPh(x.btok[end - 1])) end--;
+  x.core = x.btok.slice(0, end);
+  x.kb = x.core.join("");
+  x.kbl = x.kb.toLowerCase();
+  x.kf = x.btok.join("");
+  // Keys up to the first placeholder: "/" for "/{pattern}<CR>".
+  { const p = x.btok.findIndex(isPh); x.kh = p < 0 ? x.kb : x.btok.slice(0, p).join(""); }
+  x.m = ex ? [":"] : (arr(e.m).length ? arr(e.m).map(String) : (typeof e.m === "string" ? [e.m] : ["n"]));
+  x.d = String(e.d ?? "");
+  x.cat = e.cat || (ex ? "Command line" : "Misc");
+  x.ctx = e.ctx || null;
+  x.n = e.n ? String(e.n) : "";
+  x.e = !!e.e;
+  x.sl = e.sl ? String(e.sl) : "";
+  // Help: built-ins carry tag + file; live/curated carry a tag and (when it's a runtime tag) "hf".
+  x.tag = e.t || (kind === "curated" ? e.h : null) || null;
+  x.hfile = kind === "builtin" ? e.h || null : e.hf || null;
+  if (ex) {
+    // ":s[ubstitute]" → abbreviation "s", full name "substitute".
+    const m = raw.replace(/^:/, "").match(/^([^[]*)(?:\[([^\]]*)\])?(.*)$/) || ["", raw, "", ""];
+    x.exAbbr = m[1];
+    x.exFull = m[1] + (m[2] || "") + m[3];
+  }
+  x.changed = kind === "builtin" ? !!(arr(e.ov).length || arr(e.wait).length) : kind === "live" ? !!(arr(e.rep).length || arr(e.sh).length) : false;
+  return x;
+}
+function finishHay(x) {
+  const e = x.ref;
+  x.hay = [x.raw, x.kf, x.ex ? "" : x.tok.map(humanTok).join(" "), x.ld ? "leader" : "", x.d, x.cat, srcLabel(x.s), x.s, x.ctx,
+    x.tag, stripTags(x.n), e.rhs, e.sec, e.f].filter(Boolean).join(" ").toLowerCase();
+  x.dl = x.d.toLowerCase();
+  x.words = new Set(x.hay.split(/[^a-z0-9_]+/).filter(Boolean));
+}
+
+// index.txt lists some keys twice (the Visual-mode table repeats every text object, e.g. "as" with tag
+// v_as): fold an entry with the same keys and help tag into the first one, keeping its index as an alias.
+const BUILT_ALL = arr(D.builtins).map((e, i) => mk(e, "builtin", i));
+{
+  const first = new Map();
+  for (const x of BUILT_ALL) {
+    if (x.ex || !x.tag) continue;
+    const key = `${x.raw}\u0000${x.tag}`;
+    const p = first.get(key);
+    if (!p) { first.set(key, x); continue; }
+    x.dup = p;
+    p.m = [...new Set([...p.m, ...x.m])];
+    for (const f of ["ov", "wait"]) if (arr(x.ref[f]).length) p.ref[f] = [...arr(p.ref[f]), ...arr(x.ref[f])];
+    if (!p.n && x.n) p.n = x.n;
+    p.e = p.e || x.e;
+    p.changed = !!(arr(p.ref.ov).length || arr(p.ref.wait).length);
+  }
+}
+// "{char1}<BS>{char2}" (digraphs) starts with a typed character, so a map of <BS> doesn't replace it;
+// only a register or count may come before the keys a mapping can take over.
+for (const x of BUILT_ALL) {
+  if (x.ex || !x.tok.length || !isPh(x.tok[0]) || /^(\["x\]|\{count\})$/.test(x.tok[0])) continue;
+  x.noOv = true;
+  x.ref.ov = []; x.ref.wait = [];
+  x.changed = false;
+}
+const BUILT = BUILT_ALL.filter((x) => !x.dup);
+const LIVE = arr(D.live).map((e, i) => mk(e, "live", i));
+for (const x of LIVE) {
+  const r = arr(x.ref.rep).filter((o) => !(BUILT_ALL[o.b] && BUILT_ALL[o.b].noOv));
+  if (r.length !== arr(x.ref.rep).length) { x.ref.rep = r; x.changed = !!(r.length || arr(x.ref.sh).length); }
+}
+const CUR = arr(D.curated).filter((e) => e && e.k).map((e, i) => mk(e, "curated", i));
+const CMDS = arr(D.commands).filter((e) => e && e.k).map((e, i) => mk(e, "cmd", i));
+
+// mini.ai's own text objects (verified in mini.ai/lua/mini/ai.lua, H.builtin_textobjects): used only
+// when the curated data doesn't describe them, so the keyboard and composer still know about them.
+const MINI_AI = LIVE.some((x) => x.s === "mini.ai" && x.kb === "i" && x.m.includes("o"));
+// mini.ai's next/last suffix keys as configured (the config moves "next" to aN/iN so Neovim's an/in stay free).
+const aiSuffix = (word, dflt) => {
+  const e = LIVE.find((x) => x.s === "mini.ai" && /^i.$/.test(x.kb) && new RegExp(word, "i").test(x.d));
+  return e ? e.kb.slice(1) : dflt;
+};
+const AI_NEXT = aiSuffix("next", "n"), AI_LAST = aiSuffix("last", "l");
+const MINI_AI_IDS = {
+  a: "argument", f: "function call", q: "any quote \" ' `", b: "any bracket ( [ {", t: "tag", "?": "prompted left/right edges",
+  // "(" "[" "{" "<": inner part trims edge whitespace; ")" "]" "}" ">" keep it (mini.ai's builtin table).
+  "(": "( ) · i trims spaces", ")": "( ) block", "[": "[ ] · i trims spaces", "]": "[ ] block", "{": "{ } · i trims spaces", "}": "{ } block",
+  "<": "< > · i trims spaces", ">": "< > block", '"': "double-quoted string", "'": "single-quoted string", "`": "backtick string",
+};
+if (MINI_AI) {
+  const have = new Set(CUR.filter((x) => x.s === "mini.ai").map((x) => x.kb));
+  for (const id of ["a", "f", "q", "?"]) {
+    for (const ai of ["i", "a"]) {
+      if (have.has(ai + id)) continue;
+      const x = mk({ k: ai + id, m: ["o", "x"], s: "mini.ai", cat: "Text object", h: "MiniAi-builtin-textobjects",
+        d: `${ai === "i" ? "Inside" : "Around"} ${MINI_AI_IDS[id]} (mini.ai)` }, "curated", CUR.length);
+      x.synthetic = true;
+      CUR.push(x);
+    }
+  }
+}
+const ALL = [...BUILT, ...LIVE, ...CUR, ...CMDS];
+ALL.forEach((x, i) => { x.id = i; finishHay(x); });
+const liveAt = (j) => LIVE[j];
+const builtAt = (i) => { const x = BUILT_ALL[i]; return x ? x.dup || x : undefined; };
+
+// A printable key mapped in Select mode: snippet placeholders are Select mode, so typing that key
+// over a placeholder runs the map instead of replacing the placeholder text.
+const selectTrap = (x) => x.kind === "live" && x.m.includes("s") && !x.ctx && x.tok.length > 0 && (x.tok[0].length === 1 || x.tok[0] === "<Space>");
+
+// Leader groups: "<leader>f" → { name, cat }
+const GROUPS = new Map();
+for (const [k, v] of Object.entries(obj(D.groups))) {
+  const g = obj(v);
+  GROUPS.set(canonKeys(k).join(""), { k, name: String(g.name || ""), cat: g.cat || null });
+}
+
+// ---- Header -----------------------------------------------------------------------------
+{
+  const ver = String(META.version || "").replace(/\+.*$/, "");
+  $("eyebrow").textContent = `Rootiest Neovim · NVIM ${ver || "?"} · generated ${META.date || "?"}`;
+  const builtinKeys = BUILT.filter((x) => !x.ex).length;
+  const exCount = BUILT.filter((x) => x.ex).length;
+  const mine = LIVE.filter((x) => x.sk === "config").length;
+  const plug = LIVE.filter((x) => x.sk === "plugin").length;
+  const nv = LIVE.filter((x) => x.sk === "neovim").length;
+  const changed = BUILT.filter((x) => arr(x.ref.ov).length).length;
+  const leaderCap = LEADER === " " ? `<kbd>Space</kbd>` : `<kbd>${esc(LEADER)}</kbd>`;
+  const localCap = LOCAL === " " ? `<kbd>Space</kbd>` : `<kbd>${esc(LOCAL)}</kbd>`;
+  const st = [
+    [leaderCap, "Leader"], [localCap, "Local leader"],
+    [builtinKeys.toLocaleString(), `Built-in keys (+ ${exCount.toLocaleString()} Ex commands)`],
+    [mine.toLocaleString(), "Your maps"], [plug.toLocaleString(), "Plugin maps"], [nv.toLocaleString(), "Neovim default maps"],
+    [changed.toLocaleString(), "Built-ins changed by the config"],
+  ];
+  $("stats").innerHTML = st.map(([v, l]) => `<li><b>${v}</b><span>${esc(l)}</span></li>`).join("");
+}
+
+// ---- Rendering helpers --------------------------------------------------------------------
+/** One token as keycap HTML. The first token of a leader map renders as a distinct Leader cap. */
+function capHTML(t, first, x) {
+  if (t === '["x]') return `<span class="reg" title="Optional register: type &quot; and a register name first">"x</span>`;
+  if (isPh(t)) return `<span class="ph" title="Placeholder">${esc(t)}</span>`;
+  if (first && x && x.ld && t === LEADER_TOK) return `<kbd class="lead" title="Leader">${LEADER === " " ? "Space" : esc(LEADER)}<small>leader</small></kbd>`;
+  if (first && x && x.lld && t === LOCAL_TOK) return `<kbd class="lead" title="Local leader">${LOCAL === " " ? "Space" : esc(LOCAL)}<small>local</small></kbd>`;
+  const { mods, key, plain } = splitTok(t);
+  if (plain) return `<kbd>${t === " " ? "Space" : esc(t)}</kbd>`;
+  const label = NICE[key] || key;
+  const cap = `<kbd${label.length > 1 ? ' class="named"' : ""} title="${esc(t)}">${esc(label)}</kbd>`;
+  if (!mods.length) return cap;
+  return `<span class="combo" title="${esc(t)}">${mods.map((m) => `<kbd class="mod">${esc(MODN[m] || m)}</kbd>`).join("")}${cap}</span>`;
+}
+function exHTML(raw) {
+  const m = raw.match(/^([^[]*)(\[[^\]]*\])?(.*)$/);
+  return `<code class="exk">${esc(m[1])}${m[2] ? `<span class="opt">${esc(m[2])}</span>` : ""}${esc(m[3])}</code>`;
+}
+function keysHTML(x, toks) {
+  if (x && x.ex) return `<span class="keys">${exHTML(x.raw)}</span>`;
+  // Curated alternatives written as "K / gx": one cap group per alternative.
+  if (!toks && x.raw && / \/ /.test(x.raw)) {
+    const alts = x.raw.split(/ \/ /).map((s) => s.trim()).filter(Boolean);
+    return `<span class="keys" aria-label="${esc(x.raw)}">${alts.map((a) => canonKeys(a).map((t, i) => capHTML(t, i === 0, x)).join("")).join(`<span class="alt" aria-hidden="true">/</span>`)}</span>`;
+  }
+  toks = toks || x.tok;
+  const aria = esc(toks.join(""));
+  return `<span class="keys" aria-label="${aria}">${toks.map((t, i) => capHTML(t, i === 0, x)).join("")}</span>`;
+}
+const tokCaps = (toks, opts = {}) => keysHTML({ tok: toks, ld: !!opts.ld, lld: false }, toks);
+function fileLine(x) {
+  const e = x.ref;
+  if (!e.f) return "";
+  const path = x.sk === "config" ? e.f : x.sk === "neovim" ? `$VIMRUNTIME/${e.f}` : `${x.s}/${e.f}`;
+  return `<span title="Defined in">${esc(path)}${e.l ? ":" + esc(e.l) : ""}</span>`;
+}
+function helpHTML(x) {
+  if (!x.tag) return "";
+  const link = x.hfile ? `<a href="${esc(helpURL(x.hfile, x.tag))}" target="_blank" rel="noopener">:h ${esc(x.tag)}</a>` : `<span class="fl">:h ${esc(x.tag)}</span>`;
+  return `${link} <button type="button" class="copy" data-copy=":h ${esc(x.tag)}" aria-label="Copy :h ${esc(x.tag)}">copy</button>`;
+}
+const groupBy = (list, f) => { const m = new Map(); for (const v of list) { const k = f(v); if (!m.has(k)) m.set(k, []); m.get(k).push(v); } return m; };
+const modeList = (list) => [...new Set(list.map((o) => o.m))];
+
+/** Warning chips: replaced, replaces, unreachable, waits, nowait, Select-mode trap. */
+function flagsHTML(x, onlyMode) {
+  const e = x.ref, out = [];
+  const fit = (o) => !onlyMode || o.m === onlyMode;
+  if (x.kind === "builtin") {
+    for (const [j, list] of groupBy(arr(e.ov).filter(fit), (o) => o.by)) {
+      const L = liveAt(j);
+      if (!L) continue;
+      out.push(`<span class="flag over">Replaced${onlyMode ? "" : ` in ${esc(modeNames(modeList(list)))}`} by <b>${esc(L.d)}</b> · ${esc(srcLabel(L.s))}${L.ctx ? ` (${esc(L.ctx)})` : ""}</span>`);
+    }
+    for (const w of arr(e.wait).filter(fit)) {
+      const ext = arr(w.ext);
+      out.push(`<span class="flag" title="A longer mapping starts with this key, so Neovim waits 'timeoutlen' before running it">Waits ${esc(TIMEOUT)} ms${onlyMode ? "" : ` in ${esc(modeNames([w.m]))}`}: ${ext.map((k) => `<code>${esc(k)}</code>`).join(" ")}${w.n > ext.length ? ` +${w.n - ext.length} more` : ""}</span>`);
+    }
+  } else if (x.kind === "live") {
+    const seen = new Set();
+    for (const [i, list] of groupBy(arr(e.rep).filter(fit), (o) => o.b)) {
+      const B = builtAt(i);
+      if (!B || seen.has(B.d)) continue;
+      seen.add(B.d);
+      out.push(`<span class="flag rep">Replaces built-in${onlyMode ? "" : ` (${esc(modeList(list).join(""))})`}: <s>${esc(B.d)}</s></span>`);
+    }
+    for (const s of arr(e.sh).filter(fit)) {
+      const L = liveAt(s.by);
+      if (L) out.push(`<span class="flag dead">Unreachable: <code>${esc(L.raw)}</code> (${esc(L.d)}) is <code>nowait</code> and fires first</span>`);
+    }
+    if (e.nw) out.push(`<span class="flag info">nowait</span>`);
+    if (selectTrap(x)) out.push(`<span class="flag">Also in Select mode: typing it over a snippet placeholder runs this map</span>`);
+  }
+  return out.join("");
+}
+
+// ---- Short labels for keycaps --------------------------------------------------------------
+// entry.sl wins; then these by help tag (meanings from index.txt); else a label derived from the description.
+const SL = {
+  "h": "←", "j": "↓", "k": "↑", "l": "→", "w": "word →", "W": "WORD →", "b": "← word", "B": "← WORD", "e": "word end",
+  "E": "WORD end", "0": "line start", "^": "first char", "$": "line end", "gg": "first line", "G": "last line",
+  "f": "find →", "F": "← find", "t": "till →", "T": "← till", ";": "repeat f/t", ",": "f/t back", "n": "next match",
+  "N": "prev match", "star": "word →", "#": "← word", "%": "match pair", "{": "← para", "}": "para →", "(": "← sentence",
+  ")": "sentence →", "H": "screen top", "M": "screen mid", "L": "screen bottom", "i": "insert", "a": "append",
+  "I": "insert line", "A": "append line", "o": "open below", "O": "open above", "x": "delete char", "X": "delete ←",
+  "d": "delete", "c": "change", "y": "yank", "p": "put after", "P": "put before", "u": "undo", "CTRL-R": "redo",
+  "U": "undo line", "r": "replace char", "R": "replace mode", "s": "subst char", "S": "subst line", "C": "change to end",
+  "D": "delete to end", "Y": "yank line", "J": "join", "K": "keyword help", "v": "visual", "V": "visual line",
+  "CTRL-V": "visual block", ".": "repeat", "q": "record", "@": "run macro", "Q": "replay macro", "m": "set mark",
+  "'": "mark line", "`": "mark", "/": "search →", "?": "← search", ":": "cmdline", "~": "toggle case", ">": "indent",
+  "<": "dedent", "=": "reindent", "!": "filter", "&": "repeat :s", "quote": "register", "g": "g prefix", "z": "z prefix",
+  "[": "[ prefix", "]": "] prefix", "bar": "column", "_": "first char ↓", "-": "↑ line start", "+": "↓ line start",
+  "<CR>": "↓ line start", "count": "count", "<Space>": "→", "CTRL-A": "increment", "CTRL-X": "decrement",
+  "CTRL-O": "jump back", "<Tab>": "jump fwd", "CTRL-I": "jump fwd", "CTRL-D": "½ page ↓", "CTRL-U": "½ page ↑",
+  "CTRL-F": "page ↓", "CTRL-B": "page ↑", "CTRL-E": "scroll ↓", "CTRL-Y": "scroll ↑", "CTRL-G": "file info",
+  "CTRL-L": "redraw", "CTRL-]": "tag jump", "CTRL-T": "tag back", "CTRL-^": "alt file", "CTRL-W": "window…",
+  "CTRL-Z": "suspend", "CTRL-C": "interrupt", "CTRL-N": "↓", "CTRL-P": "↑", "CTRL-H": "←", "CTRL-J": "↓",
+  "CTRL-M": "↓ line start", "<BS>": "←", "ZZ": "save & close", "ZQ": "quit no save", "<Esc>": "cancel",
+  "<Del>": "delete char", "<Insert>": "insert", "<Home>": "line start", "<End>": "line end", "<PageUp>": "page ↑",
+  "<PageDown>": "page ↓", "<Up>": "↑", "<Down>": "↓", "<Left>": "←", "<Right>": "→", "<F1>": "help", "<Help>": "help",
+  "<S-Up>": "page ↑", "<S-Down>": "page ↓", "<S-Left>": "← word", "<S-Right>": "word →", "<C-Left>": "← word",
+  "<C-Right>": "word →", "<C-Home>": "first line", "<C-End>": "last line", "<S-CR>": "page ↓",
+  // g…
+  "g~": "toggle case", "gu": "lowercase", "gU": "uppercase", "gq": "format", "gw": "format, stay", "gJ": "join raw",
+  "gi": "insert at last", "gI": "insert col 1", "gv": "reselect", "gn": "select match", "gN": "← select match",
+  "gp": "put after+", "gP": "put before+", "g;": "older change", "g,": "newer change", "gf": "open file",
+  "gF": "file:line", "gd": "local def", "gD": "global def", "gx": "open URL", "gstar": "word →*", "g#": "← word*",
+  "gj": "↓ display", "gk": "↑ display", "g0": "display start", "g$": "display end", "g_": "last char", "gm": "mid screen",
+  "gM": "mid line", "ge": "← word end", "gE": "← WORD end", "ga": "char code", "g8": "UTF-8 bytes", "g<": "last output",
+  "g&": "repeat :s all", "g?": "rot13", "gR": "virt replace", "gr": "virt repl char", "gs": "sleep", "gt": "next tab",
+  "gT": "prev tab", "g<Tab>": "last tab", "go": "byte N", "gh": "select mode", "gH": "select line", "g@": "operatorfunc",
+  "g+": "newer state", "g-": "older state", "g]": "tselect", "g_CTRL-]": "tjump", "gV": "no reselect", "g^": "display first",
+  "g<Home>": "display start", "g<End>": "display end", "g'": "mark (no jump)", "g`": "mark (no jump)", "g?g?": "rot13 line",
+  "g_CTRL-A": "dump memory", "g_CTRL-G": "word count", "g_CTRL-H": "select block", "gQ": "Ex mode", "g<Down>": "↓ display", "g<Up>": "↑ display",
+  // z…
+  "zz": "center", "zt": "top", "zb": "bottom", "z<CR>": "top, BOL", "z.": "center, BOL", "z-": "bottom, BOL",
+  "za": "toggle fold", "zA": "toggle deep", "zc": "close fold", "zC": "close deep", "zo": "open fold", "zO": "open deep",
+  "zR": "open all", "zM": "close all", "zr": "fold less", "zm": "fold more", "zf": "create fold", "zF": "fold N lines",
+  "zd": "delete fold", "zD": "delete deep", "zE": "erase folds", "zj": "next fold", "zk": "prev fold", "zv": "show cursor",
+  "zx": "update folds", "zX": "reapply", "zn": "folds off", "zN": "folds on", "zi": "toggle folds", "zh": "scroll ←",
+  "zl": "scroll →", "zH": "½ screen ←", "zL": "½ screen →", "zs": "scroll start", "ze": "scroll end", "zg": "good word",
+  "zG": "good (temp)", "zw": "bad word", "zW": "bad (temp)", "z=": "spell fix", "zug": "undo zg", "zp": "paste block",
+  "zP": "paste block ←", "zy": "yank block", "z+": "page ↓", "z^": "page ↑", "z<Left>": "scroll ←", "z<Right>": "scroll →",
+  // [ ]
+  "[(": "← unmatched (", "])": "unmatched ) →", "[{": "← unmatched {", "]}": "unmatched } →", "[[": "← section",
+  "]]": "section →", "[]": "← SECTION", "][": "SECTION →", "[m": "← method", "]m": "method →", "[M": "← method end",
+  "]M": "method end →", "[s": "← misspelled", "]s": "misspelled →", "[c": "← change", "]c": "change →", "[z": "fold start",
+  "]z": "fold end", "[p": "put above, indent", "]p": "put below, indent", "['": "← mark line", "]'": "mark line →",
+  "[`": "← mark", "]`": "mark →", "[/": "← comment", "]/": "comment →", "[#": "← #if", "]#": "#endif →",
+  "[star": "← comment", "]star": "comment →", "[i": "show def", "]i": "show def", "[I": "list matches", "]I": "list matches",
+  "[d": "show #define", "]d": "show #define", "[D": "list #defines", "]D": "list #defines", "[f": "open file", "]f": "open file",
+  "[P": "put, indent", "]P": "put, indent", "[_CTRL-I": "jump to match", "]_CTRL-I": "jump to match",
+  "[_CTRL-D": "jump #define", "]_CTRL-D": "jump #define",
+  // CTRL-W …
+  "CTRL-W_s": "split", "CTRL-W_S": "split", "CTRL-W_v": "vsplit", "CTRL-W_n": "new", "CTRL-W_q": "quit", "CTRL-W_c": "close",
+  "CTRL-W_o": "only", "CTRL-W_w": "next", "CTRL-W_W": "previous", "CTRL-W_p": "last used", "CTRL-W_h": "← window",
+  "CTRL-W_j": "↓ window", "CTRL-W_k": "↑ window", "CTRL-W_l": "→ window", "CTRL-W_t": "top window", "CTRL-W_b": "bottom window",
+  "CTRL-W_H": "move far ←", "CTRL-W_J": "move bottom", "CTRL-W_K": "move top", "CTRL-W_L": "move far →", "CTRL-W_r": "rotate ↓",
+  "CTRL-W_R": "rotate ↑", "CTRL-W_x": "exchange", "CTRL-W_=": "equalize", "CTRL-W_+": "taller", "CTRL-W_-": "shorter",
+  "CTRL-W_<": "narrower", "CTRL-W_>": "wider", "CTRL-W__": "max height", "CTRL-W_bar": "max width", "CTRL-W_T": "to new tab",
+  "CTRL-W_f": "split file", "CTRL-W_F": "split file:line", "CTRL-W_]": "split tag", "CTRL-W_^": "split alt",
+  "CTRL-W_}": "preview tag", "CTRL-W_z": "close preview", "CTRL-W_P": "to preview", "CTRL-W_d": "split def",
+  "CTRL-W_i": "split decl", "CTRL-W_g": "g… (tabs)", "CTRL-W_gf": "file in tab", "CTRL-W_gF": "file:line tab",
+  "CTRL-W_gt": "next tab", "CTRL-W_gT": "prev tab", "CTRL-W_e": "", "CTRL-W_<Up>": "↑ window", "CTRL-W_<Down>": "↓ window",
+  "CTRL-W_<Left>": "← window", "CTRL-W_<Right>": "→ window",
+  // Visual
+  "v_o": "other end", "v_O": "other corner", "v_d": "delete", "v_x": "delete", "v_c": "change", "v_s": "change",
+  "v_y": "yank", "v_p": "replace", "v_P": "replace, keep", "v_r": "replace chars", "v_u": "lowercase", "v_U": "uppercase",
+  "v_~": "toggle case", "v_>": "indent", "v_<": "dedent", "v_=": "reindent", "v_J": "join", "v_gJ": "join raw",
+  "v_:": "cmd on range", "v_b_I": "block insert", "v_b_A": "block append", "v_C": "change lines", "v_S": "change lines",
+  "v_R": "change lines", "v_X": "delete lines", "v_D": "delete lines", "v_Y": "yank lines", "v_v": "charwise",
+  "v_V": "linewise", "v_CTRL-V": "blockwise", "v_gv": "swap previous", "v_<Esc>": "exit", "v_CTRL-C": "exit",
+  "v_CTRL-A": "increment", "v_CTRL-X": "decrement", "v_g_CTRL-A": "sequence +", "v_g_CTRL-X": "sequence −", "v_K": "keyword help",
+  "v_!": "filter", "v_gq": "format", "v_CTRL-G": "select mode", "v_CTRL-]": "tag jump", "v_CTRL-O": "visual once",
+  // Text objects
+  "v_iw": "word", "v_aw": "word + space", "v_iW": "WORD", "v_aW": "WORD + space", "v_is": "sentence", "v_as": "sentence +",
+  "v_ip": "paragraph", "v_ap": "paragraph +", "v_i(": "( ) inside", "v_a(": "( ) block", "v_i)": "( ) inside",
+  "v_a)": "( ) block", "v_ib": "( ) inside", "v_ab": "( ) block", "v_i[": "[ ] inside", "v_a[": "[ ] block",
+  "v_i]": "[ ] inside", "v_a]": "[ ] block", "v_i{": "{ } inside", "v_a{": "{ } block", "v_i}": "{ } inside",
+  "v_a}": "{ } block", "v_iB": "{ } inside", "v_aB": "{ } block", "v_i<": "< > inside", "v_a<": "< > block",
+  "v_i>": "< > inside", "v_a>": "< > block", "v_it": "tag inside", "v_at": "tag block", "v_iquote": "\" \" inside",
+  "v_aquote": "\" \" string", "v_i'": "' ' inside", "v_a'": "' ' string", "v_i`": "` ` inside", "v_a`": "` ` string",
+  // Insert CTRL-…
+  "i_CTRL-W": "delete word", "i_CTRL-U": "delete line", "i_CTRL-H": "bksp", "i_CTRL-_": "toggle revins", "i_CTRL-T": "indent", "i_CTRL-D": "dedent",
+  "i_CTRL-R": "insert register", "i_CTRL-O": "one command", "i_CTRL-N": "complete ↓", "i_CTRL-P": "complete ↑",
+  "i_CTRL-X": "complete…", "i_CTRL-E": "char below", "i_CTRL-Y": "char above", "i_CTRL-A": "insert last",
+  "i_CTRL-@": "last + exit", "i_CTRL-V": "literal", "i_CTRL-K": "digraph", "i_CTRL-G": "undo/move…", "i_CTRL-]": "abbreviate",
+  "i_CTRL-C": "quit insert", "i_CTRL-[": "Esc", "i_CTRL-J": "new line", "i_CTRL-M": "new line", "i_CTRL-I": "Tab",
+  "i_CTRL-Q": "literal", "i_CTRL-^": "toggle lmap", "i_CTRL-Z": "", "i_<Esc>": "Normal mode", "i_<CR>": "new line",
+  "i_<Tab>": "Tab", "i_<BS>": "backspace", "i_<Del>": "delete →", "i_<Up>": "↑", "i_<Down>": "↓", "i_<Left>": "←",
+  "i_<Right>": "→", "i_<Home>": "line start", "i_<End>": "line end", "i_<PageUp>": "page ↑", "i_<PageDown>": "page ↓",
+  "i_<Insert>": "toggle replace", "i_<F1>": "help", "i_<NL>": "new line", "i_CTRL-B": "", "i_CTRL-L": "",
+  "i_<C-Left>": "← word", "i_<C-Right>": "word →", "i_<S-Left>": "← word", "i_<S-Right>": "word →",
+  "i_<C-Home>": "file start", "i_<C-End>": "file end", "i_<S-Up>": "page ↑", "i_<S-Down>": "page ↓",
+  "o_v": "charwise", "o_V": "linewise", "o_CTRL-V": "blockwise",
+};
+const STOP = new Set(["the", "a", "an", "to", "of", "n", "nth", "and", "or", "with", "in", "for", "on", "at", "is", "it", "go",
+  "cursor", "under", "current", "from", "that", "this", "by", "be", "lines", "times", "same", "as", "into", "when", "if", "its", "vim.lsp.buf", "inside", "around", "inner", "…"]);
+const UNHELPFUL = /^\((lua function|disabled)\)$|^runs |^:help /i;
+/** A 1–2 word label from a description: "Toggle Undotree" → "Toggle Undotree", "same as "j"" → "= j". */
+function deriveLabel(d) {
+  d = String(d || "").trim();
+  if (!d) return "";
+  let m = d.match(/^same as\s+["`|]?([^"`|]+?)["`|]?(\s|$)/i);
+  if (m) return "= " + m[1].trim();
+  m = d.match(/^vim\.lsp\.buf\.([a-z_]+)\(\)/);
+  if (m) return m[1].replace(/_/g, " ");
+  m = d.match(/^:(\S+)/);
+  if (m) return ":" + m[1];
+  const words = d.replace(/\([^)]*\)|\[[^\]]*\]/g, " ").replace(/["'`|,.:;]/g, " ").split(/\s+/)
+    .filter((w) => w && !STOP.has(w.toLowerCase()));
+  // Sentence-case like the hand-written labels ("Clear search" → "clear search"), keeping acronyms (LSP).
+  return words.slice(0, 2).map((w) => (/^[A-Z][a-z]/.test(w) ? w[0].toLowerCase() + w.slice(1) : w)).join(" ");
+}
+function labelOf(x) {
+  if (!x) return "";
+  if (x.sl) return x.sl;
+  if (x.kind === "builtin" && x.tag && SL[x.tag] !== undefined && SL[x.tag] !== "") return SL[x.tag];
+  if (x.kind === "live" && UNHELPFUL.test(x.d)) {
+    // A Lua callback without a description: use the meaning of the built-in it replaces.
+    const rep = arr(x.ref.rep).map((r) => builtAt(r.b)).find(Boolean);
+    if (rep) return labelOf(rep);
+    if (/^\(disabled\)$/.test(x.d)) return "disabled";
+  }
+  return deriveLabel(x.d);
+}
+
+// ---- Lookup by key sequence -------------------------------------------------------------------
+// IDX[mode] maps the first base token to every entry that can be typed in that mode.
+const IDX = {};
+for (const x of ALL) {
+  if (x.ex || !x.btok.length) continue;
+  for (const m of new Set(x.m.flatMap((m) => (m === "v" ? ["x", "s"] : [m])))) {
+    const map = IDX[m] || (IDX[m] = new Map());
+    const k = x.btok[0];
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(x);
+  }
+}
+const KIND_RANK = { live: 0, curated: 1, builtin: 2, cmd: 3 };
+/**
+ * Everything bound to `seq` in `mode`:
+ *   exact   – entries whose keys are exactly seq ("w", "<Space>ff")
+ *   belongs – seq followed only by placeholders (f{char}, ["x]d{motion})
+ *   kids    – longer sequences that start with seq (prefix maps)
+ * primary is what actually happens: exact live maps win over built-ins.
+ */
+function lookup(mode, seq) {
+  const cand = (IDX[mode] && IDX[mode].get(seq[0])) || [];
+  const exact = [], belongs = [], kids = [];
+  for (const x of cand) {
+    const t = x.btok;
+    if (t.length < seq.length) continue;
+    let ok = true;
+    for (let i = 1; i < seq.length; i++) if (t[i] !== seq[i]) { ok = false; break; }
+    if (!ok) continue;
+    if (t.length === seq.length) exact.push(x);
+    // "f{char}", "/{pattern}<CR>": the key itself, waiting for an argument.
+    else if (isPh(t[seq.length])) belongs.push(x);
+    else kids.push(x);
+  }
+  const rank = (a, b) => (a.ctx ? 1 : 0) - (b.ctx ? 1 : 0) || KIND_RANK[a.kind] - KIND_RANK[b.kind];
+  exact.sort(rank); belongs.sort(rank);
+  const main = [...exact, ...belongs];
+  let primary = main.find((x) => !x.ctx && x.kind === "live") || main.find((x) => !x.ctx && x.kind === "curated")
+    || exact.find((x) => !x.ctx) || belongs.find((x) => !x.ctx) || null;
+  // A disabled prefix key (mini.surround's "s") is really just a group of longer keys.
+  // Keys that only exist in some context (a plugin window, a filetype) never label the cap.
+  const mainKids = kids.filter((x) => !x.ctx);
+  // The leader key itself: its built-in meaning (Space = "l") is not what anyone presses it for.
+  const isLeader = seq.length === 1 && seq[0] === LEADER_TOK && mainKids.some((x) => x.ld);
+  const asGroup = mainKids.length && (isLeader || !primary || (primary.kind === "live" && /^\(disabled\)$/.test(primary.d)));
+  return { mode, seq, exact, belongs, kids, mainKids, primary, asGroup: !!asGroup, isLeader };
+}
+function groupName(seq, kids) {
+  if (seq.length === 1 && seq[0] === LEADER_TOK && kids.some((x) => x.ld)) return "leader…";
+  const g = GROUPS.get(seq.join(""));
+  if (g && g.name) return g.name.replace(/^\+/, "");
+  const srcs = new Set(kids.filter((k) => !k.ctx).map((k) => k.s));
+  if (srcs.size === 1) {
+    const s = [...srcs][0];
+    if (s !== "builtin" && s !== "config" && s !== "neovim") return s.replace(/^mini\./, "").replace(/[.-]nvim$/, "") + "…";
+  }
+  const uniq = [...new Set(kids.map((k) => k.btok.slice(seq.length).map(glyphTok).join("")))];
+  if (uniq.length === 1) return "→ " + uniq[0];
+  return `${glyphTok(seq[seq.length - 1])} prefix`;
+}
+
+// ---- What's different -------------------------------------------------------------------------
+{
+  const notes = arr(D.notes);
+  const cards = notes.map((nt) => {
+    nt = obj(nt);
+    const kind = ["change", "warn", "tip"].includes(nt.kind) ? nt.kind : "change";
+    const kindLabel = { change: "changed", warn: "watch out", tip: "tip" }[kind];
+    const rows = arr(nt.rows).map((r) => `<dt>${arr(r)[0] ?? ""}</dt><dd>${arr(r)[1] ?? ""}</dd>`).join("");
+    // Note fields (lead, rows, note) are HTML by design; only the title is escaped.
+    return { kind, html: `<div class="${kind}"><b class="t">${esc(nt.title || "")}<em>${kindLabel}</em></b>${nt.lead ? `<p class="lead">${nt.lead}</p>` : ""}${rows ? `<dl>${rows}</dl>` : ""}${nt.note ? `<p>${nt.note}</p>` : ""}</div>` };
+  });
+  // Kind chips + a "show all" fold so 30-odd cards don't bury the rest of the page.
+  const NOTE_FOLD = 9;
+  const NK = { all: "All", warn: "Watch out", change: "Changed", tip: "Tips" };
+  let nkind = "all", nall = false;
+  function drawNotes() {
+    const list = cards.filter((c) => nkind === "all" || c.kind === nkind);
+    const show = nall ? list : list.slice(0, NOTE_FOLD);
+    $("notecards").innerHTML = show.map((c) => c.html).join("");
+    $("notemore").hidden = list.length <= NOTE_FOLD;
+    $("notemore").textContent = nall ? "Show fewer cards" : `Show all ${list.length} cards`;
+    $("notemore").setAttribute("aria-expanded", String(nall));
+    for (const b of $("notechips").children) b.setAttribute("aria-pressed", String(b.dataset.v === nkind));
+  }
+  $("notechips").innerHTML = Object.entries(NK).map(([k, l]) => {
+    const n = k === "all" ? cards.length : cards.filter((c) => c.kind === k).length;
+    return n ? `<button type="button" class="chip" data-v="${k}" aria-pressed="${k === nkind}">${l}<span>${n}</span></button>` : "";
+  }).join("");
+  $("notechips").addEventListener("click", (e) => { const b = e.target.closest(".chip"); if (b) { nkind = b.dataset.v; drawNotes(); } });
+  $("notemore").addEventListener("click", () => { const was = nall; nall = !nall; drawNotes(); if (was) scrollToEl($("notechips")); });
+  drawNotes();
+  if (!cards.length) { $("notecards").hidden = true; $("notechips").hidden = true; }
+
+  const lists = [];
+  // 1. Built-ins replaced by a mapping, grouped by who replaced them.
+  const pairs = new Map(); // "b|live" → {B, L, modes}
+  for (const B of BUILT) {
+    for (const o of arr(B.ref.ov)) {
+      const L = liveAt(o.by);
+      if (!L) continue;
+      const key = `${B.kf}|${B.d}|${o.by}`;
+      if (!pairs.has(key)) pairs.set(key, { B, L, modes: new Set() });
+      pairs.get(key).modes.add(o.m);
+    }
+  }
+  const bySrc = groupBy([...pairs.values()], (p) => p.L.s);
+  const srcOrder = [...bySrc.keys()].sort((a, b) => ["config", "plugin", "neovim", "builtin"].indexOf(srcKind(a)) - ["config", "plugin", "neovim", "builtin"].indexOf(srcKind(b)) || a.localeCompare(b));
+  if (pairs.size) {
+    lists.push(`<details class="dl"><summary><h3>Built-ins replaced by a mapping <span class="count">${pairs.size}</span></h3></summary>
+      <p>The original Vim meaning (struck through) and what the key does now.</p>
+      ${srcOrder.map((s) => `<div class="dgroup"><h4>${srcBadge(s)} <span>${bySrc.get(s).length}</span></h4>${bySrc.get(s).map(({ B, L, modes }) => `
+        <div class="drow"><div>${keysHTML(B)}</div><div><span class="was">${esc(B.d)}</span><span class="arrow" aria-hidden="true">→</span><b>${esc(L.d)}</b>
+          <div class="meta">${modeBadges([...modes])}${L.ctx ? `<span class="ctx">${esc(L.ctx)}</span>` : ""}${fileLine(L)}</div></div></div>`).join("")}</div>`).join("")}
+    </details>`);
+  }
+  // 2. Mappings made unreachable by a shorter nowait map.
+  const dead = LIVE.filter((x) => arr(x.ref.sh).length);
+  if (dead.length) {
+    lists.push(`<details class="dl"><summary><h3>Mappings made unreachable <span class="count">${dead.length}</span></h3></summary>
+      <p>A shorter <code>nowait</code> map fires as soon as its keys are typed, so these longer maps can never be reached.</p>
+      <div class="dgroup">${dead.map((x) => { const by = arr(x.ref.sh).map((s) => liveAt(s.by)).filter(Boolean)[0]; return `
+        <div class="drow"><div>${keysHTML(x)}</div><div><span class="was">${esc(x.d)}</span> ${srcBadge(x.s)}
+          <div class="meta">${by ? `blocked by ${keysHTML(by)} ${esc(by.d)} · ${fileLine(by)}` : ""}</div></div></div>`; }).join("")}</div></details>`);
+  }
+  // 3. Complete built-ins that now wait 'timeoutlen' because a mapping extends them.
+  const waits = BUILT.filter((x) => arr(x.ref.wait).length);
+  if (waits.length) {
+    lists.push(`<details class="dl"><summary><h3>Keys that now wait ${esc(TIMEOUT)} ms <span class="count">${waits.length}</span></h3></summary>
+      <p>These built-ins still work, but because longer mappings start with the same keys Neovim pauses for <code>'timeoutlen'</code> (${esc(TIMEOUT)} ms) before running them. Type the next key sooner to pick a longer map.</p>
+      <div class="dgroup">${waits.map((x) => `
+        <div class="drow"><div>${keysHTML(x)}</div><div>${esc(x.d)}<div class="meta">${arr(x.ref.wait).map((w) =>
+          `<span>${modeBadges([w.m])} ${arr(w.ext).map((k) => `<code>${esc(k)}</code>`).join(" ")}${w.n > arr(w.ext).length ? ` +${w.n - arr(w.ext).length} more` : ""}</span>`).join("")}</div></div></div>`).join("")}</div></details>`);
+  }
+  // 4. Printable keys mapped in Select mode (snippet placeholders are Select mode).
+  const traps = LIVE.filter(selectTrap);
+  if (traps.length) {
+    lists.push(`<details class="dl"><summary><h3>Printable keys mapped in Select mode <span class="count">${traps.length}</span></h3></summary>
+      <p>Snippet placeholders are selected in Select mode, where typing a printable key should replace the placeholder. These maps (set with mode <code>"v"</code>, which includes Select) run instead${traps.some((x) => x.tok[0] === "<Space>") ? `, and a typed <kbd>Space</kbd> waits ${esc(TIMEOUT)} ms for the leader maps` : ""}. Mapping <code>"x"</code> instead of <code>"v"</code> avoids this.</p>
+      <div class="dgroup">${traps.map((x) => `
+        <div class="drow"><div>${keysHTML(x)}</div><div>${esc(x.d)} ${srcBadge(x.s)}<div class="meta">${modeBadges(x.m)}${fileLine(x)}</div></div></div>`).join("")}</div></details>`);
+  }
+  $("difflists").innerHTML = lists.join("") || `<p class="muted">No differences detected.</p>`;
+}
+
+// ---- Keyboard ---------------------------------------------------------------------------------
+// Two physical boards in key units (1u = one letter key): a standard US ANSI tenkeyless board and
+// the full-size QMK board (Keychron Q5 Max) from the QMK cheatsheet. Letters are QWERTY on both, so a
+// key does the same Vim thing on either; only where it sits (and which keys exist) changes.
+// Printable keys carry base/shifted characters, named keys a Vim key name, modifier keys are toggles.
+const pair = (b, s, w) => ({ b, s, w });
+const letters = (s) => s.split("").map((c) => pair(c, c.toUpperCase()));
+const fk = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => ({ n: "F" + (a + i) }));
+const numrow = [pair("`", "~"), pair("1", "!"), pair("2", "@"), pair("3", "#"), pair("4", "$"), pair("5", "%"), pair("6", "^"),
+  pair("7", "&"), pair("8", "*"), pair("9", "("), pair("0", ")"), pair("-", "_"), pair("=", "+")];
+const kp = (n, label, h) => ({ n, label, h });
+function buildBoard(w, h, rows) {
+  const keys = [];
+  for (const [y, x0, items] of rows) {
+    let x = x0;
+    for (const it of items) {
+      const kw = it.w || 1;
+      if (!it.gap) keys.push({ ...it, x, y, w: kw, h: it.h || 1 });
+      x += kw;
+    }
+  }
+  return { w, h, keys };
+}
+const BOARDS = {
+  standard: { name: "Standard", ...buildBoard(18.25, 6.25, [
+    [0, 0, [{ n: "Esc" }, { gap: 1 }, ...fk(1, 4), { gap: 1, w: 0.5 }, ...fk(5, 8), { gap: 1, w: 0.5 }, ...fk(9, 12)]],
+    [1.25, 0, [...numrow, { n: "BS", w: 2, label: "Backspace" }]],
+    [1.25, 15.25, [{ n: "Insert", label: "Ins" }, { n: "Home" }, { n: "PageUp", label: "PgUp" }]],
+    [2.25, 0, [{ n: "Tab", w: 1.5 }, ...letters("qwertyuiop"), pair("[", "{"), pair("]", "}"), pair("\\", "|", 1.5)]],
+    [2.25, 15.25, [{ n: "Del" }, { n: "End" }, { n: "PageDown", label: "PgDn" }]],
+    [3.25, 0, [{ mod: "Caps", w: 1.75 }, ...letters("asdfghjkl"), pair(";", ":"), pair("'", '"'), { n: "CR", w: 2.25, label: "Enter" }]],
+    [4.25, 0, [{ mod: "Shift", w: 2.25 }, ...letters("zxcvbnm"), pair(",", "<"), pair(".", ">"), pair("/", "?"), { mod: "Shift", w: 2.75 }]],
+    [4.25, 16.25, [{ n: "Up", label: "↑" }]],
+    [5.25, 0, [{ mod: "Ctrl", w: 1.25 }, { mod: "Super", w: 1.25 }, { mod: "Alt", w: 1.25 }, { n: "Space", w: 6.25 },
+      { mod: "Alt", w: 1.25 }, { mod: "Super", w: 1.25 }, { mod: "Menu", w: 1.25 }, { mod: "Ctrl", w: 1.25 }]],
+    [5.25, 15.25, [{ n: "Left", label: "←" }, { n: "Down", label: "↓" }, { n: "Right", label: "→" }]],
+  ]) },
+  // Positions from the Q5 Max info.json (LAYOUT_ansi_101). It has no Insert key, the nav column is
+  // PgUp / PgDn / Home-End (a tap dance: tap Home, double-tap End), the right-hand Alt/Menu are the
+  // FN1/FN2 layer keys, and the top-right keys (Print Screen, Calc, Find, knob) have no Vim meaning.
+  q5: { name: "Q5 Max (QMK)", ...buildBoard(20.5, 6.5, [
+    [0, 0, [{ n: "Esc" }, { gap: 1 }, ...fk(1, 4), { gap: 1, w: 0.5 }, ...fk(5, 8), { gap: 1, w: 0.5 }, ...fk(9, 12), { gap: 1, w: 0.25 },
+      { n: "Del" }, { n: "PrtSc" }, { n: "Calc" }, { n: "Find" }, { n: "Knob", label: "⏯" }]],
+    [1.25, 0, [...numrow, { n: "BS", w: 2, label: "Backspace" }, { gap: 1, w: 0.25 }, { n: "PageUp", label: "PgUp" },
+      { n: "NumLock", label: "Num" }, kp("kDivide", "/"), kp("kMultiply", "*"), kp("kMinus", "-")]],
+    [2.25, 0, [{ n: "Tab", w: 1.5 }, ...letters("qwertyuiop"), pair("[", "{"), pair("]", "}"), pair("\\", "|", 1.5), { gap: 1, w: 0.25 },
+      { n: "PageDown", label: "PgDn" }, kp("k7", "7"), kp("k8", "8"), kp("k9", "9"), kp("kPlus", "+", 2)]],
+    [3.25, 0, [{ mod: "Caps", w: 1.75 }, ...letters("asdfghjkl"), pair(";", ":"), pair("'", '"'), { n: "CR", w: 2.25, label: "Enter" }, { gap: 1, w: 0.25 },
+      { n: "Home", label: "Home" }, kp("k4", "4"), kp("k5", "5"), kp("k6", "6")]],
+    [4.25, 0, [{ mod: "Shift", w: 2.25 }, ...letters("zxcvbnm"), pair(",", "<"), pair(".", ">"), pair("/", "?"), { mod: "Shift", w: 1.75 }, { gap: 1, w: 2.5 },
+      kp("k1", "1"), kp("k2", "2"), kp("k3", "3"), kp("kEnter", "Ent", 2)]],
+    [4.5, 14.25, [{ n: "Up", label: "↑" }]],
+    [5.25, 0, [{ mod: "Ctrl", w: 1.25 }, { mod: "Super", w: 1.25 }, { mod: "Alt", w: 1.25 }, { n: "Space", w: 6.25 },
+      { mod: "Fn2" }, { mod: "Fn1" }, { mod: "Ctrl" }, { gap: 1, w: 3.5 }, { n: "k0", label: "0", w: 2 }, kp("kPoint", ".")]],
+    [5.5, 13.25, [{ n: "Left", label: "←" }, { n: "Down", label: "↓" }, { n: "Right", label: "→" }]],
+  ]) },
+};
+let KB_BOARD = "standard";
+try { const b = localStorage.getItem("nvim-cheatsheet-board"); if (BOARDS[b]) KB_BOARD = b; } catch (e) { /* storage blocked: default board */ }
+let KEYS = BOARDS[KB_BOARD].keys;
+
+// Layers: a mode, a prefix typed first, and which modifiers start held.
+const LAYERS = [
+  { id: "normal", name: "Normal", mode: "n", prefix: [], led: "var(--h1)", about: "Normal mode: what each key does on its own." },
+  { id: "shift", name: "Shift", mode: "n", prefix: [], shift: true, led: "var(--h3)", about: "Normal mode with <kbd>Shift</kbd> held: capitals and the shifted symbols." },
+  { id: "ctrl", name: "Ctrl", mode: "n", prefix: [], ctrl: true, led: "var(--h5)", about: "Normal mode with <kbd>Ctrl</kbd> held." },
+  { id: "g", name: "g…", mode: "n", prefix: ["g"], led: "var(--h2)", about: "Press <kbd>g</kbd>, then:" },
+  { id: "z", name: "z…", mode: "n", prefix: ["z"], led: "var(--h9)", about: "Press <kbd>z</kbd>, then: (folds, scrolling, spelling)" },
+  { id: "lb", name: "[…", mode: "n", prefix: ["["], led: "var(--h7)", about: "Press <kbd>[</kbd>, then: (mostly “go backwards to …”)" },
+  { id: "rb", name: "]…", mode: "n", prefix: ["]"], led: "var(--h7)", about: "Press <kbd>]</kbd>, then: (mostly “go forwards to …”)" },
+  { id: "cw", name: "Ctrl-W…", mode: "n", prefix: ["<C-W>"], led: "var(--h10)", about: "Press <kbd>Ctrl</kbd><kbd>W</kbd>, then: (windows)" },
+  { id: "leader", name: "Leader…", mode: "n", prefix: [LEADER_TOK], led: "var(--s-config)", leader: true, about: "Press the leader key, then:" },
+  { id: "visual", name: "Visual", mode: "x", prefix: [], led: "var(--h5)", about: "Visual mode (after <kbd>v</kbd>, <kbd>V</kbd> or <kbd>Ctrl</kbd><kbd>V</kbd>)." },
+  { id: "insert", name: "Insert (Ctrl)", mode: "i", prefix: [], ctrl: true, namedPlain: true, led: "var(--h4)", about: "Insert mode with <kbd>Ctrl</kbd> held. Named keys (Tab, Enter, arrows…) are shown without Ctrl." },
+  { id: "obj", name: "Text objects", mode: "o", prefix: ["i"], ai: true, led: "var(--h2)", about: "After an operator (<kbd>d</kbd>, <kbd>c</kbd>, <kbd>y</kbd>…) or in Visual mode, type <kbd>i</kbd> or <kbd>a</kbd>, then (click <kbd>Shift</kbd> for <code>( { &lt; \" W B</code>):" },
+];
+const KB = { layer: 0, shift: false, ctrl: false, ai: "i", cur: -1, infos: [] };
+
+/** The Vim token a physical key produces under the current modifiers (null for modifier keys). */
+function keyToken(k, layer) {
+  if (k.mod) return null;
+  const ctrl = KB.ctrl && !(k.n && layer.namedPlain);
+  if (k.n) {
+    const mods = [...(ctrl ? ["C"] : []), ...(KB.shift ? ["S"] : [])];
+    if (!mods.length) return k.n === "Space" ? "<Space>" : `<${k.n}>`;
+    return `<${mods.join("-")}-${k.n}>`;
+  }
+  const ch = KB.shift ? k.s : k.b;
+  if (!ctrl) return ch;
+  if (/^[a-z]$/.test(k.b)) return KB.shift ? `<C-S-${k.b.toUpperCase()}>` : `<C-${k.b.toUpperCase()}>`;
+  return `<C-${ch}>`;
+}
+// Ctrl+symbol keys that terminals send as a different control character.
+const CTRL_ALIAS = { "<C-6>": "<C-^>", "<C-2>": "<C-@>", "<C-->": "<C-_>", "<C-/>": "<C-_>" };
+
+function infoFor(k, layer) {
+  const tok = keyToken(k, layer);
+  if (!tok) return null;
+  const prefix = layer.ai ? [KB.ai] : layer.prefix;
+  const seq = [...prefix, tok];
+  let info = lookup(layer.mode, seq);
+  if (!info.primary && !info.kids.length && CTRL_ALIAS[tok]) {
+    const alt = lookup(layer.mode, [...prefix, CTRL_ALIAS[tok]]);
+    if (alt.primary || alt.kids.length) info = alt;
+  }
+  info.tok = tok;
+  return info;
+}
+function capContent(k, info) {
+  if (k.mod) return { cls: "modkey", g: esc(k.mod), lb: "", mk: "" };
+  const tok = info.tok;
+  const g = esc(k.n && !KB.shift && !(KB.ctrl && !LAYERS[KB.layer].namedPlain) ? k.label || glyphTok(tok) : glyphTok(tok));
+  const p = info.primary;
+  if (!p && !info.mainKids.length) return { cls: "none", g, lb: "", mk: "" };
+  let lb, cat, mk, dead = false;
+  if (info.asGroup) {
+    lb = groupName(info.seq, info.mainKids);
+    const g2 = GROUPS.get(info.seq.join(""));
+    cat = (g2 && g2.cat) || info.mainKids[0].cat;
+    mk = `<i class="mk group" aria-hidden="true"></i>`;
+  } else {
+    lb = labelOf(p);
+    cat = p.cat;
+    const waits = p.kind === "builtin" && arr(p.ref.wait).some((w) => w.m === info.mode);
+    if (p.kind === "builtin") mk = `<i class="mk builtin${waits ? " wait" : ""}" aria-hidden="true"></i>`;
+    else mk = `<i class="mk live" style="--mkc:var(--s-${p.sk})" aria-hidden="true"></i>`;
+    dead = p.kind === "live" && arr(p.ref.sh).some((s) => s.m === info.mode);
+  }
+  return { cls: `tint${dead ? " dead" : ""}`, g, lb: esc(lb), mk, cat };
+}
+
+function drawKB() {
+  const layer = LAYERS[KB.layer];
+  for (const t of $("kbtabs").children) t.setAttribute("aria-selected", String(+t.dataset.i === KB.layer));
+  $("aiswitch").hidden = !layer.ai;
+  for (const b of $("aiswitch").children) b.setAttribute("aria-pressed", String(b.dataset.ai === KB.ai));
+  KB.infos = KEYS.map((k) => infoFor(k, layer));
+  const B = BOARDS[KB_BOARD];
+  $("kb").style.aspectRatio = `${B.w} / ${B.h}`;
+  for (const b of $("kblayout").children) b.setAttribute("aria-pressed", String(b.dataset.board === KB_BOARD));
+  const cats = new Map();
+  $("kb").innerHTML = KEYS.map((k, i) => {
+    const info = KB.infos[i];
+    const c = capContent(k, info || {});
+    if (c.cat) cats.set(c.cat, (cats.get(c.cat) || 0) + 1);
+    const style = `left:${(k.x / B.w) * 100}%;top:${(k.y / B.h) * 100}%;width:${(k.w / B.w) * 100}%;height:${(k.h / B.h) * 100}%`;
+    const pressed = k.mod === "Shift" ? KB.shift : k.mod === "Ctrl" ? KB.ctrl : null;
+    const aria = k.mod ? `${k.mod}${pressed === null ? "" : pressed ? " (held)" : " (not held)"}`
+      : `${info ? info.seq.join("") : ""}${c.lb ? ": " + c.lb : ""}`;
+    return `<button type="button" class="key ${c.cls}${i === KB.cur ? " cur" : ""}" style="${style}" data-i="${i}"${pressed === null ? "" : ` aria-pressed="${pressed}"`}${k.mod && pressed === null ? ' tabindex="-1"' : ""} aria-label="${esc(aria)}">
+      <span class="cap" style="${c.cat ? `--cat:${catVar(c.cat)}` : ""}">${c.mk || ""}<span class="g">${c.g}</span><span class="lb">${c.lb}</span></span></button>`;
+  }).join("");
+  const sorted = [...cats.entries()].sort((a, b) => catRank(a[0]) - catRank(b[0]));
+  $("kblegend").innerHTML = sorted.map(([c]) => `<span class="c" style="--cat:${catVar(c)}">${esc(c)}</span>`).join("")
+    + `<span><i class="mk live" style="--mkc:var(--s-config)"></i>your map</span><span><i class="mk live" style="--mkc:var(--s-plugin)"></i>plugin map</span>`
+    + `<span><i class="mk live" style="--mkc:var(--s-neovim)"></i>Neovim default</span><span><i class="mk builtin"></i>plain built-in</span>`
+    + `<span><i class="mk builtin wait"></i>waits ${esc(TIMEOUT)} ms</span><span><i class="mk group"></i>prefix: more keys follow</span>`;
+  const prefixCaps = layer.ai ? `<kbd>${esc(KB.ai)}</kbd>` : "";
+  const held = [KB.ctrl ? "Ctrl" : "", KB.shift ? "Shift" : ""].filter(Boolean);
+  $("layermeta").innerHTML = `${layer.about} ${prefixCaps}${layer.leader ? ` ${tokCaps([LEADER_TOK], { ld: true })}` : ""}${held.length ? ` <span class="muted">· holding ${held.map((h) => `<kbd>${h}</kbd>`).join(" ")}</span>` : ""}`;
+  if (KB.cur >= 0 && KB.infos[KB.cur]) showKey(KB.cur);
+  else $("keyinfo").innerHTML = `<span class="muted">Hover or focus a key to see everything bound to it in this layer.</span>`;
+}
+$("kbtabs").innerHTML = LAYERS.map((l, i) =>
+  `<button type="button" class="tab" role="tab" id="kbtab-${l.id}" style="--led:${l.led}" aria-selected="${i === KB.layer}" aria-controls="kb" data-i="${i}"><i></i>${esc(l.name)}</button>`).join("");
+function selectLayer(i) {
+  KB.layer = i;
+  KB.shift = !!LAYERS[i].shift;
+  KB.ctrl = !!LAYERS[i].ctrl;
+  KB.cur = -1;
+  drawKB();
+}
+$("kbtabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) selectLayer(+b.dataset.i); });
+// Arrow keys move between tabs (tablist pattern).
+function tabArrows(listEl, onPick) {
+  listEl.addEventListener("keydown", (e) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+    const tabs = [...listEl.querySelectorAll('[role="tab"]')];
+    const i = tabs.indexOf(document.activeElement);
+    if (i < 0) return;
+    e.preventDefault();
+    const j = e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : (i + (e.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+    onPick(tabs[j]);
+    const again = [...listEl.querySelectorAll('[role="tab"]')][j];
+    if (again) again.focus();
+  });
+}
+tabArrows($("kbtabs"), (t) => selectLayer(+t.dataset.i));
+$("kblayout").innerHTML = Object.entries(BOARDS).map(([id, b]) => `<button type="button" data-board="${id}" aria-pressed="${id === KB_BOARD}">${esc(b.name)}</button>`).join("");
+$("kblayout").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-board]");
+  if (!b || b.dataset.board === KB_BOARD) return;
+  KB_BOARD = b.dataset.board;
+  KEYS = BOARDS[KB_BOARD].keys;
+  KB.cur = -1;
+  try { localStorage.setItem("nvim-cheatsheet-board", KB_BOARD); } catch (err) { /* storage blocked: choice isn't remembered */ }
+  drawKB();
+});
+$("aiswitch").addEventListener("click", (e) => { const b = e.target.closest("[data-ai]"); if (b) { KB.ai = b.dataset.ai; drawKB(); } });
+
+/** Detail panel: every entry for the key in this layer, then the longer keys it starts. */
+function entryLI(x, mode) {
+  const struck = x.kind === "builtin" && arr(x.ref.ov).some((o) => o.m === mode);
+  return `<li><div class="top">${keysHTML(x)} <span class="${struck ? "was" : ""}">${esc(x.d)}</span></div>
+    <div class="rm">${srcBadge(x.s)}${x.ctx ? `<span class="ctx">${esc(x.ctx)}</span>` : ""}<span class="catb" style="--cat:${catVar(x.cat)}">${esc(x.cat)}</span>${modeBadges(x.m)}</div>
+    ${(() => { const f = flagsHTML(x, mode); return f ? `<div class="rflags">${f}</div>` : ""; })()}
+    ${x.n ? `<div class="rn">${x.n}</div>` : ""}
+    <div class="rf">${fileLine(x)}${helpHTML(x)}</div></li>`;
+}
+function showKey(i) {
+  const info = KB.infos[i];
+  if (!info) return;
+  KB.cur = i;
+  for (const el of $("kb").querySelectorAll(".key.cur")) el.classList.remove("cur");
+  const el = $("kb").querySelector(`.key[data-i="${i}"]`);
+  if (el) el.classList.add("cur");
+  const layer = LAYERS[KB.layer];
+  const mode = info.mode;
+  const head = `<div class="ki-head">${tokCaps(info.seq, { ld: !!layer.leader })}<span class="muted">in ${esc(modeNames([mode]))} mode</span></div>`;
+  const main = [...info.exact, ...info.belongs];
+  const kids = info.kids.slice().sort((a, b) => KIND_RANK[a.kind] - KIND_RANK[b.kind] || a.kf.localeCompare(b.kf));
+  // One chip per distinct continuation; the live map wins over the built-in it replaces.
+  const seen = new Map();
+  for (const k of kids) { const rest = k.btok.slice(info.seq.length).join(""); if (!seen.has(rest)) seen.set(rest, k); }
+  const chips = [...seen.values()];
+  const MAX = 40;
+  const g = info.asGroup ? GROUPS.get(info.seq.join("")) : null;
+  $("keyinfo").innerHTML = head
+    + (main.length ? `<ul class="ki-list">${main.map((x) => entryLI(x, mode)).join("")}</ul>` : (info.kids.length ? "" : `<p class="muted">Nothing is bound to this key here.</p>`))
+    + (chips.length ? `<div><p class="muted">${g && g.name ? `<b>${esc(g.name)}</b> · ` : ""}Then press (${chips.length}):</p><div class="kids">${chips.slice(0, MAX).map((k) =>
+      `<span class="kid">${tokCaps(k.btok.slice(info.seq.length))}<span>${esc(k.d)}</span></span>`).join("")}${chips.length > MAX ? `<span class="kid">+${chips.length - MAX} more — search the finder</span>` : ""}</div></div>` : "");
+}
+$("kb").addEventListener("mouseover", (e) => { const k = e.target.closest(".key"); if (k && KB.infos[+k.dataset.i]) showKey(+k.dataset.i); });
+$("kb").addEventListener("focusin", (e) => { const k = e.target.closest(".key"); if (k && KB.infos[+k.dataset.i]) showKey(+k.dataset.i); });
+$("kb").addEventListener("click", (e) => {
+  const el = e.target.closest(".key");
+  if (!el) return;
+  const k = KEYS[+el.dataset.i];
+  if (k.mod === "Shift" || k.mod === "Ctrl") {
+    if (k.mod === "Shift") KB.shift = !KB.shift; else KB.ctrl = !KB.ctrl;
+    const i = +el.dataset.i;
+    drawKB();
+    const again = $("kb").querySelector(`.key[data-i="${i}"]`);
+    if (again) again.focus();
+    return;
+  }
+  const info = KB.infos[+el.dataset.i];
+  if (!info) return;
+  showKey(+el.dataset.i);
+  sendToFinder(info.seq.join(""), info.mode);
+});
+
+// ---- Leader tree ---------------------------------------------------------------------------------
+{
+  const maps = LIVE.filter((x) => x.ld && !x.ctx && x.tok[0] === LEADER_TOK);
+  const leaderCap = tokCaps([LEADER_TOK], { ld: true });
+  $("leaderintro").innerHTML = maps.length
+    ? `${maps.length} maps start with the leader ${leaderCap}${LEADER === " " ? " (Space)" : ""}. Groups follow which-key's names.${arr(META.plugins).includes("which-key") ? " Press the leader and pause (which-key's default delay is 200 ms) to see the popup." : ""}`
+    : "No leader maps found.";
+  const groupsSorted = [...GROUPS.entries()].map(([k, g]) => ({ toks: canonKeys(g.k), key: k, ...g })).sort((a, b) => b.toks.length - a.toks.length);
+  const cards = new Map(); // second token → { items, subs: Map }
+  const top = [];
+  const hasKids = (x) => maps.some((y) => y !== x && y.tok.length > x.tok.length && y.tok.slice(0, x.tok.length).join("") === x.kb);
+  for (const x of maps) {
+    if (x.tok.length <= 2 && !hasKids(x)) { top.push(x); continue; }
+    const k2 = x.tok.slice(0, 2).join("");
+    if (!cards.has(k2)) cards.set(k2, { toks: x.tok.slice(0, 2), items: [], subs: new Map() });
+    const card = cards.get(k2);
+    const sub = groupsSorted.find((g) => g.toks.length > 2 && x.tok.length > g.toks.length && g.toks.join("") === x.tok.slice(0, g.toks.length).join(""));
+    if (sub) {
+      if (!card.subs.has(sub.key)) card.subs.set(sub.key, { g: sub, items: [] });
+      card.subs.get(sub.key).items.push(x);
+    } else card.items.push(x);
+  }
+  // Groups with a single item read better at the top level.
+  for (const [k, c] of [...cards]) if (c.items.length + [...c.subs.values()].reduce((n, s) => n + s.items.length, 0) === 1 && !GROUPS.has(k)) { top.push(...c.items, ...[...c.subs.values()].flatMap((s) => s.items)); cards.delete(k); }
+  const byKey = (a, b) => a.kb.toLowerCase().localeCompare(b.kb.toLowerCase()) || (a.kb < b.kb ? 1 : -1);
+  // which-key style: items show only the keys after their card's (or sub-group's) prefix.
+  const item = (x, skip) => `<div class="litem" title="${esc(x.raw)}">${tokCaps(x.tok.slice(skip))}<span>${esc(x.d)}${x.sk !== "config" ? ` ${srcBadge(x.s)}` : ""}</span><span class="ms">${x.m.length === 1 && x.m[0] === "n" ? "" : modeBadges(x.m)}</span></div>`;
+  const cardHTML = (toks, name, cat, items, subs) => `<div class="lcard" style="--cat:${catVar(cat)}">
+      <header>${tokCaps(toks, { ld: true })}<h3>${esc(name)}</h3><span class="count">${items.length + subs.reduce((n, s) => n + s.items.length, 0)}</span></header>
+      ${items.sort(byKey).map((x) => item(x, toks.length)).join("")}
+      ${subs.map((s) => `<h4>${tokCaps(s.g.toks.slice(toks.length))} ${esc(s.g.name || "")}</h4>${s.items.sort(byKey).map((x) => item(x, s.g.toks.length)).join("")}`).join("")}
+    </div>`;
+  const out = [];
+  if (top.length) out.push(cardHTML([LEADER_TOK], "Top level", "Find & pick", top, []));
+  for (const [k, c] of [...cards].sort((a, b) => a[0].toLowerCase().localeCompare(b[0].toLowerCase()))) {
+    const g = GROUPS.get(k);
+    const name = g && g.name ? g.name.replace(/^\+/, "") : `${glyphTok(c.toks[1])} group`;
+    const cat = (g && g.cat) || (c.items[0] || [...c.subs.values()][0].items[0]).cat;
+    out.push(cardHTML(c.toks, name, cat, c.items, [...c.subs.values()]));
+  }
+  $("ltree").innerHTML = out.join("");
+}
+
+// ---- Finder ------------------------------------------------------------------------------------------
+// scope: starter = essentials + everything the config adds or changes (the default view; a typed query
+// searches everything), ess = essentials, chg = changed by the config, all = everything.
+const F = { mode: "all", src: "all", cat: "All", scope: "starter", limit: 100 };
+const PAGE = 100;
+let shown = [], shownQuery = false, scoredCount = 0;
+let composed = null;
+const OP_RE = /\{motion\}$/;
+function decompose(toks) {
+  toks = arr(toks).slice();
+  let count = "";
+  while (toks.length && /^[1-9]$/.test(toks[0]) || (count && toks.length && /^\d$/.test(toks[0]))) count += toks.shift();
+  const eff = (list) => list.sort((a, b) => KIND_RANK[a.kind] - KIND_RANK[b.kind])[0];
+  for (let i = Math.min(toks.length - 1, 2); i >= 1; i--) {
+    const opK = toks.slice(0, i).join(""), rest = toks.slice(i).join("");
+    const op = BUILT.find((x) => x.kb === opK && OP_RE.test(x.kf) && x.m.includes("n"))
+      || [...CUR, ...LIVE].find((x) => !x.ctx && x.kb === opK && OP_RE.test(x.kf) && x.m.includes("n"));
+    if (!op) continue;
+    const usable = (x) => !x.ex && !x.ctx && x.kind !== "cmd" && (modeHas(x, "o") || (x.kind === "builtin" && x.ref.mo && x.m.includes("n")));
+    // Exact keys first, then "iN{id}"-style entries whose last key is a placeholder ("iNb", "f(").
+    const mo = eff(ALL.filter((x) => usable(x) && x.kb === rest))
+      || eff(ALL.filter((x) => usable(x) && x.kb && rest.length > x.kb.length && rest.startsWith(x.kb)
+        && rest.length - x.kb.length === 1 && x.btok.length > x.core.length));
+    if (mo) return { op, mo, count, keys: toks };
+  }
+  return null;
+}
+const inStarter = (x) => x.e || x.changed || x.sk === "config";
+const MODE_CHIPS = [["all", "All"], ["n", "Normal"], ["x", "Visual"], ["o", "Op-pending"], ["i", "Insert"], ["c", "Cmdline"], ["t", "Terminal"], ["s", "Select"], [":", "Ex commands"]];
+$("modechips").innerHTML = `<span class="lbl">Mode</span>` + MODE_CHIPS.map(([m, l]) => `<button type="button" class="chip" data-v="${esc(m)}" aria-pressed="${m === F.mode}">${esc(l)}</button>`).join("");
+{
+  const counts = new Map();
+  for (const x of ALL) counts.set(x.s, (counts.get(x.s) || 0) + 1);
+  const kinds = { builtin: 0, neovim: 0, config: 0, plugin: 0 };
+  for (const [s, n] of counts) kinds[srcKind(s)] += n;
+  // One chip per kind of source; the 30-odd individual plugins go in a menu so the row stays short.
+  const plugins = [...counts.entries()].filter(([s]) => srcKind(s) === "plugin").sort((a, b) => a[0].localeCompare(b[0]));
+  $("srcchips").innerHTML = `<span class="lbl">Source</span>`
+    + [["all", "All", ALL.length, ""], ["k:builtin", "Built-in", kinds.builtin, "--s-builtin"], ["k:neovim", "Neovim default", kinds.neovim, "--s-neovim"],
+      ["k:config", "Your config", kinds.config, "--s-config"], ["k:plugin", "Plugins", kinds.plugin, "--s-plugin"]]
+      .filter(([v, , n]) => v === "all" || n > 0)
+      .map(([v, l, n, c]) => `<button type="button" class="chip" data-v="${esc(v)}" aria-pressed="${v === F.src}">${c ? `<i style="--dot:var(${c})"></i>` : ""}${esc(l)}<span>${n}</span></button>`).join("")
+    + (plugins.length ? `<select class="sel" id="srcsel" aria-label="Only one plugin"><option value="">One plugin…</option>${plugins.map(([s, n]) => `<option value="s:${esc(s)}">${esc(s)} (${n})</option>`).join("")}</select>` : "");
+}
+
+// Query parsing: "ctrl-w", "<c-w>", "^w", "C-w", "space f", "leader f" all become canonical keys.
+const KEY_WORD = { space: "<Space>", spc: "<Space>", leader: LEADER_TOK, localleader: LOCAL_TOK, esc: "<Esc>", escape: "<Esc>",
+  enter: "<CR>", return: "<CR>", cr: "<CR>", bs: "<BS>", backspace: "<BS>", tab: "<Tab>" };
+const MOD_RE = /^(ctrl|control|shift|alt|meta|cmd|super|opt|option|c|s|m|a|d)[-+](.+)$/i;
+function partToTokens(p) {
+  if (p.includes("<")) return canonKeys(p);
+  const lw = p.toLowerCase();
+  if (KEY_WORD[lw]) return [KEY_WORD[lw]];
+  let m = p.match(/^\^(.)(.*)$/);
+  if (m) return [canonTok(`<C-${m[1]}>`), ...partToTokens(m[2] || "").filter(Boolean)];
+  const mods = [];
+  let rest = p;
+  while ((m = rest.match(MOD_RE))) { mods.push(MOD_ALIAS[m[1].toLowerCase()] || (/^opt/i.test(m[1]) ? "M" : "C")); rest = m[2]; }
+  if (mods.length) {
+    const named = NAMED[rest.toLowerCase()];
+    if (named) return [canonTok(`<${mods.join("-")}-${named}>`)];
+    return [canonTok(`<${mods.join("-")}-${rest[0]}>`), ...rest.slice(1).split("")];
+  }
+  return p.split("");
+}
+function parseQuery(raw) {
+  const q = raw.trim();
+  if (!q) return null;
+  const lower = q.toLowerCase();
+  const P = { raw: q, lower, ex: q.startsWith(":") };
+  P.words = (P.ex ? lower.slice(1) : lower).split(/\s+/).filter(Boolean);
+  if (P.ex) {
+    P.name = q.slice(1).trim().split(/\s+/)[0] || "";
+    P.nameLower = P.name.toLowerCase();
+    return P;
+  }
+  const parts = q.replace(/<leader>/gi, " leader ").replace(/<localleader>/gi, " localleader ").trim().split(/\s+/);
+  const toks = [];
+  for (let i = 0; i < parts.length; i++) {
+    let p = parts[i];
+    // "ctrl w", "shift tab": a lone modifier word applies to the next word.
+    if (/^(ctrl|control|shift|alt|meta|cmd|super)$/i.test(p) && i + 1 < parts.length) p = `${p}-${parts[++i]}`;
+    toks.push(...partToTokens(p));
+  }
+  P.toks = toks;
+  P.key = toks.join("");
+  P.keyLower = P.key.toLowerCase();
+  return P;
+}
+function score(x, P) {
+  if (P.ex) {
+    if (!x.ex) return 0;
+    let s = 0;
+    if (!P.name) s = 1;
+    else if (x.exAbbr === P.name || x.exFull === P.name) s = 1000;
+    else if (x.exFull.startsWith(P.name) && P.name.length >= x.exAbbr.length) s = 800;
+    else if (x.exFull.toLowerCase().startsWith(P.nameLower)) s = 500 - Math.min(x.exFull.length, 100);
+    if (!s && P.words.length && P.words.every((w) => x.hay.includes(w))) s = 100;
+    return s ? s + (x.kind === "cmd" ? 5 : 0) : 0;
+  }
+  let s = 0;
+  const k = P.key;
+  if (k && !x.ex) {
+    if (x.kb === k || x.kf === k) s = 1000;
+    else if (x.kh === k) s = 950;
+    else if (x.kbl === P.keyLower) s = 600;
+    else if (x.kb.startsWith(k)) s = 400 - Math.min(x.kb.length - k.length, 50) * 4;
+    else if (k.length > 1 && x.kbl.startsWith(P.keyLower)) s = 250;
+  }
+  // Words: short ones (1–2 chars) must be whole words so "d" doesn't match every description.
+  const okWords = P.words.every((w) => (w.length < 3 && /^[a-z0-9_]+$/.test(w) ? x.words.has(w) : x.hay.includes(w)));
+  if (okWords) {
+    let ds = 100;
+    if (x.dl.startsWith(P.lower)) ds += 60;
+    else if (x.dl.includes(P.lower)) ds += 30;
+    s = Math.max(s, ds);
+  }
+  if (!s) return 0;
+  // Global keys before ones that only work in a plugin window or filetype; Normal mode first.
+  return s + (x.e ? 15 : 0) + (x.kind === "live" ? 8 : 0) - (arr(x.ref.ov).length ? 5 : 0) - (x.ctx ? 60 : 0) + (x.m.includes("n") ? 3 : 0);
+}
+const modeHas = (x, m) => x.m.includes(m) || (x.m.includes("v") && (m === "x" || m === "s"));
+function srcOK(x) {
+  if (F.src === "all") return true;
+  if (F.src.startsWith("k:")) return x.sk === F.src.slice(2);
+  return x.s === F.src.slice(2);
+}
+const byDefault = (a, b) => catRank(a.cat) - catRank(b.cat) || (b.e - a.e) || KIND_RANK[a.kind] - KIND_RANK[b.kind] || a.kf.localeCompare(b.kf);
+
+function rowHTML(x) {
+  const flags = flagsHTML(x);
+  const struck = x.kind === "builtin" && arr(x.ref.ov).length && x.m.every((m) => arr(x.ref.ov).some((o) => o.m === m));
+  const rhs = x.kind === "live" && x.ref.rhs && !/^runs /.test(x.d) ? `<span class="fl">rhs <code>${esc(x.ref.rhs)}</code></span>` : "";
+  const extra = x.kind === "cmd" ? [x.ref.na && x.ref.na !== "0" ? `<span class="fl">args ${esc(x.ref.na)}</span>` : "", x.ref.r ? `<span class="fl">range</span>` : ""].join("") : "";
+  const fl = fileLine(x);
+  return `<article class="row${struck ? " dimmed" : ""}" style="--cat:${catVar(x.cat)}">
+    <div class="rk">${keysHTML(x)}</div>
+    <div class="rb">
+      <p class="rd">${esc(x.d || "(no description)")}</p>
+      <div class="rm">${modeBadges(x.m)}${srcBadge(x.s)}<span class="catb" style="--cat:${catVar(x.cat)}">${esc(x.cat)}</span>${x.e ? `<span class="badge" title="Essential">★ essential</span>` : ""}${x.ctx ? `<span class="ctx">${esc(x.ctx)}</span>` : ""}${fl ? `<span class="fl">${fl}</span>` : ""}${rhs}${extra}${helpHTML(x)}</div>
+      ${flags ? `<div class="rflags">${flags}</div>` : ""}
+      ${x.n ? `<div class="rn">${x.n}</div>` : ""}
+    </div></article>`;
+}
+/** Rows from..to, with a category heading wherever the category changes (browse view only). */
+function rowsHTML(from, to) {
+  const heads = !shownQuery && F.cat === "All";
+  let out = "";
+  for (let i = from; i < Math.min(to, shown.length); i++) {
+    const x = shown[i];
+    if (heads && (i === 0 || shown[i - 1].cat !== x.cat)) {
+      out += `<h3 class="rcat" style="--cat:${catVar(x.cat)}">${esc(x.cat)}</h3>`;
+    }
+    out += rowHTML(x);
+  }
+  return out;
+}
+
+const SCOPE_HINT = {
+  starter: "The keys worth knowing plus everything your config adds or changes. Typing searches every key.",
+  ess: "Only the essentials.", chg: "Only built-ins your config replaces or delays, and maps that override them.", all: "",
+};
+function runFinder(keepLimit) {
+  const P = parseQuery($("q").value);
+  // Browsing shows the chosen scope; a typed search in the default scope looks through everything.
+  const scope = P && F.scope === "starter" ? "all" : F.scope;
+  const exOK = F.mode === ":" || (F.mode === "all" && P && P.ex);
+  const scored = [];
+  for (const x of ALL) {
+    if (x.ex ? !exOK : (F.mode === ":" || (F.mode !== "all" && !modeHas(x, F.mode)))) continue;
+    if (!srcOK(x)) continue;
+    if (scope === "starter" ? !inStarter(x) : scope === "ess" ? !x.e : scope === "chg" ? !x.changed : false) continue;
+    const s = P ? score(x, P) : 1;
+    if (s > 0) scored.push([s, x]);
+  }
+  // "ciw", "3dap", "gUiw": no entry has those keys, so explain them as operator + motion/text object
+  // and put those two entries first.
+  composed = P && !P.ex && !scored.some(([sc]) => sc >= 1000) ? decompose(P.toks) : null;
+  if (composed) {
+    const rest = scored.filter(([, x]) => x !== composed.op && x !== composed.mo);
+    scored.length = 0;
+    scored.push([5000, composed.op], [4999, composed.mo], ...rest);
+  }
+  // Category chips count what the other filters and the query leave.
+  const counts = new Map();
+  for (const [, x] of scored) counts.set(x.cat, (counts.get(x.cat) || 0) + 1);
+  const cats = [...counts.keys()];
+  if (F.cat !== "All" && !counts.has(F.cat)) cats.push(F.cat);
+  cats.sort((a, b) => catRank(a) - catRank(b));
+  $("catchips").innerHTML = `<span class="lbl">Category</span><button type="button" class="chip" data-v="All" aria-pressed="${F.cat === "All"}">All<span>${scored.length}</span></button>`
+    + cats.map((c) => `<button type="button" class="chip" data-v="${esc(c)}" aria-pressed="${F.cat === c}"><i style="--dot:${catVar(c)}"></i>${esc(c)}<span>${counts.get(c) || 0}</span></button>`).join("");
+  scoredCount = scored.length;
+  const list = F.cat === "All" ? scored : scored.filter(([, x]) => x.cat === F.cat);
+  list.sort(P ? (a, b) => b[0] - a[0] || KIND_RANK[a[1].kind] - KIND_RANK[b[1].kind] || a[1].kf.length - b[1].kf.length || a[1].kf.localeCompare(b[1].kf) : (a, b) => byDefault(a[1], b[1]));
+  shown = list.map(([, x]) => x);
+  shownQuery = !!P;
+  if (!keepLimit) F.limit = PAGE;
+  $("count").textContent = `${shown.length.toLocaleString()} / ${ALL.length.toLocaleString()}`;
+  $("scopehint").textContent = P && F.scope === "starter" ? "Searching every key." : SCOPE_HINT[F.scope] || "";
+  renderRows();
+}
+function moreButton() {
+  const rest = shown.length - F.limit;
+  $("more").hidden = rest <= 0;
+  $("more").textContent = rest > 0 ? `Show ${Math.min(rest, PAGE)} more (${rest.toLocaleString()} left)` : "";
+}
+function renderRows() {
+  const P = parseQuery($("q").value);
+  const hint = P && !P.ex && F.mode !== ":" && !shown.length ? " Start with “:” to search Ex commands." : "";
+  const elsewhere = F.cat !== "All" && !shown.length ? scoredCount : 0;
+  const comp = composed ? `<p class="compose">${tokCaps([...composed.count.split("").filter(Boolean), ...composed.keys])} <span>=</span> ${keysHTML(composed.op, composed.op.core)} <span class="muted">${esc(composed.op.d.replace(/\s*\[into register x\]/, "").replace(/\{motion\}/, "…"))}</span> <span>+</span> ${keysHTML(composed.mo, composed.mo.core)} <span class="muted">${esc(composed.mo.d)}</span>${composed.count ? ` <span class="muted">· count ${esc(composed.count)}</span>` : ""} · <a href="#composer">composer</a></p>` : "";
+  $("results").innerHTML = comp + (shown.length ? rowsHTML(0, F.limit)
+    : `<p class="empty">Nothing matches${P ? ` “${esc(P.raw)}”` : ""}${F.cat !== "All" ? ` in ${esc(F.cat)}` : ""} with these filters.${elsewhere ? ` ${elsewhere} in other categories: pick <b>All</b> above.` : hint}</p>`);
+  moreButton();
+}
+$("more").addEventListener("click", () => {
+  const from = F.limit;
+  F.limit += PAGE;
+  $("results").insertAdjacentHTML("beforeend", rowsHTML(from, F.limit));
+  moreButton();
+});
+let qFrame = 0;
+$("q").addEventListener("input", () => { cancelAnimationFrame(qFrame); qFrame = requestAnimationFrame(() => runFinder()); });
+$("q").addEventListener("keydown", (e) => { if (e.key === "Escape") { $("q").value = ""; runFinder(); } });
+function setChip(el, v) { for (const c of el.querySelectorAll(".chip")) c.setAttribute("aria-pressed", String(c.dataset.v === v)); }
+function chipGroup(el, key, after) {
+  el.addEventListener("click", (e) => {
+    const b = e.target.closest(".chip");
+    if (!b) return;
+    F[key] = b.dataset.v;
+    setChip(el, F[key]);
+    if (after) after();
+    runFinder();
+  });
+}
+const srcSel = () => $("srcsel");
+function syncSrcSel() { const s = srcSel(); if (!s) return; s.value = F.src.startsWith("s:") ? F.src : ""; s.classList.toggle("on", !!s.value); }
+chipGroup($("modechips"), "mode");
+chipGroup($("srcchips"), "src", syncSrcSel);
+chipGroup($("catchips"), "cat");
+if (srcSel()) srcSel().addEventListener("change", () => { F.src = srcSel().value || "all"; setChip($("srcchips"), F.src); syncSrcSel(); runFinder(); });
+function setScope(v) {
+  F.scope = v;
+  for (const b of $("scope").children) b.setAttribute("aria-pressed", String(b.dataset.scope === v));
+}
+$("scope").addEventListener("click", (e) => { const b = e.target.closest("[data-scope]"); if (b) { setScope(b.dataset.scope); runFinder(); } });
+$("reset").addEventListener("click", () => {
+  Object.assign(F, { mode: "all", src: "all", cat: "All" });
+  setScope("starter");
+  setChip($("modechips"), "all"); setChip($("srcchips"), "all"); syncSrcSel();
+  runFinder();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+  const a = document.activeElement;
+  if (a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable)) return;
+  e.preventDefault();
+  $("q").focus();
+  $("q").select();
+});
+/** Keyboard → finder: search the key sequence in that mode. */
+function sendToFinder(keys, mode) {
+  $("q").value = keys;
+  F.mode = MODE_CHIPS.some(([m]) => m === mode) ? mode : "all";
+  F.cat = "All";
+  setChip($("modechips"), F.mode);
+  runFinder();
+  toast(`Finder: ${keys} in ${modeNames([mode])} mode — ${shown.length} match${shown.length === 1 ? "" : "es"} below`);
+}
+runFinder();
+
+// ---- Text-object composer --------------------------------------------------------------------------
+{
+  const hasN = (keys) => BUILT.some((x) => x.kb === keys && x.m.includes("n") && /\{motion\}$/.test(x.kf));
+  const liveN = (keys) => LIVE.find((x) => x.kb === keys && x.m.includes("n") && !x.ctx);
+  const OPS = [
+    ["d", "delete"], ["c", "change"], ["y", "yank"], [">", "indent"], ["<", "dedent"], ["=", "re-indent"], ["gu", "lowercase"],
+    ["gU", "uppercase"], ["g~", "toggle the case of"], ["gq", "format"], ["gw", "format (cursor stays put)"], ["g?", "ROT13-encode"],
+    ["!", "filter through a command"], ["zf", "create a fold over"], ["g@", "run 'operatorfunc' on"],
+  ].filter(([k]) => hasN(k)).map(([k, v]) => ({ k, v, src: "builtin" }));
+  OPS.push({ k: "v", v: "select", src: "builtin" });
+  const gc = liveN("gc");
+  if (gc) OPS.push({ k: "gc", v: "toggle comments on", src: gc.s });
+  const sa = liveN("sa"), sd = liveN("sd"), sr = liveN("sr");
+  if (sa) OPS.push({ k: "sa", v: "surround", src: sa.s, sa: true });
+  // Other operators described by the curated data (cat "Operator", keys ending in {motion}).
+  for (const x of [...CUR, ...LIVE]) {
+    if (x.cat !== "Operator" || x.ctx || !/\{motion\}$/.test(x.kf) || OPS.some((o) => o.k === x.kb) || !x.kb) continue;
+    OPS.push({ k: x.kb, v: x.d.replace(/\s*\{motion\}.*$/i, "").replace(/^./, (c) => c.toLowerCase()), src: x.s });
+  }
+  if (sd) OPS.push({ k: "sd", v: "delete the surrounding", src: sd.s, sur: "d" });
+  if (sr) OPS.push({ k: "sr", v: "replace the surrounding", src: sr.s, sur: "r" });
+  // Config maps that change an operator (e.g. d → "dd): shown under the result.
+  const opNote = (k) => { const L = liveN(k); return L ? L : null; };
+
+  // Objects: built-in from index.txt, then mini.ai ones from the curated data.
+  const NOUN = { w: "word", W: "WORD", s: "sentence", p: "paragraph", "(": "( ) block", ")": "( ) block", b: "( ) block",
+    "[": "[ ] block", "]": "[ ] block", "{": "{ } block", "}": "{ } block", B: "{ } block", "<": "< > block", ">": "< > block",
+    t: "tag block", '"': "double-quoted string", "'": "single-quoted string", "`": "backtick string" };
+  const objs = new Map(); // id → { id, noun, src, desc }
+  for (const x of BUILT) {
+    if (x.cat !== "Text object" || x.ref.sec !== "Text objects" || x.tok.length !== 2 || !/^[ia]$/.test(x.tok[0])) continue;
+    const id = x.tok[1];
+    if (!objs.has(id)) objs.set(id, { id, noun: NOUN[id] || x.d, src: "builtin", ent: {} });
+    const o = objs.get(id);
+    if (!o.ent[x.tok[0]]) o.ent[x.tok[0]] = x;
+  }
+  // Curated objects (mini.ai, the config's own): only concrete ids that exist as both i… and a….
+  const curObj = CUR.filter((x) => x.cat === "Text object" && !x.ctx && x.tok.length >= 2 && /^[ia]$/.test(x.tok[0]) && !x.tok.some(isPh));
+  const sides = groupBy(curObj, (x) => x.tok.slice(1).join(""));
+  for (const [id, list] of sides) {
+    if (!list.some((x) => x.tok[0] === "i") || !list.some((x) => x.tok[0] === "a")) continue;
+    const inner = list.find((x) => x.tok[0] === "i");
+    const prev = objs.get(id);
+    const noun = MINI_AI_IDS[id] || inner.d.replace(/\([^)]*\)/g, "").replace(/^(inside|inner)\s+/i, "").replace(/^(the|a|an)\s+/i, "").split(/[,:;]/)[0].trim().replace(/^./, (c) => c.toLowerCase());
+    if (!prev || prev.src === "builtin") objs.set(id, { id, noun: noun || id, src: inner.s, ent: { i: inner, a: list.find((x) => x.tok[0] === "a") } });
+  }
+  // With mini.ai active it handles every id in its table (and any non-letter); letters it lacks fall back to Vim.
+  if (MINI_AI) for (const o of objs.values()) if (MINI_AI_IDS[o.id] && o.src === "builtin") { o.src = "mini.ai"; o.noun = MINI_AI_IDS[o.id]; }
+  const miniIds = new Set([...objs.values()].filter((o) => o.src !== "builtin").map((o) => o.id));
+  const ORDER = "wWsp()b[]{}B<>t\"'`qfa?";
+  const rank = (id) => { const i = ORDER.indexOf(id); return id.length === 1 && i >= 0 ? i : ORDER.length; };
+  const OBJ = [...objs.values()].sort((x, y) => rank(x.id) - rank(y.id) || x.id.localeCompare(y.id));
+  const short = (t) => (t.length > 22 ? t.slice(0, 21) + "…" : t);
+  const SUR = ["(", ")", "[", "]", "{", "}", "<", ">", '"', "'", "`", "b", "q", "t", "f", "?"];
+  const SUR_NOUN = { "(": "( ) with inner spaces", ")": "( )", "[": "[ ] with inner spaces", "]": "[ ]", "{": "{ } with inner spaces",
+    "}": "{ }", "<": "< > with inner spaces", ">": "< >", b: "brackets: the nearest ( ), [ ] or { }", q: "quotes: the nearest ' \" or `", t: "tag",
+    f: "function call", "?": "left/right pair (prompted)", '"': '" "', "'": "' '", "`": "` `" };
+  const SUR_ADD = { b: "( )", q: '" "', t: "a tag (asks for its name)", f: "a function call (asks for its name)", "?": "a left/right pair it asks for" };
+
+  const C = { op: OPS[0] ? OPS[0].k : "d", ai: "i", mod: "", id: OBJ.find((o) => o.id === "w") ? "w" : (OBJ[0] || {}).id, count: "", ch: ")" };
+  const chipsFor = (key, list, cls = "") => list.map(([v, label, small, extra]) => `<button type="button" class="chip ${cls} ${extra || ""}" data-k="${key}" data-v="${esc(v)}" aria-pressed="${String(C[key]) === String(v)}">${esc(label)}${small ? `<small>${esc(small)}</small>` : ""}</button>`).join("");
+  $("composerintro").innerHTML = `Operators × text objects. ${MINI_AI ? `In this config <b>mini.ai</b> takes over <kbd>i</kbd> and <kbd>a</kbd>: it handles brackets, quotes, tags, <code>f</code> (function call), <code>a</code> (argument) and more, adds <kbd>${esc(AI_NEXT)}</kbd>/<kbd>${esc(AI_LAST)}</kbd> for the next/last match, and falls back to Vim's own objects for the rest (<code>w</code>, <code>s</code>, <code>p</code>…).` : ""}`;
+  function render() {
+    const op = OPS.find((o) => o.k === C.op) || OPS[0];
+    if (!op) { $("comp").innerHTML = `<p class="muted">No operators found.</p>`; return; }
+    const isSur = !!op.sur;
+    const rows = [];
+    rows.push(`<div class="crow"><span class="lbl">Operator</span><div class="chips">${chipsFor("op", OPS.map((o) => [o.k, o.k, o.v.split(" (")[0], o.src !== "builtin" ? "mini" : ""]))}</div></div>`);
+    if (!isSur) rows.push(`<div class="crow"><span class="lbl">Scope</span><div class="chips">${chipsFor("ai", [["i", "i", "inside"], ["a", "a", "around"]])}</div></div>`);
+    // next/last only exist for mini.ai's own objects (AI_NEXT/AI_LAST) and for mini.surround's sd/sr
+    // (always n/l); for Vim's
+    // objects (w, s, p) mini.ai falls back to the built-in and the suffix would be typed as an object id.
+    const curObj = OBJ.find((x) => x.id === C.id);
+    const modOK = isSur || (MINI_AI && curObj && miniIds.has(curObj.id));
+    if (modOK) rows.push(`<div class="crow"><span class="lbl">Which one</span><div class="chips">${chipsFor("mod", [["", "nearest", "covering or next"], ["n", isSur ? "n" : AI_NEXT, "next"], ["l", isSur ? "l" : AI_LAST, "last (previous)"]])}</div></div>`);
+    if (isSur) rows.push(`<div class="crow"><span class="lbl">Surrounding</span><div class="chips">${chipsFor("id", SUR.map((s) => [s, s, ["b", "q", "t", "f", "?"].includes(s) ? short(SUR_NOUN[s]) : ""]), "mini")}</div></div>`);
+    else {
+      const bi = OBJ.filter((o) => !miniIds.has(o.id)), mi = OBJ.filter((o) => miniIds.has(o.id));
+      rows.push(`<div class="crow"><span class="lbl">Object</span><div class="stack" style="gap:8px">
+        ${bi.length ? `<div class="chips"><span class="lbl">Built-in</span>${chipsFor("id", bi.map((o) => [o.id, o.id, short(o.noun)]))}</div>` : ""}
+        ${mi.length ? `<div class="chips"><span class="lbl">${esc([...new Set(mi.map((o) => o.src))].join(" · "))}</span>${chipsFor("id", mi.map((o) => [o.id, o.id, short(o.noun)]), "mini")}</div>` : ""}</div></div>`);
+      rows.push(`<div class="crow"><label class="lbl" for="ccount">Count</label><div><input id="ccount" type="number" min="1" max="99" inputmode="numeric" value="${esc(C.count)}" placeholder="—" aria-label="Optional count"></div></div>`);
+    }
+    if (op.sa || op.sur === "r") rows.push(`<div class="crow"><span class="lbl">${op.sa ? "With" : "Replace with"}</span><div class="chips">${chipsFor("ch", SUR.map((s) => [s, s]), "mini")}</div></div>`);
+
+    // Result.
+    const mod = C.mod && modOK ? C.mod : "";
+    let keys, sentence, objSrc = "", objEnt = null;
+    if (isSur) {
+      if (!SUR.includes(C.id)) C.id = ")";
+      keys = [...canonKeys(op.k), ...(mod ? [mod] : []), C.id, ...(op.sur === "r" ? [C.ch] : [])];
+      const which = mod === "n" ? " <span class=\"muted\">(the next one after the cursor)</span>" : mod === "l" ? " <span class=\"muted\">(the previous one)</span>" : "";
+      sentence = op.sur === "d" ? `<b>delete</b> the surrounding ${esc(SUR_NOUN[C.id])}${which}`
+        : `<b>replace</b> the surrounding ${esc(SUR_NOUN[C.id])} with ${esc(SUR_ADD[C.ch] || SUR_NOUN[C.ch] || C.ch)}${which}`;
+    } else {
+      const o = OBJ.find((x) => x.id === C.id) || OBJ[0];
+      if (!o) { $("comp").innerHTML = rows.join("") + `<p class="muted">No text objects found.</p>`; return; }
+      C.id = o.id;
+      const cnt = /^[1-9]\d?$/.test(C.count) ? C.count : "";
+      const sfx = mod === "n" ? AI_NEXT : mod === "l" ? AI_LAST : "";
+      keys = [...canonKeys(op.k), ...(cnt ? cnt.split("") : []), C.ai, ...(sfx ? [sfx] : []), ...canonKeys(o.id), ...(op.sa ? [C.ch] : [])];
+      const which = mod === "n" ? "the next " : mod === "l" ? "the previous " : "";
+      const scope = C.ai === "i" ? "inside" : "around";
+      sentence = `<b>${esc(op.v)}</b> ${scope} ${which}${esc(o.noun)}${cnt ? ` <span class="muted">(count ${esc(cnt)})</span>` : ""}${op.sa ? ` with ${esc(SUR_ADD[C.ch] || SUR_NOUN[C.ch] || C.ch)}` : ""}`;
+      objSrc = o.src;
+      objEnt = o.ent[C.ai] || o.ent.i || o.ent.a || null;
+    }
+    const note = opNote(op.k);
+    const noteHTML = note && op.src === "builtin" ? `<p class="muted">Your config maps <kbd>${esc(op.k)}</kbd>: ${esc(note.d)}${note.ref.rhs ? ` (<code>${esc(note.ref.rhs)}</code>)` : ""} · ${fileLine(note)}</p>` : "";
+    rows.push(`<div class="cout" aria-live="polite">${tokCaps(keys)}<p class="sent">${sentence.replace(/^<b>(.)/, (m, c) => `<b>${c.toUpperCase()}`)}</p>
+      <div class="rm">${srcBadge(op.src)}<span class="muted">operator</span>${isSur ? "" : `${srcBadge(objSrc)}<span class="muted">text object</span>${objEnt ? `<span class="rf">${helpHTML(objEnt)}</span>` : ""}`}
+      <button type="button" class="copy" data-copy="${esc(keys.join(""))}">copy keys</button></div>${noteHTML}</div>`);
+    $("comp").innerHTML = rows.join("");
+    const cc = $("ccount");
+    if (cc) cc.addEventListener("input", () => { C.count = cc.value.trim(); render(); const again = $("ccount"); if (again) { again.focus(); const v = again.value; again.value = ""; again.value = v; } });
+  }
+  $("comp").addEventListener("click", (e) => {
+    const b = e.target.closest(".chip[data-k]");
+    if (!b) return;
+    const k = b.dataset.k;
+    C[k] = b.dataset.v;
+    if (k === "op") { const op = OPS.find((o) => o.k === C.op); if (op && op.sur && !SUR.includes(C.id)) C.id = ")"; if (op && !op.sur && !OBJ.some((o) => o.id === C.id)) C.id = "w"; }
+    render();
+    const again = $("comp").querySelector(`.chip[data-k="${k}"][data-v="${CSS.escape(C[k])}"]`);
+    if (again) again.focus();
+  });
+  render();
+}
+
+// ---- Inside plugin windows ---------------------------------------------------------------------------
+// ~40 window contexts are folded into a few top-level groups; each group lists its windows as sections,
+// with chips to show one, and one search box filters every window at once.
+{
+  const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const has = (s, ...w) => w.every((x) => s.includes(x));
+  const human = (a) => String(a || "").replace(/_/g, " ").replace(/^function$/, "custom function").trim();
+  const picker = obj(D.picker), blink = obj(D.blink), flash = obj(D.flash);
+  const explorer = arr(D.explorer);
+  // Top-level groups, in tab order. A window context goes to the first group whose test matches.
+  const WGROUPS = [
+    { id: "picker", name: "Picker", src: "snacks", led: "var(--h6)", test: (c) => c.startsWith("snacks picker") },
+    { id: "explorer", name: "Explorer", src: "snacks", led: "var(--h12)", test: (c) => has(c, "explorer") },
+    { id: "complete", name: "Completion", src: "blink.cmp", led: "var(--h4)", test: (c) => has(c, "completion") || has(c, "blink") },
+    { id: "jump", name: "Flash & Leap", src: "flash", led: "var(--h1)", test: (c) => has(c, "flash") || has(c, "leap") || /\bafter [ft]\b/.test(c) },
+    { id: "git", name: "Git", src: "gitsigns", led: "var(--h11)", test: (c) => /\b(git|gitsigns|github|forgejo|pr)\b/.test(c) },
+    { id: "notes", name: "Notes", src: "obsidian.nvim", led: "var(--h5)", test: (c) => /\b(obsidian|markdown|haunt)\b/.test(c) },
+    { id: "term", name: "Terminal & AI", src: "sidekick", led: "var(--h9)", test: (c) => /\b(terminal|sidekick|kitty|scrollback|nes)\b/.test(c) },
+    { id: "other", name: "Other", src: "config", led: "var(--h13)", test: () => true },
+  ];
+  const groupOf = (ctx) => WGROUPS.find((g) => g.test(norm(ctx))) || WGROUPS[WGROUPS.length - 1];
+
+  // Items: { keys (HTML), desc, chain, modes, note (HTML), hay (search text) }.
+  const itemModes = (it) => (Array.isArray(it.mode) ? it.mode : it.mode ? [it.mode] : []);
+  const hayOf = (toks, ...rest) => [toks.join(""), toks.map(humanTok).join(" "), toks.map(glyphTok).join(" "), ...rest.map(stripTags)].join(" ").toLowerCase();
+  function dataItem(it, curMap) {
+    const toks = canonKeys(it.lhs);
+    const c = curMap.get(toks.join(""));
+    if (c) c.used = true;
+    const actions = arr(it.actions).length ? arr(it.actions) : [it.action];
+    const chain = actions.map(human).filter(Boolean).join(" → ");
+    const desc = (c && c.d) || it.desc || chain || "(action)";
+    const modes = itemModes(it).length ? itemModes(it) : c ? c.m : [];
+    return { keys: tokCaps(toks), desc, chain: chain !== desc ? chain : "", modes, note: (c && c.n) || "", hay: hayOf(toks, desc, chain, c ? c.n : "") };
+  }
+  const curItem = (x) => ({ keys: keysHTML(x), desc: x.d, chain: "", modes: x.m, note: x.n, hay: hayOf(x.tok, x.raw, x.d, x.n) });
+  const byLhs = (a, b) => String(a.lhs).toLowerCase().localeCompare(String(b.lhs).toLowerCase());
+
+  // Sections from the live data (picker, explorer, blink), with curated notes merged in by key.
+  const SECTIONS = [];
+  const sec = (s) => { s.items = s.items || []; SECTIONS.push(s); return s; };
+  const dataSecs = [];
+  if (arr(picker.input).length || arr(picker.list).length || arr(picker.preview).length) {
+    const lede = "Any Snacks picker (files, grep, buffers…). Your config adds <kbd>s</kbd> and <kbd>Alt</kbd><kbd>s</kbd> (flash) and <kbd>Alt</kbd><kbd>a</kbd> (send to Sidekick) in the input.";
+    dataSecs.push({ g: "picker", name: "Input box", src: "snacks", data: arr(picker.input), take: (c) => c === "snacks picker input" || c === "snacks picker", lede });
+    dataSecs.push({ g: "picker", name: "Result list", src: "snacks", data: arr(picker.list), take: (c) => c === "snacks picker list" });
+    dataSecs.push({ g: "picker", name: "Preview", src: "snacks", data: arr(picker.preview), take: (c) => c === "snacks picker preview" });
+  }
+  if (explorer.length) dataSecs.push({ g: "explorer", name: "Explorer list", src: "snacks", data: explorer, take: (c) => has(c, "explorer"),
+    lede: "The file explorer (<kbd>Space</kbd><kbd>e</kbd>): its list window, including the picker list keys it inherits." });
+  const blinkLede = "blink.cmp keys while completing. Each key tries its actions left to right; <i>fallback</i> runs whatever the key would do without blink.";
+  if (arr(blink.default).length) dataSecs.push({ g: "complete", name: "Insert mode", src: "blink.cmp", data: arr(blink.default), take: (c) => has(c, "completion") && has(c, "insert"), lede: blinkLede });
+  if (arr(blink.cmdline).length) dataSecs.push({ g: "complete", name: "Command line", src: "blink.cmp", data: arr(blink.cmdline), take: (c) => has(c, "completion") && has(c, "cmdline") });
+  if (arr(blink.term).length) dataSecs.push({ g: "complete", name: "Terminal", src: "blink.cmp", data: arr(blink.term), take: (c) => has(c, "completion") && has(c, "term") });
+
+  // Curated entries with a ctx: merged into a data section, or a section of their own.
+  const byCtx = groupBy(CUR.filter((x) => x.ctx), (x) => x.ctx);
+  const ctxSecs = new Map();
+  for (const [ctx, list] of byCtx) {
+    const c = norm(ctx);
+    const ds = dataSecs.find((d) => d.take(c));
+    if (ds) { (ds.cur || (ds.cur = [])).push(...list); continue; }
+    ctxSecs.set(ctx, list);
+  }
+  for (const d of dataSecs) {
+    const curMap = new Map((d.cur || []).map((x) => [x.kb || x.kf, x]));
+    const items = d.data.slice().sort(byLhs).map((it) => dataItem(it, curMap));
+    items.push(...(d.cur || []).filter((x) => !x.used).map(curItem));
+    for (const x of d.cur || []) delete x.used;
+    sec({ g: d.g, name: d.name, src: d.src, lede: d.lede, items });
+  }
+  // Flash's enhanced f/t (from the flash config): a section with its own explanation.
+  if (arr(flash.char_keys).length) {
+    const keys = arr(flash.char_keys);
+    const fl = (k) => LIVE.find((x) => x.s === "flash" && x.kb === k && !x.ctx);
+    sec({ g: "jump", name: "Flash f / t", src: "flash",
+      lede: `Flash replaces the built-in character motions. ${flash.multi_line === false ? "<b>Current line only</b> (<code>multi_line = false</code>), like stock Vim." : "Searches across lines."}
+        ${flash.jump_labels ? "Shows jump labels." : "No jump labels:"} after <kbd>f</kbd>/<kbd>t</kbd>, press the same key again for the next match and its capital (<kbd>F</kbd>/<kbd>T</kbd>) for the previous one; <kbd>;</kbd> and <kbd>,</kbd> also work.`,
+      items: keys.map((k) => {
+        const x = fl(k), b = BUILT.find((y) => y.kb === k && y.m.includes("n"));
+        const desc = x && !UNHELPFUL.test(x.d) ? x.d : b ? b.d : "";
+        return { keys: tokCaps(canonKeys(k)), desc, chain: x ? stripTags(fileLine(x)) : "", modes: x ? x.m : [], note: "", hay: hayOf(canonKeys(k), desc, "flash") };
+      }) });
+  }
+  for (const [ctx, list] of [...ctxSecs].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))) {
+    const g = groupOf(ctx);
+    // Inside the Picker group "Snacks picker · git_log" reads better as "git_log".
+    const name = g.id === "picker" ? ctx.replace(/^Snacks picker\s*·\s*/i, "") : ctx;
+    sec({ g: g.id, name, src: list[0].s, items: list.map(curItem) });
+  }
+  SECTIONS.forEach((s, i) => { s.id = `w-${i}`; s.hayName = norm(s.name); });
+  const GROUPS_W = WGROUPS.map((g) => ({ ...g, secs: SECTIONS.filter((s) => s.g === g.id) })).filter((g) => g.secs.length);
+
+  // Big groups (the picker has ~150 keys over 30 windows) open on their first window, small ones show all.
+  const firstSub = (g) => (g && g.secs.length > 1 && g.secs.reduce((k, s) => k + s.items.length, 0) > 60 ? g.secs[0].id : "all");
+  const W = { g: 0, sub: firstSub(GROUPS_W[0]), q: "" };
+  const itemHTML = (it) => `<div class="witem">${it.keys}<div class="act"><span>${esc(it.desc)}${it.modes.length ? `<span class="ms">${modeBadges(it.modes)}</span>` : ""}</span>
+      ${it.chain ? `<span class="chain">${esc(it.chain)}</span>` : ""}${it.note ? `<span class="rn">${it.note}</span>` : ""}</div></div>`;
+  const secHTML = (s, items, showGroup) => `<div class="wgroup" id="${s.id}"><h3>${esc(s.name)} ${srcBadge(s.src)}${showGroup ? `<span class="ctx">${esc(WGROUPS.find((g) => g.id === s.g).name)}</span>` : ""} <span class="count">${items.length}</span></h3>
+      ${s.lede && !W.q ? `<p class="lede">${s.lede}</p>` : ""}<div class="wlist">${items.map(itemHTML).join("")}</div></div>`;
+  function matches(s) {
+    if (!W.q) return s.items;
+    const words = W.q.split(/\s+/).filter(Boolean);
+    const nameHit = words.every((w) => s.hayName.includes(w));
+    return nameHit ? s.items : s.items.filter((it) => words.every((w) => it.hay.includes(w)));
+  }
+  function draw() {
+    if (!GROUPS_W.length) { $("wpanel").innerHTML = `<p class="muted">No plugin window keys in the data.</p>`; return; }
+    const total = SECTIONS.reduce((n, s) => n + s.items.length, 0);
+    if (W.q) {
+      // Search: every group, only the matching keys; tabs show how many each group has.
+      const hits = SECTIONS.map((s) => [s, matches(s)]).filter(([, it]) => it.length);
+      const n = hits.reduce((k, [, it]) => k + it.length, 0);
+      for (const t of $("wtabs").children) {
+        const g = GROUPS_W[+t.dataset.i];
+        t.querySelector("span").textContent = hits.filter(([s]) => s.g === g.id).reduce((k, [, it]) => k + it.length, 0);
+        t.setAttribute("aria-selected", "false");
+      }
+      $("wsubs").innerHTML = "";
+      $("wcount").textContent = `${n} / ${total}`;
+      $("wpanel").removeAttribute("aria-labelledby");
+      $("wpanel").innerHTML = hits.length ? hits.map(([s, it]) => secHTML(s, it, true)).join("") : `<p class="empty">No key in a plugin window matches “${esc(W.q)}”.</p>`;
+      return;
+    }
+    const g = GROUPS_W[W.g];
+    for (const t of $("wtabs").children) {
+      const tg = GROUPS_W[+t.dataset.i];
+      t.querySelector("span").textContent = tg.secs.reduce((k, s) => k + s.items.length, 0);
+      t.setAttribute("aria-selected", String(+t.dataset.i === W.g));
+    }
+    $("wcount").textContent = `${total} keys`;
+    $("wsubs").innerHTML = g.secs.length > 1 ? `<button type="button" class="chip" data-v="all" aria-pressed="${W.sub === "all"}">All<span>${g.secs.reduce((k, s) => k + s.items.length, 0)}</span></button>`
+      + g.secs.map((s) => `<button type="button" class="chip" data-v="${s.id}" aria-pressed="${W.sub === s.id}">${esc(s.name)}<span>${s.items.length}</span></button>`).join("") : "";
+    $("wpanel").setAttribute("aria-labelledby", `wtab-${g.id}`);
+    $("wpanel").innerHTML = g.secs.filter((s) => W.sub === "all" || s.id === W.sub).map((s) => secHTML(s, s.items, false)).join("");
+  }
+  $("wtabs").innerHTML = GROUPS_W.map((g, i) => `<button type="button" class="tab" role="tab" id="wtab-${g.id}" style="--led:${g.led}" aria-selected="${i === W.g}" aria-controls="wpanel" data-i="${i}"><i></i>${esc(g.name)} <span></span></button>`).join("");
+  const pick = (i) => { W.g = i; W.sub = firstSub(GROUPS_W[i]); if (W.q) { W.q = ""; $("wq").value = ""; } draw(); };
+  $("wtabs").addEventListener("click", (e) => { const b = e.target.closest(".tab"); if (b) pick(+b.dataset.i); });
+  tabArrows($("wtabs"), (t) => pick(+t.dataset.i));
+  $("wsubs").addEventListener("click", (e) => { const b = e.target.closest(".chip"); if (b) { W.sub = b.dataset.v; draw(); } });
+  let wFrame = 0;
+  $("wq").addEventListener("input", () => { cancelAnimationFrame(wFrame); wFrame = requestAnimationFrame(() => { W.q = $("wq").value.trim().toLowerCase(); draw(); }); });
+  $("wq").addEventListener("keydown", (e) => { if (e.key === "Escape") { $("wq").value = ""; W.q = ""; draw(); } });
+  draw();
+}
+
+// ---- Commands -----------------------------------------------------------------------------------------
+{
+  let csrc = "all";
+  const counts = new Map();
+  for (const x of CMDS) counts.set(x.s, (counts.get(x.s) || 0) + 1);
+  const srcs = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  $("cchips").innerHTML = `<button type="button" class="chip" data-v="all" aria-pressed="true">All<span>${CMDS.length}</span></button>`
+    + srcs.map(([s, n]) => `<button type="button" class="chip" data-v="${esc(s)}" aria-pressed="false"><i style="--dot:var(--s-${srcKind(s)})"></i>${esc(srcLabel(s))}<span>${n}</span></button>`).join("");
+  function draw() {
+    const q = $("cq").value.trim().toLowerCase().replace(/^:/, "");
+    const words = q.split(/\s+/).filter(Boolean);
+    const list = CMDS.filter((x) => (csrc === "all" || x.s === csrc) && words.every((w) => x.hay.includes(w)))
+      .sort((a, b) => (q ? (b.exFull.toLowerCase().startsWith(q) - a.exFull.toLowerCase().startsWith(q)) : 0) || a.exFull.localeCompare(b.exFull));
+    $("ccount").textContent = `${list.length} / ${CMDS.length}`;
+    $("clist").innerHTML = list.length ? list.map((x) => `<div class="crow2"><div class="cn">${esc(x.raw)}</div><div>${esc(x.d || "(no description)")}
+      <div class="meta">${srcBadge(x.s)}${x.ctx ? `<span class="ctx">${esc(x.ctx)} buffers</span>` : ""}${x.ref.na && x.ref.na !== "0" ? `<span>args ${esc(x.ref.na)}</span>` : ""}${x.ref.r ? "<span>range</span>" : ""}${fileLine(x)}</div></div></div>`).join("")
+      : `<p class="empty">No command matches.</p>`;
+  }
+  $("cq").addEventListener("input", draw);
+  $("cq").addEventListener("keydown", (e) => { if (e.key === "Escape") { $("cq").value = ""; draw(); } });
+  $("cchips").addEventListener("click", (e) => {
+    const b = e.target.closest(".chip");
+    if (!b) return;
+    csrc = b.dataset.v;
+    for (const c of $("cchips").children) c.setAttribute("aria-pressed", String(c === b));
+    draw();
+  });
+  draw();
+}
+
+drawKB();
+</script>
+</body>
+</html>

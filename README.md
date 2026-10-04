@@ -5,6 +5,8 @@ A modern, modular, and high-performance Neovim configuration built from scratch 
 ![Neovim](https://img.shields.io/badge/Neovim-0.10+-blue?logo=neovim)
 ![License](https://img.shields.io/badge/License-GPLv3+-green)
 
+📖 **[Interactive keymap cheatsheet](https://pages.rootiest.dev/neovim-config/cheatsheet/)**: every Vim key and every mapping in this config, searchable.
+
 ## ✨ Highlights
 
 - **Built-in Package Management**: Exclusively uses `vim.pack` for lightweight, native plugin management.
@@ -39,7 +41,8 @@ The configuration is strictly modular:
 - **Nvim-web-devicons**: Consistent icons across UI components.
 
 ### Editing & Navigation
-- **Flash**: Enhanced motion and search.
+- **Flash**: `f`/`F`/`t`/`T` with match highlighting, kept to the current line.
+- **Leap**: Jump anywhere in the window with `<CR>` + two characters (`S` across windows).
 - **Focusline**: Keeps the active line at a configurable screen position (30%) during scrolling motions.
 - **Mini.ai**: Better text objects (including `g` for entire buffer).
 - **Mini.surround**: Surround text objects (add/delete/change).
@@ -59,7 +62,7 @@ The configuration is strictly modular:
 ### LSP & Completion
 - **Blink.cmp** + **blink.lib**: High-performance Rust-based completion. Auto-detects binary across install layouts; falls back gracefully if unavailable. Rebuilds automatically on `PackChanged`.
 - **blink-copilot**: Surfaces GitHub Copilot inline suggestions inside the blink.cmp completion menu.
-- **Sidekick.nvim**: AI assistant providing Next Edit Suggestions (NES) for multi-line refactoring via the Copilot LSP, plus an integrated AI CLI terminal (`<leader>aa`) with context-aware prompts. Snacks picker integration sends selections to the active AI session via `<Alt-a>`.
+- **Sidekick.nvim**: AI assistant providing Next Edit Suggestions (NES) for multi-line refactoring via the Copilot LSP, plus an integrated AI CLI terminal (`:Sidekick cli toggle`) with context-aware prompts. Snacks picker integration sends selections to the active AI session via `<Alt-a>`.
 - **LSPConfig + Mason**: Managed LSP support for Lua, C/C++, Rust, Python, Fish, and Shell.
 - **Conform**: Formatter with format-on-save and range formatting.
 - **Inc-rename**: Incremental LSP rename with live preview.
@@ -134,19 +137,17 @@ Place machine-specific or secret configuration in `~/.config/.user-dots/nvim/loc
 | `j` / `k` / `↓` / `↑` | Move by wrapped (display) line when no count is given; counts still move by real lines. Arrows do the same in insert mode |
 | `<leader>sr` | Search and Replace (Grug-far) |
 | `<leader>gg` | Open Lazygit |
-| `<leader>qs` | Restore Last Session (Persistence) |
+| `<leader>qs` / `<leader>ql` | Restore Session / Restore Last Session (Persistence) |
 | `<leader>cf` | Format Buffer (Conform) |
 | `<leader>uu` | Toggle Undo Tree |
 | `<leader>z` | Toggle Zen Mode |
-| `gd` / `gr` | Goto Definition / References |
+| `gd` / `grr` | Goto Definition / References (Snacks pickers); Neovim's `grn` `gra` `gri` `grt` stay available |
 | `K` | Hover Documentation |
-| `s` / `S` | Leap Motion (Normal/Window) |
-| `ys` / `ds` / `cs` | Surround (Add/Delete/Change) |
-| `gx` / `gX` | Open URL under cursor (Gx.nvim) |
+| `<CR>` / `S` | Leap Motion (Window/Across windows) |
+| `sa` / `sd` / `sr` | Surround (Add/Delete/Replace, mini.surround) |
+| `gx` | Open URL, file, plugin or issue under cursor (Gx.nvim) |
 | `<Tab>` *(insert)* | Advance snippet → NES suggestion → native inline completion → fallback |
-| `<Tab>` *(normal)* | Jump to / apply Sidekick NES suggestion |
-| `<leader>aa` | Toggle Sidekick AI CLI terminal |
-| `<leader>as` | Select AI tool (Sidekick) |
+| `<Tab>` *(normal)* | Jump to / apply Sidekick NES suggestion, else jump forward |
 | `<Alt-a>` *(picker)* | Send picker selection to active AI CLI session |
 | `<leader>ha` | Annotate current position (Haunt) |
 | `<leader>ht` | Toggle annotation visibility (Haunt) |
@@ -158,6 +159,20 @@ Place machine-specific or secret configuration in `~/.config/.user-dots/nvim/loc
 | `<leader>cbd` | Delete Comment Box/Line |
 | `<leader>cbk` | Browse Box Style Catalog |
 | `:Q` | Forced Write-All and Quit |
+
+The full list, including built-in Vim keys and keys inside plugin windows, is in the cheatsheet below.
+
+## 📖 Keymap Cheatsheet
+
+**[pages.rootiest.dev/neovim-config/cheatsheet](https://pages.rootiest.dev/neovim-config/cheatsheet/)**: a single-page, searchable reference of every built-in Vim key plus this config's live keymaps, showing which built-ins a mapping replaces and where each mapping is defined. It also has an interactive keyboard, a leader-key tree, a text-object composer and the keys inside plugin windows (pickers, completion, Flash/Leap).
+
+It is generated from Neovim's own help index, a headless dump of this config and curated notes in `docs/cheatsheet/curated/`. After changing keymaps, regenerate it:
+
+```bash
+python3 docs/cheatsheet/gen_cheatsheet.py
+```
+
+Pushing `docs/cheatsheet/cheatsheet.html` to `main` publishes it (`.github/workflows/pages.yml`).
 
 ## 📜 License
 
