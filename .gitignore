@@ -377,3 +377,4 @@ docs/specs
 docs/devlogs
 
 # ──────────────────────────────────────────────────────────────
+/docs/cheatsheet/__pycache__/
