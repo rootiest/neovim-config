@@ -102,6 +102,7 @@ nav a { color: var(--accent); text-decoration: none; font-weight: 600; }
 nav a:hover { text-decoration: underline; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: var(--panel); flex: none; }
 .seg button { border: 0; background: transparent; padding: 6px 12px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+#kblayout { justify-self: start; }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; list-style: none; margin: 0; padding: 0; }
@@ -396,6 +397,7 @@ footer code { font-size: 0.8rem; }
         <button type="button" data-ai="a" aria-pressed="false">a · around</button>
       </div>
     </div>
+    <div class="seg" id="kblayout" role="group" aria-label="Keyboard layout"></div>
     <div class="legend" id="kblegend"></div>
     <div class="board"><div class="case"><div class="kb" id="kb" role="group" aria-label="Keyboard"></div></div></div>
     <div class="keyinfo" id="keyinfo" aria-live="polite"></div>
@@ -1148,32 +1150,65 @@ function groupName(seq, kids) {
 }
 
 // ---- Keyboard ---------------------------------------------------------------------------------
-// US ANSI board in key units (1u = one letter key). Printable keys carry base/shifted characters,
-// named keys a Vim key name, and modifier keys are toggles.
-const KB_W = 18.25, KB_H = 6.25;
-const KEYS = [];
-function addRow(y, x, items) {
-  for (const it of items) {
-    const w = it.w || 1;
-    if (!it.gap) KEYS.push({ ...it, x, y, w });
-    x += w;
-  }
-}
+// Two physical boards in key units (1u = one letter key): a standard US ANSI tenkeyless board and
+// the full-size QMK board (Keychron Q5 Max) from the QMK cheatsheet. Letters are QWERTY on both, so a
+// key does the same Vim thing on either; only where it sits (and which keys exist) changes.
+// Printable keys carry base/shifted characters, named keys a Vim key name, modifier keys are toggles.
 const pair = (b, s, w) => ({ b, s, w });
 const letters = (s) => s.split("").map((c) => pair(c, c.toUpperCase()));
 const fk = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => ({ n: "F" + (a + i) }));
-addRow(0, 0, [{ n: "Esc" }, { gap: 1, w: 1 }, ...fk(1, 4), { gap: 1, w: 0.5 }, ...fk(5, 8), { gap: 1, w: 0.5 }, ...fk(9, 12)]);
-addRow(1.25, 0, [pair("`", "~"), pair("1", "!"), pair("2", "@"), pair("3", "#"), pair("4", "$"), pair("5", "%"), pair("6", "^"),
-  pair("7", "&"), pair("8", "*"), pair("9", "("), pair("0", ")"), pair("-", "_"), pair("=", "+"), { n: "BS", w: 2, label: "Backspace" }]);
-addRow(1.25, 15.25, [{ n: "Insert", label: "Ins" }, { n: "Home" }, { n: "PageUp", label: "PgUp" }]);
-addRow(2.25, 0, [{ n: "Tab", w: 1.5 }, ...letters("qwertyuiop"), pair("[", "{"), pair("]", "}"), pair("\\", "|", 1.5)]);
-addRow(2.25, 15.25, [{ n: "Del" }, { n: "End" }, { n: "PageDown", label: "PgDn" }]);
-addRow(3.25, 0, [{ mod: "Caps", w: 1.75 }, ...letters("asdfghjkl"), pair(";", ":"), pair("'", '"'), { n: "CR", w: 2.25, label: "Enter" }]);
-addRow(4.25, 0, [{ mod: "Shift", w: 2.25 }, ...letters("zxcvbnm"), pair(",", "<"), pair(".", ">"), pair("/", "?"), { mod: "Shift", w: 2.75 }]);
-addRow(4.25, 16.25, [{ n: "Up", label: "↑" }]);
-addRow(5.25, 0, [{ mod: "Ctrl", w: 1.25 }, { mod: "Super", w: 1.25 }, { mod: "Alt", w: 1.25 }, { n: "Space", w: 6.25 },
-  { mod: "Alt", w: 1.25 }, { mod: "Super", w: 1.25 }, { mod: "Menu", w: 1.25 }, { mod: "Ctrl", w: 1.25 }]);
-addRow(5.25, 15.25, [{ n: "Left", label: "←" }, { n: "Down", label: "↓" }, { n: "Right", label: "→" }]);
+const numrow = [pair("`", "~"), pair("1", "!"), pair("2", "@"), pair("3", "#"), pair("4", "$"), pair("5", "%"), pair("6", "^"),
+  pair("7", "&"), pair("8", "*"), pair("9", "("), pair("0", ")"), pair("-", "_"), pair("=", "+")];
+const kp = (n, label, h) => ({ n, label, h });
+function buildBoard(w, h, rows) {
+  const keys = [];
+  for (const [y, x0, items] of rows) {
+    let x = x0;
+    for (const it of items) {
+      const kw = it.w || 1;
+      if (!it.gap) keys.push({ ...it, x, y, w: kw, h: it.h || 1 });
+      x += kw;
+    }
+  }
+  return { w, h, keys };
+}
+const BOARDS = {
+  standard: { name: "Standard", ...buildBoard(18.25, 6.25, [
+    [0, 0, [{ n: "Esc" }, { gap: 1 }, ...fk(1, 4), { gap: 1, w: 0.5 }, ...fk(5, 8), { gap: 1, w: 0.5 }, ...fk(9, 12)]],
+    [1.25, 0, [...numrow, { n: "BS", w: 2, label: "Backspace" }]],
+    [1.25, 15.25, [{ n: "Insert", label: "Ins" }, { n: "Home" }, { n: "PageUp", label: "PgUp" }]],
+    [2.25, 0, [{ n: "Tab", w: 1.5 }, ...letters("qwertyuiop"), pair("[", "{"), pair("]", "}"), pair("\\", "|", 1.5)]],
+    [2.25, 15.25, [{ n: "Del" }, { n: "End" }, { n: "PageDown", label: "PgDn" }]],
+    [3.25, 0, [{ mod: "Caps", w: 1.75 }, ...letters("asdfghjkl"), pair(";", ":"), pair("'", '"'), { n: "CR", w: 2.25, label: "Enter" }]],
+    [4.25, 0, [{ mod: "Shift", w: 2.25 }, ...letters("zxcvbnm"), pair(",", "<"), pair(".", ">"), pair("/", "?"), { mod: "Shift", w: 2.75 }]],
+    [4.25, 16.25, [{ n: "Up", label: "↑" }]],
+    [5.25, 0, [{ mod: "Ctrl", w: 1.25 }, { mod: "Super", w: 1.25 }, { mod: "Alt", w: 1.25 }, { n: "Space", w: 6.25 },
+      { mod: "Alt", w: 1.25 }, { mod: "Super", w: 1.25 }, { mod: "Menu", w: 1.25 }, { mod: "Ctrl", w: 1.25 }]],
+    [5.25, 15.25, [{ n: "Left", label: "←" }, { n: "Down", label: "↓" }, { n: "Right", label: "→" }]],
+  ]) },
+  // Positions from the Q5 Max info.json (LAYOUT_ansi_101). It has no Insert key, the nav column is
+  // PgUp / PgDn / Home-End (a tap dance: tap Home, double-tap End), the right-hand Alt/Menu are the
+  // FN1/FN2 layer keys, and the top-right keys (Print Screen, Calc, Find, knob) have no Vim meaning.
+  q5: { name: "Q5 Max (QMK)", ...buildBoard(20.5, 6.5, [
+    [0, 0, [{ n: "Esc" }, { gap: 1 }, ...fk(1, 4), { gap: 1, w: 0.5 }, ...fk(5, 8), { gap: 1, w: 0.5 }, ...fk(9, 12), { gap: 1, w: 0.25 },
+      { n: "Del" }, { n: "PrtSc" }, { n: "Calc" }, { n: "Find" }, { n: "Knob", label: "⏯" }]],
+    [1.25, 0, [...numrow, { n: "BS", w: 2, label: "Backspace" }, { gap: 1, w: 0.25 }, { n: "PageUp", label: "PgUp" },
+      { n: "NumLock", label: "Num" }, kp("kDivide", "/"), kp("kMultiply", "*"), kp("kMinus", "-")]],
+    [2.25, 0, [{ n: "Tab", w: 1.5 }, ...letters("qwertyuiop"), pair("[", "{"), pair("]", "}"), pair("\\", "|", 1.5), { gap: 1, w: 0.25 },
+      { n: "PageDown", label: "PgDn" }, kp("k7", "7"), kp("k8", "8"), kp("k9", "9"), kp("kPlus", "+", 2)]],
+    [3.25, 0, [{ mod: "Caps", w: 1.75 }, ...letters("asdfghjkl"), pair(";", ":"), pair("'", '"'), { n: "CR", w: 2.25, label: "Enter" }, { gap: 1, w: 0.25 },
+      { n: "Home", label: "Home" }, kp("k4", "4"), kp("k5", "5"), kp("k6", "6")]],
+    [4.25, 0, [{ mod: "Shift", w: 2.25 }, ...letters("zxcvbnm"), pair(",", "<"), pair(".", ">"), pair("/", "?"), { mod: "Shift", w: 1.75 }, { gap: 1, w: 2.5 },
+      kp("k1", "1"), kp("k2", "2"), kp("k3", "3"), kp("kEnter", "Ent", 2)]],
+    [4.5, 14.25, [{ n: "Up", label: "↑" }]],
+    [5.25, 0, [{ mod: "Ctrl", w: 1.25 }, { mod: "Super", w: 1.25 }, { mod: "Alt", w: 1.25 }, { n: "Space", w: 6.25 },
+      { mod: "Fn2" }, { mod: "Fn1" }, { mod: "Ctrl" }, { gap: 1, w: 3.5 }, { n: "k0", label: "0", w: 2 }, kp("kPoint", ".")]],
+    [5.5, 13.25, [{ n: "Left", label: "←" }, { n: "Down", label: "↓" }, { n: "Right", label: "→" }]],
+  ]) },
+};
+let KB_BOARD = "standard";
+try { const b = localStorage.getItem("nvim-cheatsheet-board"); if (BOARDS[b]) KB_BOARD = b; } catch (e) { /* storage blocked: default board */ }
+let KEYS = BOARDS[KB_BOARD].keys;
 
 // Layers: a mode, a prefix typed first, and which modifiers start held.
 const LAYERS = [
@@ -1251,12 +1286,15 @@ function drawKB() {
   $("aiswitch").hidden = !layer.ai;
   for (const b of $("aiswitch").children) b.setAttribute("aria-pressed", String(b.dataset.ai === KB.ai));
   KB.infos = KEYS.map((k) => infoFor(k, layer));
+  const B = BOARDS[KB_BOARD];
+  $("kb").style.aspectRatio = `${B.w} / ${B.h}`;
+  for (const b of $("kblayout").children) b.setAttribute("aria-pressed", String(b.dataset.board === KB_BOARD));
   const cats = new Map();
   $("kb").innerHTML = KEYS.map((k, i) => {
     const info = KB.infos[i];
     const c = capContent(k, info || {});
     if (c.cat) cats.set(c.cat, (cats.get(c.cat) || 0) + 1);
-    const style = `left:${(k.x / KB_W) * 100}%;top:${(k.y / KB_H) * 100}%;width:${(k.w / KB_W) * 100}%;height:${(1 / KB_H) * 100}%`;
+    const style = `left:${(k.x / B.w) * 100}%;top:${(k.y / B.h) * 100}%;width:${(k.w / B.w) * 100}%;height:${(k.h / B.h) * 100}%`;
     const pressed = k.mod === "Shift" ? KB.shift : k.mod === "Ctrl" ? KB.ctrl : null;
     const aria = k.mod ? `${k.mod}${pressed === null ? "" : pressed ? " (held)" : " (not held)"}`
       : `${info ? info.seq.join("") : ""}${c.lb ? ": " + c.lb : ""}`;
@@ -1299,6 +1337,16 @@ function tabArrows(listEl, onPick) {
   });
 }
 tabArrows($("kbtabs"), (t) => selectLayer(+t.dataset.i));
+$("kblayout").innerHTML = Object.entries(BOARDS).map(([id, b]) => `<button type="button" data-board="${id}" aria-pressed="${id === KB_BOARD}">${esc(b.name)}</button>`).join("");
+$("kblayout").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-board]");
+  if (!b || b.dataset.board === KB_BOARD) return;
+  KB_BOARD = b.dataset.board;
+  KEYS = BOARDS[KB_BOARD].keys;
+  KB.cur = -1;
+  try { localStorage.setItem("nvim-cheatsheet-board", KB_BOARD); } catch (err) { /* storage blocked: choice isn't remembered */ }
+  drawKB();
+});
 $("aiswitch").addEventListener("click", (e) => { const b = e.target.closest("[data-ai]"); if (b) { KB.ai = b.dataset.ai; drawKB(); } });
 
 /** Detail panel: every entry for the key in this layer, then the longer keys it starts. */
