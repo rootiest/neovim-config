@@ -276,6 +276,7 @@ end, { expr = true, desc = "Rename Symbol" })
 
 -- Other
 vim.keymap.set("n", "<leader>ur", "<cmd>nohlsearch<cr>", { desc = "Clear Search Highlights" })
+vim.keymap.set("n", "<leader>s<Esc>", "<cmd>let @/ = '' | nohlsearch<cr>", { desc = "Clear Search" })
 vim.keymap.set("n", "<leader>z", function()
 	Snacks.zen()
 end, { desc = "Toggle Zen Mode" })

@@ -1293,6 +1293,11 @@ function infoFor(k, layer) {
     const alt = lookup(layer.mode, [...prefix, CTRL_ALIAS[tok]]);
     if (alt.primary || alt.kids.length) info = alt;
   }
+  // Ctrl-M is Enter to the terminal, so a map on <CR> (leap) is what <C-M> really runs.
+  if (tok === "<C-M>") {
+    const cr = lookup(layer.mode, [...prefix, "<CR>"]);
+    if (cr.primary && cr.primary.kind === "live") info = cr;
+  }
   info.tok = tok;
   return info;
 }
