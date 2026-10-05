@@ -913,7 +913,7 @@ function flagsHTML(x, onlyMode) {
 // ---- Short labels for keycaps --------------------------------------------------------------
 // entry.sl wins; then these by help tag (meanings from index.txt); else a label derived from the description.
 const SL = {
-  "h": "←", "j": "↓", "k": "↑", "l": "→", "w": "word →", "W": "WORD →", "b": "← word", "B": "← WORD", "e": "word end",
+  "h": "left", "j": "down", "k": "up", "l": "right", "w": "word →", "W": "WORD →", "b": "← word", "B": "← WORD", "e": "word end",
   "E": "WORD end", "0": "line start", "^": "first char", "$": "line end", "gg": "first line", "G": "last line",
   "f": "find →", "F": "← find", "t": "till →", "T": "← till", ";": "repeat f/t", ",": "f/t back", "n": "next match",
   "N": "prev match", "star": "word →", "#": "← word", "%": "match pair", "{": "← para", "}": "para →", "(": "← sentence",
@@ -933,7 +933,7 @@ const SL = {
   "CTRL-Z": "suspend", "CTRL-C": "interrupt", "CTRL-N": "down", "CTRL-P": "up", "CTRL-H": "left", "CTRL-J": "down",
   "CTRL-M": "↓ line start", "<BS>": "cursor left", "ZZ": "save & close", "ZQ": "quit no save", "<Esc>": "cancel",
   "<Del>": "delete char", "<Insert>": "insert", "<Home>": "line start", "<End>": "line end", "<PageUp>": "page ↑",
-  "<PageDown>": "page ↓", "<Up>": "↑", "<Down>": "↓", "<Left>": "←", "<Right>": "→", "<F1>": "help", "<Help>": "help",
+  "<PageDown>": "page ↓", "<Up>": "up", "<Down>": "down", "<Left>": "left", "<Right>": "right", "<F1>": "help", "<Help>": "help",
   "<S-Up>": "page ↑", "<S-Down>": "page ↓", "<S-Left>": "← word", "<S-Right>": "word →", "<C-Left>": "← word",
   "<C-Right>": "word →", "<C-Home>": "first line", "<C-End>": "last line", "<S-CR>": "page ↓",
   // g…
