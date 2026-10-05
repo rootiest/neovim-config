@@ -102,7 +102,7 @@ nav a { color: var(--accent); text-decoration: none; font-weight: 600; }
 nav a:hover { text-decoration: underline; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; background: var(--panel); flex: none; }
 .seg button { border: 0; background: transparent; padding: 6px 12px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
-#kblayout { justify-self: start; }
+.kbctl { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-self: start; }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; list-style: none; margin: 0; padding: 0; }
@@ -286,6 +286,37 @@ details.more > summary { cursor: pointer; color: var(--accent); font-weight: 600
 .mk.group { border-radius: 2px; background: transparent; border: 1.5px dashed var(--muted); }
 .mk.wait { box-shadow: 0 0 0 2px var(--warn); }
 .legend .mk { width: 10px; height: 10px; }
+/* Keyboard colourways: the keyboard has its own dark/light switch, independent of the page theme.
+   Dark is shared; light is a cool white-and-grey office board (standard) or the eggshell-white Q5 Max (as in the QMK sheet). */
+.board[data-kb="dark"] {
+  --ink: #e6e9ed; --muted: #8e97a2; --line: #2a3038; --panel: #191d22;
+  --cap: #252b32; --cap-edge: #0a0c0f; --accent: #4f9bff; --accent-ink: #0b1220;
+  --case: linear-gradient(170deg, #22272e, #15191e); --plate: #0e1114;
+  --warn: #f0b35c; --warn-bg: #33270f; --danger: #ff6b6b; --danger-bg: #3a1a1c; --ok: #7ccc6c; --ok-bg: #18301a;
+  --s-builtin: #8e97a2; --s-neovim: #3cc7b8; --s-config: #ff5c8f; --s-plugin: #a497ff;
+  --h1: #5ea1ff; --h2: #3cc7b8; --h3: #ff7a5c; --h4: #7ccc6c; --h5: #b197ff; --h6: #e8b44c; --h7: #8f96ff;
+  --h8: #e070cf; --h9: #4fc3dc; --h10: #b5c85a; --h11: #ff5c8f; --h12: #d6a06a; --h13: #8e97a2;
+}
+.board[data-kb="light"][data-board="standard"] {
+  --ink: #1c2128; --muted: #5b6570; --line: #c3cad3; --panel: #f5f6f8;
+  --cap: #fafbfc; --cap-edge: #aab2bc; --accent: #0a66e8; --accent-ink: #ffffff;
+  --case: linear-gradient(170deg, #e4e8ed, #c4cbd4); --plate: #b9c1cb;
+  --warn: #a35a00; --warn-bg: #fdf0dc; --danger: #c62828; --danger-bg: #fde4e4; --ok: #2f7d32; --ok-bg: #e2f3e3;
+  --s-builtin: #6b7480; --s-neovim: #0f8a7e; --s-config: #d6336c; --s-plugin: #6a48d7;
+  --h1: #1f6feb; --h2: #0f8a7e; --h3: #d1462f; --h4: #2f8a3a; --h5: #7c4ddb; --h6: #b7791f; --h7: #4b55d6;
+  --h8: #c03aa8; --h9: #0e7fa0; --h10: #6f7d17; --h11: #d6336c; --h12: #8a5a2b; --h13: #6b7280;
+}
+.board[data-kb="light"][data-board="q5"] {
+  --ink: #34383a; --muted: #6a6e68; --line: #cfcdc3; --panel: #f5f6f8;
+  --cap: #f1f0ea; --cap-edge: #c9c7bd; --accent: #0a66e8; --accent-ink: #ffffff;
+  --case: linear-gradient(170deg, #f4f4f1, #d8d9d5); --plate: #e4e5e3;
+  --warn: #a35a00; --warn-bg: #fdf0dc; --danger: #c62828; --danger-bg: #fde4e4; --ok: #2f7d32; --ok-bg: #e2f3e3;
+  --s-builtin: #6b7480; --s-neovim: #0f8a7e; --s-config: #d6336c; --s-plugin: #6a48d7;
+  --h1: #1f6feb; --h2: #0f8a7e; --h3: #d1462f; --h4: #2f8a3a; --h5: #7c4ddb; --h6: #b7791f; --h7: #4b55d6;
+  --h8: #c03aa8; --h9: #0e7fa0; --h10: #6f7d17; --h11: #d6336c; --h12: #8a5a2b; --h13: #6b7280;
+}
+.board[data-kb="light"] .case { box-shadow: inset 0 1px 0 #fff, 0 12px 30px -16px rgba(0,0,0,.45); }
+.board[data-kb="light"] .kb { box-shadow: inset 0 1px 3px rgba(0,0,0,.12); }
 .keyinfo { min-height: 7em; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 10px; font-size: 0.95rem; }
 .ki-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
 .ki-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -397,9 +428,15 @@ footer code { font-size: 0.8rem; }
         <button type="button" data-ai="a" aria-pressed="false">a · around</button>
       </div>
     </div>
-    <div class="seg" id="kblayout" role="group" aria-label="Keyboard layout"></div>
+    <div class="kbctl">
+      <div class="seg" id="kblayout" role="group" aria-label="Keyboard layout"></div>
+      <div class="seg" id="kbtheme" role="group" aria-label="Keyboard colourway">
+        <button type="button" data-kbt="dark" aria-pressed="true">Dark</button>
+        <button type="button" data-kbt="light" aria-pressed="false">Light</button>
+      </div>
+    </div>
     <div class="legend" id="kblegend"></div>
-    <div class="board"><div class="case"><div class="kb" id="kb" role="group" aria-label="Keyboard"></div></div></div>
+    <div class="board" id="board" data-kb="dark" data-board="standard"><div class="case"><div class="kb" id="kb" role="group" aria-label="Keyboard"></div></div></div>
     <div class="keyinfo" id="keyinfo" aria-live="polite"></div>
   </section>
 
@@ -1209,6 +1246,8 @@ const BOARDS = {
 let KB_BOARD = "standard";
 try { const b = localStorage.getItem("nvim-cheatsheet-board"); if (BOARDS[b]) KB_BOARD = b; } catch (e) { /* storage blocked: default board */ }
 let KEYS = BOARDS[KB_BOARD].keys;
+let KB_THEME = "dark";
+try { const t = localStorage.getItem("nvim-cheatsheet-kbtheme"); if (t === "light" || t === "dark") KB_THEME = t; } catch (e) { /* storage blocked: default colourway */ }
 
 // Layers: a mode, a prefix typed first, and which modifiers start held.
 const LAYERS = [
@@ -1289,6 +1328,9 @@ function drawKB() {
   const B = BOARDS[KB_BOARD];
   $("kb").style.aspectRatio = `${B.w} / ${B.h}`;
   for (const b of $("kblayout").children) b.setAttribute("aria-pressed", String(b.dataset.board === KB_BOARD));
+  $("board").dataset.board = KB_BOARD;
+  $("board").dataset.kb = KB_THEME;
+  for (const b of $("kbtheme").children) b.setAttribute("aria-pressed", String(b.dataset.kbt === KB_THEME));
   const cats = new Map();
   $("kb").innerHTML = KEYS.map((k, i) => {
     const info = KB.infos[i];
@@ -1345,6 +1387,13 @@ $("kblayout").addEventListener("click", (e) => {
   KEYS = BOARDS[KB_BOARD].keys;
   KB.cur = -1;
   try { localStorage.setItem("nvim-cheatsheet-board", KB_BOARD); } catch (err) { /* storage blocked: choice isn't remembered */ }
+  drawKB();
+});
+$("kbtheme").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-kbt]");
+  if (!b || b.dataset.kbt === KB_THEME) return;
+  KB_THEME = b.dataset.kbt;
+  try { localStorage.setItem("nvim-cheatsheet-kbtheme", KB_THEME); } catch (err) { /* storage blocked: choice isn't remembered */ }
   drawKB();
 });
 $("aiswitch").addEventListener("click", (e) => { const b = e.target.closest("[data-ai]"); if (b) { KB.ai = b.dataset.ai; drawKB(); } });
