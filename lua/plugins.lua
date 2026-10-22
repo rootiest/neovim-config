@@ -440,6 +440,17 @@ lazyload.on_vim_enter(function()
   }
   require("mini.ai").setup(Config.plugins.mini_ai)
 
+  -- Mini.operators
+  vim.pack.add({ { src = "https://github.com/echasnovski/mini.operators", name = "mini.operators" } })
+
+  -- Defaults except where they collide: exchange moves from gx (gx.nvim) to cx
+  -- (vim-exchange's key), replace from gr (the LSP gr* set, incl. grr) to cr.
+  -- sort (gs) and multiply (gm) shadow rarely used built-ins on purpose.
+  require("mini.operators").setup({
+    exchange = { prefix = "cx" },
+    replace = { prefix = "cr" },
+  })
+
   -- Icons
   vim.pack.add({ { src = "https://github.com/nvim-tree/nvim-web-devicons", name = "nvim-web-devicons" } })
 

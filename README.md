@@ -46,6 +46,7 @@ The configuration is strictly modular:
 - **Focusline**: Keeps the active line at a configurable screen position (30%) during scrolling motions.
 - **Mini.ai**: Better text objects (including `g` for entire buffer).
 - **Mini.surround**: Surround text objects (add/delete/change).
+- **Mini.operators**: Text operators that take any motion: exchange (swap two regions), sort, multiply, evaluate and replace-with-register.
 - **Mini.pairs** + `lua/smart_pairs.lua`: Context-aware auto-close for brackets, quotes and backticks — a closing character is only added when the rest of the line is empty/whitespace or a closing bracket, so wrapping existing text (e.g. adding backticks around a word) never inserts a stray closer; quotes don't pair after a word character. In Markdown, a 3rd `` ` `` or `~` on a blank line opens a fenced code block pair (only outside an existing block and with a blank line or the block's closer below); further characters lengthen both fences (` ```` `, ` ````` `), `<BS>` shrinks them, and fences nested inside a longer block pair as examples, collapsing into the enclosing block's closer once long enough to close it.
 - **Persistence**: Session management.
 - **Which-key**: Interactive keybinding documentation.
@@ -145,6 +146,7 @@ Place machine-specific or secret configuration in `~/.config/.user-dots/nvim/loc
 | `K` | Hover Documentation |
 | `<CR>` / `S` | Leap Motion (Window/Across windows) |
 | `sa` / `sd` / `sr` | Surround (Add/Delete/Replace, mini.surround) |
+| `cx` / `gs` / `gm` / `g=` / `cr` | Exchange (swap two regions), Sort, Multiply, Evaluate, Replace with register (mini.operators; `cx` and `cr` replace the default `gx`/`gr`) |
 | `gx` | Open URL, file, plugin or issue under cursor (Gx.nvim) |
 | `<Tab>` *(insert)* | Advance snippet → NES suggestion → native inline completion → fallback |
 | `<Tab>` *(normal)* | Jump to / apply Sidekick NES suggestion, else jump forward |
