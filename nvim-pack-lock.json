@@ -92,6 +92,10 @@
       "rev": "43eb2074843950a3a25aae56a5f41362ec043bfa",
       "src": "https://github.com/echasnovski/mini.ai"
     },
+    "mini.operators": {
+      "rev": "0e25aac29dd6cdbcfdbd8a6505a8e3be5064ef1a",
+      "src": "https://github.com/echasnovski/mini.operators"
+    },
     "mini.pairs": {
       "rev": "42387c7fe68fc0b6e95eaf37f1bb76e7bffaa0d9",
       "src": "https://github.com/echasnovski/mini.pairs"
