@@ -14,7 +14,7 @@ A modern, modular, and high-performance Neovim configuration built from scratch 
 - **Unified Registry**: Configuration is managed via a global `_G.Config` registry, ensuring cross-plugin consistency.
 - **High Performance**: Featuring **blink.cmp** (Rust-based completion) and optimized **Snacks.nvim** components.
 - **AI-Powered**: Native integration with **GitHub Copilot** — inline completions via **blink-copilot** and multi-line refactoring via **Sidekick.nvim** Next Edit Suggestions (NES).
-- **User-Centric QoL**: Hybrid line numbers, autosave-on-edit, and seamless system clipboard integration.
+- **User-Centric QoL**: Hybrid line numbers, autosave-on-edit, LF line endings on write, and seamless system clipboard integration.
 - **Resilient & Portable**: Intelligent terminal title management (Kitty + Fallback), automatic project root detection, and machine-local override support.
 - **Lean & Readable**: ~980 lines of Lua code (excluding comments and blanks).
 
