@@ -46,6 +46,49 @@ vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
   end,
 })
 
+-- Line endings: write LF everywhere
+-- Converts CRLF files to LF on write, and strips stray CR from mixed-ending
+-- files. Skipped for filetypes that need CR, for repos whose .editorconfig asks
+-- for CRLF, and when vim.g.keep_crlf or vim.b.keep_crlf is set.
+local keep_crlf_ft = {
+  dosbatch = true, -- cmd.exe mishandles labels/goto with LF endings
+  diff = true,     -- patches against CRLF files carry CRs on purpose
+}
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = vim.api.nvim_create_augroup("crlf_to_lf", { clear = true }),
+  callback = function(args)
+    local buf = args.buf
+    local bo, b = vim.bo[buf], vim.b[buf]
+    if bo.binary or bo.buftype ~= "" then return end
+    if vim.g.keep_crlf or b.keep_crlf or keep_crlf_ft[bo.filetype] then return end
+    local ec = b.editorconfig
+    if ec and ec.end_of_line == "crlf" then return end
+
+    local converted = false
+    if bo.fileformat ~= "unix" then
+      bo.fileformat = "unix"
+      converted = true
+    end
+
+    -- Mixed endings load as "unix" with a visible ^M on the CRLF lines
+    local stripped = 0
+    if vim.api.nvim_buf_call(buf, function() return vim.fn.search("\r$", "nw") end) > 0 then
+      pcall(vim.cmd.undojoin) -- fold into the edit that triggered the write
+      for i, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
+        if line:sub(-1) == "\r" then
+          vim.api.nvim_buf_set_text(buf, i - 1, #line - 1, i - 1, #line, {})
+          stripped = stripped + 1
+        end
+      end
+    end
+
+    if converted or stripped > 0 then
+      local msg = converted and "Converted line endings to LF" or "Stripped CR from mixed line endings"
+      vim.notify(msg, vim.log.levels.INFO, { title = "Line endings" })
+    end
+  end,
+})
+
 -- Automatically reload files changed outside of Neovim
 vim.opt.autoread = true
 
