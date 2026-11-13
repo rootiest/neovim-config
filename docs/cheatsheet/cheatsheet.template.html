@@ -1925,7 +1925,7 @@ runFinder();
     { id: "explorer", name: "Explorer", src: "snacks", led: "var(--h12)", test: (c) => has(c, "explorer") },
     { id: "complete", name: "Completion", src: "blink.cmp", led: "var(--h4)", test: (c) => has(c, "completion") || has(c, "blink") },
     { id: "jump", name: "Flash & Leap", src: "flash", led: "var(--h1)", test: (c) => has(c, "flash") || has(c, "leap") || /\bafter [ft]\b/.test(c) },
-    { id: "git", name: "Git", src: "gitsigns", led: "var(--h11)", test: (c) => /\b(git|gitsigns|github|forgejo|pr)\b/.test(c) },
+    { id: "git", name: "Git", src: "gitsigns", led: "var(--h11)", test: (c) => /\b(git|gitsigns|github|pr)\b/.test(c) },
     { id: "notes", name: "Notes", src: "obsidian.nvim", led: "var(--h5)", test: (c) => /\b(obsidian|markdown|haunt)\b/.test(c) },
     { id: "term", name: "Terminal & AI", src: "sidekick", led: "var(--h9)", test: (c) => /\b(terminal|sidekick|kitty|scrollback|nes)\b/.test(c) },
     { id: "other", name: "Other", src: "config", led: "var(--h13)", test: () => true },
