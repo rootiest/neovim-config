@@ -70,7 +70,7 @@ The configuration is strictly modular:
 
 ### Terminal
 - **Kitty Scrollback**: Browse Kitty terminal scrollback buffer inside Neovim.
-- **Neovide**: When running under the Neovide GUI, adds terminal-style system-clipboard keys: `Ctrl+Shift+V` paste (all modes; in Normal mode an empty line is replaced and the cursor lands after the paste), `Ctrl+Shift+C` copy and `Ctrl+Shift+X` cut (selection in Visual mode, current line in Normal mode).
+- **Neovide**: When running under the Neovide GUI, adds terminal-style system-clipboard keys: `Ctrl+Shift+V` paste (all modes; in Normal mode an empty line is replaced and the cursor lands after the paste), `Ctrl+Shift+C` copy and `Ctrl+Shift+X` cut (selection in Visual mode, current line in Normal mode). Neovide's own settings, including the one that lets noice.nvim load under it, live in [neovide-config](https://git.rootiest.dev/rootiest/neovide-config).
 
 ### Tracking
 - **Vim-wakatime**: Coding-time tracking. Loaded eagerly so it sees `VimEnter`/`BufEnter`; server and API key come from `~/.wakatime.cfg`. Reports as `neovim-wakatime` so Wakapi attributes time to Neovim instead of "Unknown".
