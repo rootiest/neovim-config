@@ -66,7 +66,7 @@ end
 
 local function commands(cmds, scope)
   local res = {}
-  for name, c in pairs(cmds) do
+  for name, c in vim.spairs(cmds) do
     local file, line
     if c.script_id and c.script_id > 0 then
       file = script_path(c.script_id)
@@ -124,7 +124,7 @@ local function dump()
   if ok then
     local function keys(t)
       local res = {}
-      for lhs, v in pairs(t or {}) do
+      for lhs, v in vim.spairs(t or {}) do
         if v then
           local action = type(v) == "table" and (v[1] or v.action) or v
           res[#res + 1] = {
@@ -154,9 +154,9 @@ local function dump()
   local bok, blink_keymap = pcall(require, "blink.cmp.keymap")
   if bok and blink_keymap.mappings then
     data.blink = {}
-    for kind, mappings in pairs(blink_keymap.mappings) do
+    for kind, mappings in vim.spairs(blink_keymap.mappings) do
       local res = {}
-      for lhs, actions in pairs(mappings) do
+      for lhs, actions in vim.spairs(mappings) do
         local names = {}
         for _, a in ipairs(type(actions) == "table" and actions or {}) do
           names[#names + 1] = type(a) == "string" and a or "function"
@@ -238,7 +238,7 @@ local function dump()
   end
 
   local f = assert(io.open(out, "w"))
-  f:write(vim.json.encode(data))
+  f:write(vim.json.encode(data, { sort_keys = true }))
   f:close()
   vim.cmd("qa!")
 end
