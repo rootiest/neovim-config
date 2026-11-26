@@ -192,8 +192,29 @@ local function dump()
       vim.wait(15000, function()
         return #vim.lsp.get_clients({ bufnr = buf }) > 0
       end, 100)
-      vim.wait(500)
     end
+    -- Servers attach one by one, each adding buffer-local commands. Copilot
+    -- starts a fresh client per workspace root and its Node server answers
+    -- seconds after lua_ls, so wait until every enabled server for this
+    -- filetype whose command is installed has attached (capped at 15s).
+    -- Filtered here rather than with get_configs({ filetype = ft }), which
+    -- skips configs without a `filetypes` list (Copilot) that attach to any.
+    local ft, expected = vim.bo[buf].filetype, {}
+    for _, cfg in ipairs(vim.lsp.get_configs({ enabled = true })) do
+      local fts = cfg.filetypes
+      if (fts == nil or vim.tbl_contains(fts, ft))
+          and (type(cfg.cmd) ~= "table" or vim.fn.executable(cfg.cmd[1]) == 1) then
+        expected[#expected + 1] = cfg.name
+      end
+    end
+    vim.wait(15000, function()
+      for _, name in ipairs(expected) do
+        if #vim.lsp.get_clients({ bufnr = buf, name = name }) == 0 then
+          return false
+        end
+      end
+      return true
+    end, 100)
     -- Plugins that attach on InsertEnter/BufEnter (blink.cmp, …).
     vim.api.nvim_exec_autocmds({ "BufEnter", "InsertEnter" }, { buffer = buf, modeline = false })
     local get = function(mode)
