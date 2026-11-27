@@ -16,12 +16,14 @@ on:
     branches: [main]
     paths:
       - docs/cheatsheet/cheatsheet.html
+      - docs/cheatsheet/manifest.webmanifest
       - .github/workflows/pages.yml
   workflow_dispatch:
 
 env:
   PAGES: |
     docs/cheatsheet/cheatsheet.html cheatsheet/index.html
+    docs/cheatsheet/manifest.webmanifest cheatsheet/manifest.webmanifest
 
 jobs:
   publish:

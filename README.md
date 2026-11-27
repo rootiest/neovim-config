@@ -5,7 +5,7 @@ A modern, modular, and high-performance Neovim configuration built from scratch 
 ![Neovim](https://img.shields.io/badge/Neovim-0.10+-blue?logo=neovim)
 ![License](https://img.shields.io/badge/License-GPLv3+-green)
 
-📖 **[Interactive keymap cheatsheet](https://pages.rootiest.dev/neovim-config/cheatsheet/)**: every Vim key and every mapping in this config, searchable.
+📖 **[Interactive keymap cheatsheet](https://pages.rootiest.dev/neovim-config/cheatsheet/)**: every Vim key and every mapping in this config, searchable. Install it as the "Neovim" app from [nvim.rootiest.fyi](https://nvim.rootiest.fyi/).
 
 ## ✨ Highlights
 
