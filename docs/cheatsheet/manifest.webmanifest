@@ -1,0 +1,37 @@
+{
+  "name": "Neovim Cheatsheet",
+  "short_name": "Neovim",
+  "description": "Every Vim motion, built-in key and keymap of this Neovim config, searchable and on an interactive keyboard.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111418",
+  "theme_color": "#111418",
+  "categories": [
+    "books",
+    "education",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "https://pages.rootiest.fyi/icons/color/raster/rootiest-nvim/rootiest-nvim-192px.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://pages.rootiest.fyi/icons/color/raster/rootiest-nvim/rootiest-nvim-512px.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://pages.rootiest.fyi/icons/color/raster/rootiest-nvim/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
