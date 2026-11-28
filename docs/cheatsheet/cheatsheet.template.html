@@ -252,6 +252,7 @@ details.dl > summary h3 { display: inline-flex; gap: 10px; align-items: baseline
 .drow .was { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in oklab, var(--danger) 60%, transparent); }
 .drow .arrow { color: var(--muted); margin: 0 6px; }
 .drow .meta { display: flex; gap: 6px 10px; flex-wrap: wrap; align-items: center; margin-top: 3px; font: 500 0.72rem var(--mono); color: var(--muted); }
+.drow .meta > *, .rm .fl, .rf > * { min-width: 0; overflow-wrap: anywhere; }
 details.more > summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: 0.9rem; padding: 6px 0; }
 @media (max-width: 560px) { .drow { grid-template-columns: minmax(0, 1fr); } }
 
@@ -393,6 +394,41 @@ details.more > summary { cursor: pointer; color: var(--accent); font-weight: 600
 .crow2 .cn { font: 700 0.92rem var(--mono); overflow-wrap: anywhere; }
 .crow2 .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin-top: 3px; font: 500 0.72rem var(--mono); color: var(--muted); }
 @media (max-width: 560px) { .crow2, .witem { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- Key list (narrow screens) ------------------------------------------ */
+/* Below the breakpoint the keyboard drawing gives way to a list of the selected layer's keys,
+   grouped by category, with a search on top that looks through every layer. */
+.kbfind, .kblist { display: none; }
+.kbfind { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding: 10px 0; gap: 10px; align-items: center; }
+.kbfind .search { flex: 1 1 0; }
+.layers > * { min-width: 0; }
+.kbfind .search input { font-size: 1rem; padding: 10px 0; }
+.kblist { gap: 6px; }
+.kblist .lhead { margin: 14px 0 2px; display: flex; gap: 8px; align-items: center; font: 700 0.85rem var(--mono); }
+.kblist .lhead i { width: 10px; height: 10px; border-radius: 50%; background: var(--led); }
+.kblist .lhead:first-child, .kblist .lhead + .rcat { margin-top: 0; }
+.kitem { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--cat, var(--line)); border-radius: 10px; }
+.kitem > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(64px, auto) minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; min-height: 44px; }
+.kitem > summary::-webkit-details-marker { display: none; }
+.kitem > summary::after { content: "▸"; color: var(--muted); font-size: 0.8rem; transition: transform .15s; }
+.kitem[open] > summary::after { transform: rotate(90deg); }
+.kitem .kl { display: grid; gap: 1px; min-width: 0; }
+.kitem .kl b { font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+.kitem .kl span { font-size: 0.84rem; color: var(--muted); line-height: 1.3; overflow-wrap: anywhere; }
+.kitem.dead .kl b { text-decoration: line-through; }
+.kitem .mk { position: static; flex: none; margin-right: 4px; vertical-align: 1px; }
+.kitem .kd { display: grid; gap: 10px; padding: 4px 12px 12px; font-size: 0.92rem; border-top: 1px solid var(--line); padding-top: 10px; }
+.kblist .note { font-size: 0.85rem; color: var(--muted); }
+
+@media (max-width: 760px) {
+  #keyboard .kbctl, #keyboard .legend, #keyboard .board, #keyboard .keyinfo, #keyboard .kbonly { display: none; }
+  .kbfind { display: flex; }
+  .kblist { display: grid; }
+  .kbnarrow { display: inline; }
+  /* While searching, results span every layer, so the layer controls step aside. */
+  #keyboard.searching .tabs, #keyboard.searching .layer-meta { display: none; }
+}
+@media (min-width: 761px) { .kbnarrow { display: none; } }
 footer { font-size: 0.85rem; color: var(--muted); }
 footer code { font-size: 0.8rem; }
 @media (prefers-reduced-motion: reduce) {
@@ -432,7 +468,14 @@ footer code { font-size: 0.8rem; }
 
   <section id="keyboard" class="layers" aria-labelledby="h-keyboard">
     <h2 id="h-keyboard">Keyboard</h2>
-    <p class="lede">What every key does in each mode or after each prefix. Hover or focus a key for details; click it to look it up in the finder. Click <kbd>Shift</kbd> or <kbd>Ctrl</kbd> on the board to hold them.</p>
+    <p class="lede">What every key does in each mode or after each prefix. <span class="kbonly">Hover or focus a key for details; click it to look it up in the finder. Click <kbd>Shift</kbd> or <kbd>Ctrl</kbd> on the board to hold them.</span><span class="kbnarrow">Pick a layer, then tap a key for everything bound to it, or search every layer at once.</span></p>
+    <div class="kbfind">
+      <label class="search" for="kq">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="kq" type="search" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="Search every layer — e.g. fold, gd" aria-label="Search keys on every keyboard layer" aria-controls="kblist">
+      </label>
+      <span class="count" id="kqcount" aria-live="polite"></span>
+    </div>
     <div class="tabs" id="kbtabs" role="tablist" aria-label="Keyboard layers"></div>
     <div class="layer-meta">
       <p class="grow" id="layermeta"></p>
@@ -451,6 +494,7 @@ footer code { font-size: 0.8rem; }
     <div class="legend" id="kblegend"></div>
     <div class="board" id="board" data-kb="dark" data-board="standard"><div class="case"><div class="kb" id="kb" role="group" aria-label="Keyboard"></div></div></div>
     <div class="keyinfo" id="keyinfo" aria-live="polite"></div>
+    <div class="kblist" id="kblist"></div>
   </section>
 
   <section id="leader" class="stack" aria-labelledby="h-leader">
@@ -1369,6 +1413,7 @@ function drawKB() {
   const prefixCaps = layer.ai ? `<kbd>${esc(KB.ai)}</kbd>` : "";
   const held = [KB.ctrl ? "Ctrl" : "", KB.shift ? "Shift" : ""].filter(Boolean);
   $("layermeta").innerHTML = `${layer.about} ${prefixCaps}${layer.leader ? ` ${tokCaps([LEADER_TOK], { ld: true })}` : ""}${held.length ? ` <span class="muted">· holding ${held.map((h) => `<kbd>${h}</kbd>`).join(" ")}</span>` : ""}`;
+  drawList();
   if (KB.cur >= 0 && KB.infos[KB.cur]) showKey(KB.cur);
   else $("keyinfo").innerHTML = `<span class="muted">Hover or focus a key to see everything bound to it in this layer.</span>`;
 }
@@ -1433,8 +1478,12 @@ function showKey(i) {
   const el = $("kb").querySelector(`.key[data-i="${i}"]`);
   if (el) el.classList.add("cur");
   const layer = LAYERS[KB.layer];
+  const head = `<div class="ki-head">${tokCaps(info.seq, { ld: !!layer.leader })}<span class="muted">in ${esc(modeNames([info.mode]))} mode</span></div>`;
+  $("keyinfo").innerHTML = head + keyDetailHTML(info);
+}
+/** Everything bound to one key in a layer: its entries, then the longer keys it starts. */
+function keyDetailHTML(info) {
   const mode = info.mode;
-  const head = `<div class="ki-head">${tokCaps(info.seq, { ld: !!layer.leader })}<span class="muted">in ${esc(modeNames([mode]))} mode</span></div>`;
   const main = [...info.exact, ...info.belongs];
   const kids = info.kids.slice().sort((a, b) => KIND_RANK[a.kind] - KIND_RANK[b.kind] || a.kf.localeCompare(b.kf));
   // One chip per distinct continuation; the live map wins over the built-in it replaces.
@@ -1443,8 +1492,7 @@ function showKey(i) {
   const chips = [...seen.values()];
   const MAX = 40;
   const g = info.asGroup ? GROUPS.get(info.seq.join("")) : null;
-  $("keyinfo").innerHTML = head
-    + (main.length ? `<ul class="ki-list">${main.map((x) => entryLI(x, mode)).join("")}</ul>` : (info.kids.length ? "" : `<p class="muted">Nothing is bound to this key here.</p>`))
+  return (main.length ? `<ul class="ki-list">${main.map((x) => entryLI(x, mode)).join("")}</ul>` : (info.kids.length ? "" : `<p class="muted">Nothing is bound to this key here.</p>`))
     + (chips.length ? `<div><p class="muted">${g && g.name ? `<b>${esc(g.name)}</b> · ` : ""}Then press (${chips.length}):</p><div class="kids">${chips.slice(0, MAX).map((k) =>
       `<span class="kid">${tokCaps(k.btok.slice(info.seq.length))}<span>${esc(k.d)}</span></span>`).join("")}${chips.length > MAX ? `<span class="kid">+${chips.length - MAX} more — search the finder</span>` : ""}</div></div>` : "");
 }
@@ -1467,6 +1515,79 @@ $("kb").addEventListener("click", (e) => {
   showKey(+el.dataset.i);
   sendToFinder(info.seq.join(""), info.mode);
 });
+
+// ---- Key list (narrow screens) ----------------------------------------------------------------------
+// Infos for every key of a layer, computed with that layer's own held modifiers.
+function layerInfos(layer) {
+  const held = [KB.shift, KB.ctrl];
+  KB.shift = !!layer.shift; KB.ctrl = !!layer.ctrl;
+  const infos = KEYS.map((k) => infoFor(k, layer));
+  [KB.shift, KB.ctrl] = held;
+  return infos;
+}
+/** The bound keys of a layer, one entry per key sequence, in board order. */
+function layerItems(layer, infos) {
+  const seen = new Set();
+  const out = [];
+  KEYS.forEach((k, i) => {
+    const info = infos[i];
+    if (!info || (!info.primary && !info.mainKids.length)) return;
+    const id = info.seq.join("");
+    if (seen.has(id)) return;
+    seen.add(id);
+    const c = capContent(k, info);
+    const p = info.asGroup ? null : info.primary;
+    const sub = info.asGroup ? `prefix · ${info.kids.length} key${info.kids.length === 1 ? "" : "s"} follow` : p && p.d && p.d !== c.lb ? p.d : "";
+    const hay = [id, stripTags(c.lb), sub, ...[...info.exact, ...info.belongs].map((x) => x.d), ...info.mainKids.map((x) => x.d)].join(" ").toLowerCase();
+    out.push({ info, layer, c, sub, hay, cat: c.cat || "Misc" });
+  });
+  return out;
+}
+const KL = { items: [], open: new Map() };
+function itemHTML(it, n) {
+  return `<details class="kitem${it.c.cls.includes("dead") ? " dead" : ""}" data-n="${n}" style="--cat:${catVar(it.cat)}"><summary>${tokCaps(it.info.seq, { ld: !!it.layer.leader })}
+    <span class="kl"><b>${it.c.mk || ""}${it.c.lb || esc(it.sub)}</b>${it.c.lb && it.sub ? `<span>${esc(it.sub)}</span>` : ""}</span></summary></details>`;
+}
+function drawList() {
+  const q = $("kq").value.trim().toLowerCase();
+  $("keyboard").classList.toggle("searching", !!q);
+  KL.items = [];
+  let html = "";
+  if (q) {
+    const words = q.split(/\s+/);
+    const LIMIT = 150;
+    let total = 0;
+    for (const layer of LAYERS) {
+      const hits = layerItems(layer, layerInfos(layer)).filter((it) => words.every((w) => it.hay.includes(w)));
+      total += hits.length;
+      const room = LIMIT - KL.items.length;
+      if (!hits.length || room <= 0) continue;
+      html += `<p class="lhead" style="--led:${layer.led}"><i></i>${esc(layer.name)}</p>`
+        + hits.slice(0, room).map((it) => itemHTML(it, KL.items.push(it) - 1)).join("");
+    }
+    $("kqcount").textContent = `${total} found`;
+    if (total > LIMIT) html += `<p class="note">${total - LIMIT} more. Keep typing to narrow down, or use the finder below.</p>`;
+    $("kblist").innerHTML = html || `<p class="empty">No key matches “${esc(q)}”. The finder below also searches commands and plugin windows.</p>`;
+    return;
+  }
+  $("kqcount").textContent = "";
+  const items = layerItems(LAYERS[KB.layer], KB.infos);
+  const byCat = groupBy(items, (it) => it.cat);
+  for (const cat of [...byCat.keys()].sort((a, b) => catRank(a) - catRank(b))) {
+    html += `<p class="rcat" style="--cat:${catVar(cat)}">${esc(cat)}</p>`
+      + byCat.get(cat).map((it) => itemHTML(it, KL.items.push(it) - 1)).join("");
+  }
+  $("kblist").innerHTML = html || `<p class="empty">Nothing is bound in this layer.</p>`;
+}
+// Details are filled in when an entry is opened, so long lists stay light.
+$("kblist").addEventListener("toggle", (e) => {
+  const d = e.target;
+  if (!d.open || d.querySelector(".kd")) return;
+  const it = KL.items[+d.dataset.n];
+  if (it) d.insertAdjacentHTML("beforeend", `<div class="kd">${keyDetailHTML(it.info)}</div>`);
+}, true);
+$("kq").addEventListener("input", drawList);
+$("kq").addEventListener("keydown", (e) => { if (e.key === "Escape") { $("kq").value = ""; drawList(); } });
 
 // ---- Leader tree ---------------------------------------------------------------------------------
 {
